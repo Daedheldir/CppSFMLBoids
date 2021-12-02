@@ -51,17 +51,17 @@
     <ClInclude Include="BoidAgentController.h">
       <Filter>Header Files\Boids</Filter>
     </ClInclude>
-    <ClInclude Include="BoidAgentData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BoidFlock.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MathAdditions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Definitions.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BoidFlock.h">
+      <Filter>Header Files\Boids</Filter>
+    </ClInclude>
+    <ClInclude Include="BoidAgentData.h">
+      <Filter>Header Files\Boids</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -84,10 +84,10 @@
       <Filter>Source Files\Boid</Filter>
     </ClCompile>
     <ClCompile Include="BoidAgentData.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Boid</Filter>
     </ClCompile>
     <ClCompile Include="BoidFlock.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Boid</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

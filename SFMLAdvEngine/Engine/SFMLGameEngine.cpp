@@ -10,7 +10,7 @@ dh::SFMLGameEngine::SFMLGameEngine(GameDataRef m_gameData, sf::Vector2u uWindowS
 
 dh::SFMLGameEngine::SFMLGameEngine(GameDataRef m_gameData, std::string appName, unsigned int maxUpdatesPerSecond, uint8_t fpsLimit, bool fullscreen) :
 	m_gameData(m_gameData),
-	graphics(m_gameData,appName, fullscreen, 1.0f / static_cast<float>(fpsLimit)),
+	graphics(m_gameData, appName, fullscreen, 1.0f / static_cast<float>(fpsLimit)),
 	logic(m_gameData, 1.0f / static_cast<float>(maxUpdatesPerSecond))
 {
 	std::cout << "Engine constructed.\n" << std::endl;
@@ -19,9 +19,11 @@ dh::SFMLGameEngine::SFMLGameEngine(GameDataRef m_gameData, std::string appName, 
 
 dh::SFMLGameEngine::~SFMLGameEngine()
 {
+	graphics.~GraphicsEngine();
+	logic.~LogicEngine();
 }
 
-dh::GraphicsEngine & dh::SFMLGameEngine::getGraphics()
+dh::GraphicsEngine& dh::SFMLGameEngine::getGraphics()
 {
 	return graphics;
 }
