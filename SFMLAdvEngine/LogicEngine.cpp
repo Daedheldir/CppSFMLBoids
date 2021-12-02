@@ -17,8 +17,13 @@ dh::LogicEngine::~LogicEngine()
 void dh::LogicEngine::dispose()
 {
 	logicThreadRunning = false;
-	if (m_updateThread.joinable())
+	if (m_updateThread.joinable()) {
 		m_updateThread.join();
+		std::cout << "Logic thread joined." << std::endl;
+	}
+	else {
+		std::cout << "Logic thread not joinable!" << std::endl;
+	}
 }
 
 void dh::LogicEngine::startLogicThread(const std::function<void()>& updateFunc)
@@ -27,7 +32,7 @@ void dh::LogicEngine::startLogicThread(const std::function<void()>& updateFunc)
 	m_updateThread = std::thread(&dh::LogicEngine::m_logicThread, this, updateFunc);
 }
 
-float dh::LogicEngine::getUpdateElapsedTime() const
+float dh::LogicEngine::GetUpdateElapsedTime() const
 {
 	return fUpdateElapsedTime;
 }
@@ -51,14 +56,14 @@ void dh::LogicEngine::m_updateLogicClock()
 	this->updateTime = this->updateClk.restart();
 	this->fUpdateElapsedTime = this->updateTime.asSeconds();
 
-	fUpdateCounter += fUpdateElapsedTime;
-	if (this->fUpdateCounter >= 0.2f) {
-		this->fUpdateCounter -= 0.2f;
-	}
+	//fUpdateCounter += fUpdateElapsedTime;
+	//if (this->fUpdateCounter >= 0.2f) {
+	//	this->fUpdateCounter -= 0.2f;
+	//}
 
-	if (this->fUpdateElapsedTime >= 0.2f) {
-		this->fUpdateElapsedTime = 0.2f;
-	}
+	//if (this->fUpdateElapsedTime >= 0.2f) {
+	//	this->fUpdateElapsedTime = 0.2f;
+	//}
 
 	//lock the updates per second
 	if (this->fUpdateElapsedTime < fMaxUpdatesPerSecond) {

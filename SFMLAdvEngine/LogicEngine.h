@@ -14,7 +14,7 @@ namespace dh {
 		void dispose();
 
 		void startLogicThread(const std::function<void()>& updateFunc);
-		float getUpdateElapsedTime() const;
+		float GetUpdateElapsedTime() const;
 
 	private:
 		void m_logicThread(const std::function<void()>& updateFunc);
@@ -27,13 +27,13 @@ namespace dh {
 		bool logicThreadRunning = false;
 		std::thread m_updateThread;
 
-		float	fUpdateElapsedTime;
+		float	fUpdateElapsedTime = 1.0f;
 
 		sf::Clock	updateClk;
 		sf::Time	updateTime;
 
-		float	fMaxUpdatesPerSecond;	//max logic updates per second equal to 1.0f / (int) maxUpdatesPerSecond
-		float	fUpdateCounter;
+		float	fMaxUpdatesPerSecond = 1.0f;	//max logic updates per second equal to 1.0f / (int) maxUpdatesPerSecond
+		//float	fUpdateCounter;
 	};
 
 }

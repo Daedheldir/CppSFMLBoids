@@ -27,6 +27,11 @@ dh::GraphicsEngine& dh::SFMLGameEngine::getGraphics()
 	return graphics;
 }
 
+dh::LogicEngine& dh::SFMLGameEngine::getLogic()
+{
+	return logic;
+}
+
 bool dh::SFMLGameEngine::isGameRunning()
 {
 	return this->m_gameData->bGameRunning;
@@ -34,6 +39,8 @@ bool dh::SFMLGameEngine::isGameRunning()
 
 void dh::SFMLGameEngine::Run()
 {
+	LoadResources();
+
 	this->m_gameData->bGameRunning = true;
 
 	graphics.getRenderWindow().setActive(false);

@@ -58,6 +58,16 @@ dh::Resource_Manager<sf::Font, std::string>& dh::GraphicsEngine::getFontManager(
 	return m_fontManager;
 }
 
+float dh::GraphicsEngine::GetElapsedTime() const
+{
+	return m_fRenderElapsedTime;
+}
+
+void dh::GraphicsEngine::UpdateClock()
+{
+	m_updateRenderingClock();
+}
+
 
 void dh::GraphicsEngine::startRenderingThread(const std::function<void()>& drawFunc)
 {
@@ -107,15 +117,15 @@ void dh::GraphicsEngine::m_updateRenderingClock()
 	this->m_renderTime = this->m_renderClk.restart();
 	this->m_fRenderElapsedTime = this->m_renderTime.asSeconds();
 
-	m_fRenderCounter += m_fRenderElapsedTime;
+	//m_fRenderCounter += m_fRenderElapsedTime;
 
-	if (this->m_fRenderCounter >= 0.2f) {
-		this->m_fRenderCounter -= 0.2f;
-	}
+	//if (this->m_fRenderCounter >= 0.2f) {
+	//	this->m_fRenderCounter -= 0.2f;
+	//}
 
-	if (this->m_fRenderElapsedTime >= 0.5f) {
-		this->m_fRenderElapsedTime = 0.5f;
-	}
+	//if (this->m_fRenderElapsedTime >= 0.5f) {
+	//	this->m_fRenderElapsedTime = 0.5f;
+	//}
 
 	//lock the updates per second
 	if (this->m_fRenderElapsedTime < m_fFPSLimit) {

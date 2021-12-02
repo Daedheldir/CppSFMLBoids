@@ -17,7 +17,7 @@ BoidFlock::BoidFlock() : boidsVerticesArr{ sf::PrimitiveType::Points, BOIDS_COUN
 		boidsDataArr[i].position = sf::Vector2f((float)(rand() % dh::definitions::windowSizeX), (float)(rand() % dh::definitions::windowSizeY));
 	}
 	for (int i = 0; i < BOIDS_COUNT; ++i) {
-		boidsVerticesArr[i] = (sf::Vertex{ boidsDataArr[i].position, sf::Color::Red });
+		boidsVerticesArr[i] = (sf::Vertex{ boidsDataArr[i].position, sf::Color::Transparent });
 	}
 }
 
@@ -37,7 +37,10 @@ void BoidFlock::Update()
 			//calculate separation for all agents
 			sf::Vector2f separationVec = CalculateSeparation(boidsDataArr[i], boidsInView) * SEPARATION_WEIGHT;
 
-			sf::Vector2f accelerationVec = alignmentVec + cohesionVec + separationVec;
+			//add some randomness to their movement
+			sf::Vector2f randVec = CalculateRandomMovement() * RAND_MOVE_WEIGHT;
+
+			sf::Vector2f accelerationVec = alignmentVec + cohesionVec + separationVec + randVec;
 
 			//calculate acceleration change
 			accelerationVec.x = std::lerp(boidsDataArr[i].acceleration.x, accelerationVec.x, MAX_ACCELERATION_CHANGE);
@@ -51,10 +54,10 @@ void BoidFlock::Update()
 			sf::Vector2u boidPosBounds{ dh::definitions::windowSizeX, dh::definitions::windowSizeY };
 			sf::Vector2f boidPos{ boidsDataArr[i].position + accelerationVec };
 
-			if (boidPos.x < 0) boidPos.x = boidPosBounds.x;
-			else if (boidPos.x > boidPosBounds.x) boidPos.x = 0;
-			if (boidPos.y < 0) boidPos.y = boidPosBounds.y;
-			else if (boidPos.y > boidPosBounds.y) boidPos.y = 0;
+			if (boidPos.x < 0) boidPos.x = (float)boidPosBounds.x;
+			else if (boidPos.x > boidPosBounds.x) boidPos.x = 0.0f;
+			if (boidPos.y < 0) boidPos.y = (float)boidPosBounds.y;
+			else if (boidPos.y > boidPosBounds.y) boidPos.y = 0.0f;
 
 			//update boid pos
 			boidsDataArr[i].acceleration = accelerationVec;
@@ -77,7 +80,7 @@ void BoidFlock::Update()
 			float alignStr = VectorSqrMagnitude(alignmentVec) / VectorSqrMagnitude(maxVec);
 			float cohesStr = VectorSqrMagnitude(cohesionVec) / VectorSqrMagnitude(maxVec);
 			float separStr = VectorSqrMagnitude(separationVec) / VectorSqrMagnitude(maxVec);
-			float speedMag = VectorSqrMagnitude(accelerationVec) > 1.0f ? 1.0f : VectorSqrMagnitude(accelerationVec);
+			float speedMag = mathAdditions::MapValue(VectorSqrMagnitude(accelerationVec), { 0.0f, MAX_SPEED }, { 0.0f, 1.0f });
 
 			boidsVerticesArr[i].color = {
 				static_cast<uint8_t>((255 - colorBias) * separStr + colorBias * speedMag),
@@ -95,7 +98,7 @@ std::vector<BoidAgentData*> BoidFlock::GetBoidsInView(const BoidAgentData& boid)
 {
 	std::vector<BoidAgentData*> boidsInView;
 	for (auto& neighbour : boidsDataArr) {
-		if (&neighbour != &boid && mathAdditions::VectorSqrMagnitude(boid.position - neighbour.position) < BoidFlock::BOIDS_VIEW_RANGE) {
+		if (&neighbour != &boid && mathAdditions::VectorSqrMagnitude(boid.position - neighbour.position) < BoidFlock::SQUARE_BOIDS_VIEW_RANGE) {
 			boidsInView.push_back(&neighbour);
 		}
 	}
@@ -161,4 +164,10 @@ sf::Vector2f BoidFlock::CalculateSeparation(const BoidAgentData& currentBoid, co
 	}
 
 	return avoidanceMove;
+}
+
+sf::Vector2f BoidFlock::CalculateRandomMovement()
+{
+	sf::Vector2 randomMove{ 1 - (rand() % 200) / 100.0f,1 - (rand() % 200) / 100.0f };
+	return randomMove;
 }

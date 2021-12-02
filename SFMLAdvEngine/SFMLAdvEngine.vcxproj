@@ -27,6 +27,7 @@
     <ClInclude Include="GraphicsEngine.h" />
     <ClInclude Include="LogicEngine.h" />
     <ClInclude Include="MathAdditions.h" />
+    <ClInclude Include="Quadtree.h" />
     <ClInclude Include="ResourceDefinitions.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="SFMLGameEngine.h" />
