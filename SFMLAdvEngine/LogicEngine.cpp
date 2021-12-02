@@ -10,7 +10,8 @@ dh::LogicEngine::LogicEngine(dh::GameDataRef m_gameData, float fMaxUpdatesPerSec
 
 dh::LogicEngine::~LogicEngine()
 {
-	dispose();
+	if (logicThreadRunning)
+		dispose();
 }
 
 void dh::LogicEngine::dispose()

@@ -5,7 +5,10 @@
 class BoidsApp : public dh::SFMLGameEngine {
 public:
 	BoidsApp(dh::GameDataRef m_gameData) : SFMLGameEngine(m_gameData, { dh::definitions::windowSizeX, dh::definitions::windowSizeY }, "test", 60, 60, false) {
-
+		m_gameData->renderTexture.create(dh::definitions::windowSizeX, dh::definitions::windowSizeY);
+		m_gameData->renderTextureRectShape.setSize({ dh::definitions::windowSizeX, dh::definitions::windowSizeY });
+		m_gameData->renderTextureRectShape.setPosition(0, 0);
+		m_gameData->renderTextureRectShape.setTexture(&m_gameData->renderTexture.getTexture());
 	};
 
 protected:
@@ -15,10 +18,20 @@ protected:
 			this->dispose();
 	};
 	virtual void handleInput() {};
-	virtual void handleLogic() { m_gameData->boidFlock.Update(); };
+	virtual void handleLogic()
+	{
+		//update flock
+		m_gameData->boidFlock.Update();
+
+	};
 	virtual void handleDrawing()
 	{
-		getGraphics().getRenderWindow().clear();
+		////update render texture
+		//m_gameData->renderTexture.draw(m_gameData->boidFlock.boidsVerticesArr);
+		//m_gameData->renderTexture.display();
+
+		//getGraphics().getRenderWindow().clear();
+		//getGraphics().getRenderWindow().draw(m_gameData->renderTextureRectShape);
 		getGraphics().getRenderWindow().draw(m_gameData->boidFlock.boidsVerticesArr);
 		getGraphics().getRenderWindow().display();
 	};

@@ -14,6 +14,10 @@ namespace dh {
 
 		//boid flocks
 		BoidFlock boidFlock;
+
+		//render texture for drawing
+		sf::RenderTexture renderTexture;
+		sf::RectangleShape renderTextureRectShape;
 	};
 
 	//reference to game data;

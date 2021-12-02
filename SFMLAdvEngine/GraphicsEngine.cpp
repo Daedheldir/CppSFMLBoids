@@ -20,7 +20,8 @@ dh::GraphicsEngine::GraphicsEngine(dh::GameDataRef gameData, std::string appName
 
 dh::GraphicsEngine::~GraphicsEngine()
 {
-	dispose();
+	if (renderThreadRunning)
+		dispose();
 }
 
 void dh::GraphicsEngine::dispose()
