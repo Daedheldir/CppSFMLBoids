@@ -10,21 +10,20 @@
 using mathAdditions::VectorMagnitude;
 using mathAdditions::VectorSqrMagnitude;
 
-BoidFlock::BoidFlock() : boidsVerticesArr{sf::PrimitiveType::Points, BOIDS_COUNT}
+BoidFlock::BoidFlock() : boidsVerticesArr{ sf::PrimitiveType::Points, BOIDS_COUNT }
 {
 	//initialize positions and vertex array
 	for (int i = 0; i < BOIDS_COUNT; ++i) {
 		boidsDataArr[i].position = sf::Vector2f((float)(rand() % dh::definitions::windowSizeX), (float)(rand() % dh::definitions::windowSizeY));
 	}
 	for (int i = 0; i < BOIDS_COUNT; ++i) {
-		boidsVerticesArr[i] = (sf::Vertex{ boidsDataArr[i].position, sf::Color::Red});
+		boidsVerticesArr[i] = (sf::Vertex{ boidsDataArr[i].position, sf::Color::Red });
 	}
 }
 
 void BoidFlock::Update()
 {
 	try {
-		float elapsedTime = 
 		for (int i = 0; i < BOIDS_COUNT; ++i) {
 
 			std::vector<BoidAgentData*> boidsInView{ GetBoidsInView(boidsDataArr[i]) };
@@ -81,7 +80,7 @@ void BoidFlock::Update()
 			float speedMag = VectorSqrMagnitude(accelerationVec) > 1.0f ? 1.0f : VectorSqrMagnitude(accelerationVec);
 
 			boidsVerticesArr[i].color = {
-				static_cast<uint8_t>((255-colorBias) * separStr + colorBias * speedMag),
+				static_cast<uint8_t>((255 - colorBias) * separStr + colorBias * speedMag),
 				static_cast<uint8_t>((255 - colorBias) * cohesStr + colorBias * speedMag),
 				static_cast<uint8_t>((255 - colorBias) * alignStr + colorBias * speedMag)
 			};
@@ -103,7 +102,7 @@ std::vector<BoidAgentData*> BoidFlock::GetBoidsInView(const BoidAgentData& boid)
 	return boidsInView;
 }
 
-sf::Vector2f BoidFlock::CalculateAlignment(BoidAgentData* currentBoid, std::vector<BoidAgentData*> & boidsInView)
+sf::Vector2f BoidFlock::CalculateAlignment(BoidAgentData* currentBoid, std::vector<BoidAgentData*>& boidsInView)
 {
 	if (boidsInView.size() <= 0) return currentBoid->acceleration;
 
@@ -113,12 +112,12 @@ sf::Vector2f BoidFlock::CalculateAlignment(BoidAgentData* currentBoid, std::vect
 		alignmentMove += heading->acceleration;
 	}
 
-	alignmentMove *= 1.0f/ boidsInView.size();
+	alignmentMove *= 1.0f / boidsInView.size();
 
 	return alignmentMove;
 }
 
-sf::Vector2f BoidFlock::CalculateCohesion(BoidAgentData* currentBoid, std::vector<BoidAgentData*> & boidsInView)
+sf::Vector2f BoidFlock::CalculateCohesion(BoidAgentData* currentBoid, std::vector<BoidAgentData*>& boidsInView)
 {
 	if (boidsInView.size() <= 0) return sf::Vector2f(0, 0);
 
@@ -136,19 +135,19 @@ sf::Vector2f BoidFlock::CalculateCohesion(BoidAgentData* currentBoid, std::vecto
 	return cohesionMove;
 }
 
-sf::Vector2f BoidFlock::CalculateSeparation(BoidAgentData* currentBoid, std::vector<BoidAgentData*> & boidsInView)
+sf::Vector2f BoidFlock::CalculateSeparation(BoidAgentData* currentBoid, std::vector<BoidAgentData*>& boidsInView)
 {
 	if (boidsInView.size() <= 0) return sf::Vector2f(0, 0);
 
 	//add all points together and average
-	sf::Vector2f avoidanceMove(0,0);
+	sf::Vector2f avoidanceMove(0, 0);
 	int nAvoid = 0;
 
 	sf::Vector2f closestAgentPos = boidsInView[0]->position;
 
-	for(auto neighbourPos : boidsInView)
+	for (auto neighbourPos : boidsInView)
 	{
-		
+
 		if (mathAdditions::VectorSqrMagnitude(neighbourPos->position - currentBoid->position) < BoidFlock::SQUARE_NEIGHBOUR_AVOIDANCE_RADIUS)
 		{
 			nAvoid++;
@@ -158,7 +157,7 @@ sf::Vector2f BoidFlock::CalculateSeparation(BoidAgentData* currentBoid, std::vec
 
 	if (nAvoid > 0)
 	{
-		avoidanceMove *= 1.0f/(float)nAvoid;
+		avoidanceMove *= 1.0f / (float)nAvoid;
 	}
 
 	return avoidanceMove;
