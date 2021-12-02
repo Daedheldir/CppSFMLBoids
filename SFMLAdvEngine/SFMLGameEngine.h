@@ -31,6 +31,7 @@ namespace dh {
 		sf::Vector2u getWindowSize();
 
 		dh::GraphicsEngine& getGraphics();
+		dh::LogicEngine& getLogic();
 
 		bool isGameRunning();
 
@@ -38,7 +39,7 @@ namespace dh {
 		virtual void dispose();
 
 	protected:
-		virtual void loadResources() = 0;
+		virtual void LoadResources() = 0;
 		virtual void handleEvents(sf::Event& ev) = 0;
 		virtual void handleInput() = 0;
 		virtual void handleLogic() = 0;
@@ -49,7 +50,7 @@ namespace dh {
 
 	protected:
 		GameDataRef m_gameData;
-		float		fEventsElapsedTime;
+		float		fEventsElapsedTime = 1.0f;
 
 	private:
 		GraphicsEngine	graphics;

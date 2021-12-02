@@ -16,8 +16,14 @@ namespace dh {
 		BoidFlock boidFlock;
 
 		//render texture for drawing
-		sf::RenderTexture renderTexture;
-		sf::RectangleShape renderTextureRectShape;
+		sf::RenderTexture	renderTexture;
+		sf::RectangleShape	renderTextureRectShape;
+
+		//statistics
+		sf::Font	font;
+		sf::Text	FPSCounter;
+		float		fFramesPerSecond = 0.0f;
+		float		fUpdatesPerSecond = 0.0f;
 	};
 
 	//reference to game data;

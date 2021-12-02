@@ -23,6 +23,8 @@ namespace dh {
 		dh::Resource_Manager<sf::Texture, std::string>& getTextureManager();
 		dh::Resource_Manager<sf::Font, std::string>& getFontManager();
 
+		float GetElapsedTime() const;
+		void UpdateClock();
 
 		void startRenderingThread(const std::function<void()>& drawFunc);
 	private:
@@ -45,13 +47,13 @@ namespace dh {
 		dh::Resource_Manager<sf::Font, std::string>		m_fontManager;
 
 		//time related members
-		float	m_fRenderElapsedTime;
+		float	m_fRenderElapsedTime = 1.0f;
 
 		sf::Clock	m_renderClk;
 		sf::Time	m_renderTime;
 
-		float	m_fFPSLimit;				//max rendering updates per second equal to 1.0f / (int) maxFps
+		float	m_fFPSLimit = 1.0f;				//max rendering updates per second equal to 1.0f / (int) maxFps
 
-		float	m_fRenderCounter;
+		//float	m_fRenderCounter;
 	};
 }
