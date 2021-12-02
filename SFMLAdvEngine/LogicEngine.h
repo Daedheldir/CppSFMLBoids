@@ -11,17 +11,20 @@ namespace dh {
 		LogicEngine(dh::GameDataRef m_gameData, float fMaxUpdatesPerSecond);
 		~LogicEngine();
 
-		void startLogicThread(std::function<void()> updateFunc);
+		void dispose();
+
+		void startLogicThread(const std::function<void()>& updateFunc);
 		float getUpdateElapsedTime() const;
 
 	private:
-		void m_logicThread(std::function<void()> updateFunc);
+		void m_logicThread(const std::function<void()>& updateFunc);
 
 		void m_updateLogicClock();
 
 	private:
 		dh::GameDataRef m_gameData;
 
+		bool logicThreadRunning = false;
 		std::thread m_updateThread;
 
 		float	fUpdateElapsedTime;

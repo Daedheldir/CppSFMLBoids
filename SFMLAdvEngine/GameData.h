@@ -1,5 +1,6 @@
 #pragma once
 #include <iostream>
+#include "BoidFlock.h"
 #include <SFML/Graphics.hpp>
 
 namespace dh {
@@ -10,6 +11,9 @@ namespace dh {
 
 		//views
 		std::map<std::string, sf::View> viewsMap;
+
+		//boid flocks
+		BoidFlock boidFlock;
 	};
 
 	//reference to game data;

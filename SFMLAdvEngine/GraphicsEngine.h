@@ -14,19 +14,21 @@ namespace dh {
 
 		~GraphicsEngine();
 
-		sf::RenderWindow & getRenderWindow();
+		void dispose();
+
+		sf::RenderWindow& getRenderWindow();
 
 		sf::Vector2u getWindowSize();
 
-		dh::Resource_Manager<sf::Texture, std::string> &	getTextureManager();
-		dh::Resource_Manager<sf::Font, std::string> &		getFontManager();
+		dh::Resource_Manager<sf::Texture, std::string>& getTextureManager();
+		dh::Resource_Manager<sf::Font, std::string>& getFontManager();
 
 
-		void startRenderingThread(std::function<void()> drawFunc);
+		void startRenderingThread(const std::function<void()>& drawFunc);
 	private:
 		void m_initialize(std::string appName, bool bFullscreen);
 
-		void m_renderingThread(std::function<void()> drawFunc);
+		void m_renderingThread(const std::function<void()>& drawFunc);
 
 		void m_updateRenderingClock();
 	private:
@@ -35,6 +37,7 @@ namespace dh {
 
 		dh::GameDataRef m_gameData;
 
+		bool renderThreadRunning = false;
 		std::thread m_renderThread;
 
 		//resource management
@@ -50,6 +53,5 @@ namespace dh {
 		float	m_fFPSLimit;				//max rendering updates per second equal to 1.0f / (int) maxFps
 
 		float	m_fRenderCounter;
-
 	};
 }

@@ -10,8 +10,8 @@ dh::SFMLGameEngine::SFMLGameEngine(GameDataRef m_gameData, sf::Vector2u uWindowS
 
 dh::SFMLGameEngine::SFMLGameEngine(GameDataRef m_gameData, std::string appName, unsigned int maxUpdatesPerSecond, uint8_t fpsLimit, bool fullscreen) :
 	m_gameData(m_gameData),
-	graphics(m_gameData,appName, fullscreen, 1.0f / static_cast<float>(fpsLimit)),
-	logic(m_gameData, 1.0f / static_cast<float>(maxUpdatesPerSecond))
+	logic(m_gameData, 1.0f / static_cast<float>(maxUpdatesPerSecond)),
+	graphics(m_gameData, appName, fullscreen, 1.0f / static_cast<float>(fpsLimit))
 {
 	std::cout << "Engine constructed.\n" << std::endl;
 }
@@ -19,9 +19,10 @@ dh::SFMLGameEngine::SFMLGameEngine(GameDataRef m_gameData, std::string appName, 
 
 dh::SFMLGameEngine::~SFMLGameEngine()
 {
+	this->dispose();
 }
 
-dh::GraphicsEngine & dh::SFMLGameEngine::getGraphics()
+dh::GraphicsEngine& dh::SFMLGameEngine::getGraphics()
 {
 	return graphics;
 }
@@ -39,8 +40,11 @@ void dh::SFMLGameEngine::Run()
 
 	std::cout << "Creating threads..." << std::endl;
 
-	graphics.startRenderingThread(std::bind(&dh::SFMLGameEngine::handleDrawing, this));
-	logic.startLogicThread(std::bind(&dh::SFMLGameEngine::handleLogic, this));
+	std::function<void()> logicFunc{ std::bind(&dh::SFMLGameEngine::handleLogic, this) };
+	logic.startLogicThread(logicFunc);
+
+	std::function<void()> renderingFunc{ std::bind(&dh::SFMLGameEngine::handleDrawing, this) };
+	graphics.startRenderingThread(renderingFunc);
 
 	std::cout << "\tThreads created.\n" << std::endl;
 
@@ -53,16 +57,24 @@ void dh::SFMLGameEngine::Run()
 	}
 }
 
+void dh::SFMLGameEngine::dispose()
+{
+	graphics.dispose();
+	logic.dispose();
+	this->m_gameData->bGameRunning = false;
+}
+
 void dh::SFMLGameEngine::m_pollEvents()
 {
 	sf::Event events;
 
-	while (graphics.getRenderWindow().pollEvent(events)) {
+	if (graphics.getRenderWindow().isOpen()) {
+		while (graphics.getRenderWindow().pollEvent(events)) {
 
-		handleEvents(events);
+			handleEvents(events);
+		}
+		handleInput();
 	}
-
-	handleInput();
 }
 
 

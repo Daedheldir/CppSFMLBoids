@@ -9,7 +9,7 @@ dh::GraphicsEngine::GraphicsEngine(dh::GameDataRef gameData, sf::Vector2u uWindo
 	m_initialize(appName, bFullscreen);
 }
 
-dh::GraphicsEngine::GraphicsEngine(dh::GameDataRef gameData, std::string appName, bool bFullscreen, float fFpsLimit):
+dh::GraphicsEngine::GraphicsEngine(dh::GameDataRef gameData, std::string appName, bool bFullscreen, float fFpsLimit) :
 	m_gameData(gameData),
 	m_uWindowSize(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height),
 	m_fFPSLimit(fFpsLimit)
@@ -20,13 +20,24 @@ dh::GraphicsEngine::GraphicsEngine(dh::GameDataRef gameData, std::string appName
 
 dh::GraphicsEngine::~GraphicsEngine()
 {
-	if (m_renderThread.joinable())
+	dispose();
+}
+
+void dh::GraphicsEngine::dispose()
+{
+	renderThreadRunning = false;
+	if (m_renderThread.joinable()) {
 		m_renderThread.join();
+		std::cout << "Graphics thread joined." << std::endl;
+	}
+	else {
+		std::cout << "Graphics thread not joinable!" << std::endl;
+	}
 
 	m_renderWindow.close();
 }
 
-sf::RenderWindow & dh::GraphicsEngine::getRenderWindow()
+sf::RenderWindow& dh::GraphicsEngine::getRenderWindow()
 {
 	return m_renderWindow;
 }
@@ -36,19 +47,20 @@ sf::Vector2u dh::GraphicsEngine::getWindowSize()
 	return m_uWindowSize;
 }
 
-dh::Resource_Manager<sf::Texture, std::string> & dh::GraphicsEngine::getTextureManager()
+dh::Resource_Manager<sf::Texture, std::string>& dh::GraphicsEngine::getTextureManager()
 {
 	return m_textureManager;
 }
 
-dh::Resource_Manager<sf::Font, std::string> & dh::GraphicsEngine::getFontManager()
+dh::Resource_Manager<sf::Font, std::string>& dh::GraphicsEngine::getFontManager()
 {
 	return m_fontManager;
 }
 
 
-void dh::GraphicsEngine::startRenderingThread(std::function<void()> drawFunc)
+void dh::GraphicsEngine::startRenderingThread(const std::function<void()>& drawFunc)
 {
+	renderThreadRunning = true;
 	m_renderThread = std::thread(&dh::GraphicsEngine::m_renderingThread, this, drawFunc);
 }
 
@@ -75,11 +87,11 @@ void dh::GraphicsEngine::m_initialize(std::string appName, bool bFullscreen)
 
 }
 
-void dh::GraphicsEngine::m_renderingThread(std::function<void()> drawFunc)
+void dh::GraphicsEngine::m_renderingThread(const std::function<void()>& drawFunc)
 {
 	std::cout << "\tRendering thread started." << std::endl;
 
-	while (this->m_gameData->bGameRunning)
+	while (this->renderThreadRunning)
 	{
 		m_updateRenderingClock();
 		drawFunc();

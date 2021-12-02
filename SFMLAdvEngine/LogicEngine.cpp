@@ -10,12 +10,19 @@ dh::LogicEngine::LogicEngine(dh::GameDataRef m_gameData, float fMaxUpdatesPerSec
 
 dh::LogicEngine::~LogicEngine()
 {
-	if(m_updateThread.joinable())
+	dispose();
+}
+
+void dh::LogicEngine::dispose()
+{
+	logicThreadRunning = false;
+	if (m_updateThread.joinable())
 		m_updateThread.join();
 }
 
-void dh::LogicEngine::startLogicThread(std::function<void()> updateFunc)
+void dh::LogicEngine::startLogicThread(const std::function<void()>& updateFunc)
 {
+	logicThreadRunning = true;
 	m_updateThread = std::thread(&dh::LogicEngine::m_logicThread, this, updateFunc);
 }
 
@@ -24,11 +31,11 @@ float dh::LogicEngine::getUpdateElapsedTime() const
 	return fUpdateElapsedTime;
 }
 
-void dh::LogicEngine::m_logicThread(std::function<void()> updateFunc)
+void dh::LogicEngine::m_logicThread(const std::function<void()>& updateFunc)
 {
-	std::cout << "\tRendering thread started." << std::endl;
+	std::cout << "\tLogic thread started." << std::endl;
 
-	while (this->m_gameData->bGameRunning)
+	while (this->logicThreadRunning)
 	{
 		m_updateLogicClock();
 		updateFunc();
