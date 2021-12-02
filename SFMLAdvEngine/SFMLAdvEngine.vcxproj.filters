@@ -13,80 +13,86 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\Subengines">
-      <UniqueIdentifier>{180377ed-7271-4821-a4c8-4581ab6d1f70}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Subengines">
-      <UniqueIdentifier>{c4180901-7808-4695-8e53-cc031d2c7518}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Resources">
-      <UniqueIdentifier>{87228ba1-3886-42f6-9601-676454deda19}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Boids">
       <UniqueIdentifier>{94164719-20ee-43e5-96b2-7e6dcd52e89d}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\Boid">
       <UniqueIdentifier>{9928f947-5c53-4eef-98aa-0be6dcda5d69}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Engine">
+      <UniqueIdentifier>{1d9ab95b-a487-4868-8227-981b33a73872}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Engine\Subengines">
+      <UniqueIdentifier>{c4180901-7808-4695-8e53-cc031d2c7518}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine">
+      <UniqueIdentifier>{49a69e52-4d3b-46be-b04a-9e6e3575b8fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Resources">
+      <UniqueIdentifier>{87228ba1-3886-42f6-9601-676454deda19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Engine\Subengines">
+      <UniqueIdentifier>{180377ed-7271-4821-a4c8-4581ab6d1f70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utilities">
+      <UniqueIdentifier>{78d72c76-de4d-49c1-82ea-c6c7a150d38c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="SFMLGameEngine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GameData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GraphicsEngine.h">
-      <Filter>Header Files\Subengines</Filter>
+      <Filter>Header Files\Engine\Subengines</Filter>
     </ClInclude>
     <ClInclude Include="LogicEngine.h">
-      <Filter>Header Files\Subengines</Filter>
+      <Filter>Header Files\Engine\Subengines</Filter>
     </ClInclude>
     <ClInclude Include="ResourceManager.h">
-      <Filter>Header Files\Resources</Filter>
+      <Filter>Header Files\Engine\Resources</Filter>
     </ClInclude>
     <ClInclude Include="ResourceDefinitions.h">
-      <Filter>Header Files\Resources</Filter>
+      <Filter>Header Files\Engine\Resources</Filter>
     </ClInclude>
-    <ClInclude Include="BoidAgentController.h">
+    <ClInclude Include="BoidFlock.h">
       <Filter>Header Files\Boids</Filter>
     </ClInclude>
     <ClInclude Include="BoidAgentData.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Boids</Filter>
     </ClInclude>
-    <ClInclude Include="BoidFlock.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="SFMLGameEngine.h">
+      <Filter>Header Files\Engine</Filter>
     </ClInclude>
     <ClInclude Include="MathAdditions.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Utilities</Filter>
     </ClInclude>
     <ClInclude Include="Definitions.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="GameData.h">
+      <Filter>Header Files\Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="BoidsApp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SFMLGameEngine.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GameData.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="LogicEngine.cpp">
-      <Filter>Source Files\Subengines</Filter>
+      <Filter>Source Files\Engine\Subengines</Filter>
     </ClCompile>
     <ClCompile Include="GraphicsEngine.cpp">
-      <Filter>Source Files\Subengines</Filter>
+      <Filter>Source Files\Engine\Subengines</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BoidAgentController.cpp">
+    <ClCompile Include="BoidAgentData.cpp">
       <Filter>Source Files\Boid</Filter>
     </ClCompile>
-    <ClCompile Include="BoidAgentData.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="BoidFlock.cpp">
+      <Filter>Source Files\Boid</Filter>
+    </ClCompile>
+    <ClCompile Include="SFMLGameEngine.cpp">
+      <Filter>Source Files\Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="BoidsApp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

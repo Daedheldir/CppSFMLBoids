@@ -13,13 +13,13 @@ public:
 
 private:
 	std::vector<BoidAgentData*> GetBoidsInView(const BoidAgentData& boid);
-	sf::Vector2f CalculateAlignment(BoidAgentData* currentBoid, std::vector<BoidAgentData*>& boidsInView);
-	sf::Vector2f CalculateCohesion(BoidAgentData* currentBoid, std::vector<BoidAgentData*>& boidsInView);
-	sf::Vector2f CalculateSeparation(BoidAgentData* currentBoid, std::vector<BoidAgentData*>& boidsInView);
+	sf::Vector2f CalculateAlignment(const BoidAgentData& currentBoid, const std::vector<BoidAgentData*>& boidsInView);
+	sf::Vector2f CalculateCohesion(const BoidAgentData& currentBoid, const std::vector<BoidAgentData*>& boidsInView);
+	sf::Vector2f CalculateSeparation(const BoidAgentData& currentBoid, const std::vector<BoidAgentData*>& boidsInView);
 
 public:
 	//parameters
-	static constexpr unsigned int BOIDS_COUNT = 2000u;
+	static constexpr unsigned int BOIDS_COUNT = 500u;
 	static constexpr float SQUARE_NEIGHBOUR_AVOIDANCE_RADIUS = 10.0f;
 	static constexpr float BOIDS_VIEW_RANGE = 400.0f;
 	static constexpr float MAX_SPEED = 2.0f;

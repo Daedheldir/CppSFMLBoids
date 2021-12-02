@@ -43,9 +43,6 @@ void dh::SFMLGameEngine::Run()
 	std::function<void()> logicFunc{ std::bind(&dh::SFMLGameEngine::handleLogic, this) };
 	logic.startLogicThread(logicFunc);
 
-	std::function<void()> renderingFunc{ std::bind(&dh::SFMLGameEngine::handleDrawing, this) };
-	graphics.startRenderingThread(renderingFunc);
-
 	std::cout << "\tThreads created.\n" << std::endl;
 
 	std::cout << "Engine started!" << std::endl;
@@ -54,6 +51,8 @@ void dh::SFMLGameEngine::Run()
 	{
 		fEventsElapsedTime = eventsClk.restart().asSeconds();
 		m_pollEvents();
+
+		handleDrawing();
 	}
 }
 

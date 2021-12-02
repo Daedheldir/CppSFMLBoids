@@ -29,13 +29,13 @@ void BoidFlock::Update()
 			std::vector<BoidAgentData*> boidsInView{ GetBoidsInView(boidsDataArr[i]) };
 
 			//calculate alignment for all boids
-			sf::Vector2f alignmentVec = CalculateAlignment(&boidsDataArr[i], boidsInView) * ALIGNMENT_WEIGHT;
+			sf::Vector2f alignmentVec = CalculateAlignment(boidsDataArr[i], boidsInView) * ALIGNMENT_WEIGHT;
 
 			//calculate cohesion for all agents
-			sf::Vector2f cohesionVec = CalculateCohesion(&boidsDataArr[i], boidsInView) * COHESION_WEIGHT;
+			sf::Vector2f cohesionVec = CalculateCohesion(boidsDataArr[i], boidsInView) * COHESION_WEIGHT;
 
 			//calculate separation for all agents
-			sf::Vector2f separationVec = CalculateSeparation(&boidsDataArr[i], boidsInView) * SEPARATION_WEIGHT;
+			sf::Vector2f separationVec = CalculateSeparation(boidsDataArr[i], boidsInView) * SEPARATION_WEIGHT;
 
 			sf::Vector2f accelerationVec = alignmentVec + cohesionVec + separationVec;
 
@@ -102,13 +102,13 @@ std::vector<BoidAgentData*> BoidFlock::GetBoidsInView(const BoidAgentData& boid)
 	return boidsInView;
 }
 
-sf::Vector2f BoidFlock::CalculateAlignment(BoidAgentData* currentBoid, std::vector<BoidAgentData*>& boidsInView)
+sf::Vector2f BoidFlock::CalculateAlignment(const BoidAgentData& currentBoid, const std::vector<BoidAgentData*>& boidsInView)
 {
-	if (boidsInView.size() <= 0) return currentBoid->acceleration;
+	if (boidsInView.size() <= 0) return currentBoid.acceleration;
 
 	sf::Vector2f alignmentMove(0, 0);
 
-	for (auto heading : boidsInView) {
+	for (auto& heading : boidsInView) {
 		alignmentMove += heading->acceleration;
 	}
 
@@ -117,25 +117,25 @@ sf::Vector2f BoidFlock::CalculateAlignment(BoidAgentData* currentBoid, std::vect
 	return alignmentMove;
 }
 
-sf::Vector2f BoidFlock::CalculateCohesion(BoidAgentData* currentBoid, std::vector<BoidAgentData*>& boidsInView)
+sf::Vector2f BoidFlock::CalculateCohesion(const BoidAgentData& currentBoid, const std::vector<BoidAgentData*>& boidsInView)
 {
 	if (boidsInView.size() <= 0) return sf::Vector2f(0, 0);
 
 	sf::Vector2f cohesionMove(0, 0);
 
 	//add all points together and average
-	for (auto pos : boidsInView) {
+	for (auto& pos : boidsInView) {
 		cohesionMove += pos->position;
 	}
 	cohesionMove *= 1.0f / boidsInView.size();
 
 	//create offset from agent position
-	cohesionMove -= currentBoid->position;
+	cohesionMove -= currentBoid.position;
 
 	return cohesionMove;
 }
 
-sf::Vector2f BoidFlock::CalculateSeparation(BoidAgentData* currentBoid, std::vector<BoidAgentData*>& boidsInView)
+sf::Vector2f BoidFlock::CalculateSeparation(const BoidAgentData& currentBoid, const std::vector<BoidAgentData*>& boidsInView)
 {
 	if (boidsInView.size() <= 0) return sf::Vector2f(0, 0);
 
@@ -145,13 +145,13 @@ sf::Vector2f BoidFlock::CalculateSeparation(BoidAgentData* currentBoid, std::vec
 
 	sf::Vector2f closestAgentPos = boidsInView[0]->position;
 
-	for (auto neighbourPos : boidsInView)
+	for (auto& neighbourPos : boidsInView)
 	{
 
-		if (mathAdditions::VectorSqrMagnitude(neighbourPos->position - currentBoid->position) < BoidFlock::SQUARE_NEIGHBOUR_AVOIDANCE_RADIUS)
+		if (mathAdditions::VectorSqrMagnitude(neighbourPos->position - currentBoid.position) < BoidFlock::SQUARE_NEIGHBOUR_AVOIDANCE_RADIUS)
 		{
 			nAvoid++;
-			avoidanceMove += currentBoid->position - neighbourPos->position;
+			avoidanceMove += currentBoid.position - neighbourPos->position;
 		}
 	}
 

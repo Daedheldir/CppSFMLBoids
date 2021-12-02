@@ -19,9 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BoidAgentController.h" />
     <ClInclude Include="BoidAgentData.h" />
     <ClInclude Include="BoidFlock.h" />
+    <ClInclude Include="BoidsApp.h" />
     <ClInclude Include="Definitions.h" />
     <ClInclude Include="GameData.h" />
     <ClInclude Include="GraphicsEngine.h" />
@@ -32,10 +32,9 @@
     <ClInclude Include="SFMLGameEngine.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BoidAgentController.cpp" />
     <ClCompile Include="BoidAgentData.cpp" />
     <ClCompile Include="BoidFlock.cpp" />
-    <ClCompile Include="GameData.cpp" />
+    <ClCompile Include="BoidsApp.cpp" />
     <ClCompile Include="GraphicsEngine.cpp" />
     <ClCompile Include="LogicEngine.cpp" />
     <ClCompile Include="main.cpp" />
@@ -163,6 +162,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

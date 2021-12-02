@@ -79,7 +79,7 @@ void dh::GraphicsEngine::m_initialize(std::string appName, bool bFullscreen)
 
 	//setting up views
 	std::cout << "Setting up views..." << std::endl;
-	for (auto view : this->m_gameData->viewsMap) {
+	for (auto& view : this->m_gameData->viewsMap) {
 		view.second.setSize(static_cast<float>(m_uWindowSize.x), static_cast<float>(m_uWindowSize.y));
 		view.second.setCenter(static_cast<float>(m_uWindowSize.x / 2), static_cast<float>(m_uWindowSize.y / 2));
 	}
