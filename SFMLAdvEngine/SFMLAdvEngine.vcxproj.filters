@@ -40,6 +40,12 @@
     <Filter Include="Source Files\Utilities">
       <UniqueIdentifier>{2ae2da70-4c1c-46b3-bb5a-273945580f68}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Boid\FlockBehaviours">
+      <UniqueIdentifier>{7b89543e-b4b9-4762-9ea1-8b51a0f56b06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Boids\FlockBehaviours">
+      <UniqueIdentifier>{e21bc6b7-4ed4-4f6c-9e63-0f76667261ef}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraphicsEngine.h">
@@ -77,6 +83,21 @@
     </ClInclude>
     <ClInclude Include="GameData.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FlockBehaviour.h">
+      <Filter>Header Files\Boids\FlockBehaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="AlignmentBehaviour.h">
+      <Filter>Header Files\Boids\FlockBehaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="SeparationBehaviour.h">
+      <Filter>Header Files\Boids\FlockBehaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="CohesionBehaviour.h">
+      <Filter>Header Files\Boids\FlockBehaviours</Filter>
+    </ClInclude>
+    <ClInclude Include="RandomMovementBehaviour.h">
+      <Filter>Header Files\Boids\FlockBehaviours</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

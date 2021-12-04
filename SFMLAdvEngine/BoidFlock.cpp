@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cmath>
 #include <set>
+#include <algorithm>
 
 #include "BoidFlock.h"
 
@@ -10,7 +11,9 @@
 using mathAdditions::VectorMagnitude;
 using mathAdditions::VectorSqrMagnitude;
 
-BoidFlock::BoidFlock() : boidsVerticesArr{ sf::PrimitiveType::Points, BOIDS_COUNT }
+BoidFlock::BoidFlock(std::map<FlockBehaviourTypes, FlockBehaviour*> flockRules) :
+	boidsVerticesArr{ sf::PrimitiveType::Points, BOIDS_COUNT },
+	flockBehaviours{ flockRules }
 {
 	//initialize positions and vertex array
 	for (int i = 0; i < BOIDS_COUNT; ++i) {
@@ -21,6 +24,14 @@ BoidFlock::BoidFlock() : boidsVerticesArr{ sf::PrimitiveType::Points, BOIDS_COUN
 	}
 }
 
+BoidFlock::~BoidFlock()
+{
+	//memory cleanup
+	for (auto& behaviour : flockBehaviours) {
+		delete behaviour.second;
+	}
+}
+
 void BoidFlock::Update()
 {
 	try {
@@ -28,24 +39,20 @@ void BoidFlock::Update()
 
 			std::vector<BoidAgentData*> boidsInView{ GetBoidsInView(boidsDataArr[i]) };
 
-			//calculate alignment for all boids
-			sf::Vector2f alignmentVec = CalculateAlignment(boidsDataArr[i], boidsInView) * ALIGNMENT_WEIGHT;
+			//calculate all added behaviours
+			std::map<FlockBehaviourTypes, sf::Vector2f> calculatedMovements;
+			std::vector<sf::Vector2f> calculatedMovementsVecs;
+			sf::Vector2f accelerationVec{ 0,0 };
 
-			//calculate cohesion for all agents
-			sf::Vector2f cohesionVec = CalculateCohesion(boidsDataArr[i], boidsInView) * COHESION_WEIGHT;
-
-			//calculate separation for all agents
-			sf::Vector2f separationVec = CalculateSeparation(boidsDataArr[i], boidsInView) * SEPARATION_WEIGHT;
-
-			//add some randomness to their movement
-			sf::Vector2f randVec = CalculateRandomMovement() * RAND_MOVE_WEIGHT;
-
-			sf::Vector2f accelerationVec = alignmentVec + cohesionVec + separationVec + randVec;
+			for (auto& behaviour : flockBehaviours) {
+				calculatedMovements.insert({ behaviour.first,  (*behaviour.second)(boidsDataArr[i], boidsInView) });
+				calculatedMovementsVecs.push_back(calculatedMovements[behaviour.first]);
+				accelerationVec += calculatedMovements[behaviour.first];
+			}
 
 			//calculate acceleration change
 			accelerationVec.x = std::lerp(boidsDataArr[i].acceleration.x, accelerationVec.x, MAX_ACCELERATION_CHANGE);
 			accelerationVec.y = std::lerp(boidsDataArr[i].acceleration.y, accelerationVec.y, MAX_ACCELERATION_CHANGE);
-
 
 			//clamp vector magnitude
 			accelerationVec = mathAdditions::ClampVectorMagnitude(accelerationVec, MAX_SPEED);
@@ -71,15 +78,16 @@ void BoidFlock::Update()
 				float mag_b = VectorSqrMagnitude(b);
 				return  mag_a < mag_b;
 			};
-			sf::Vector2f maxVec = { std::max
-			(
-				std::initializer_list{ alignmentVec, cohesionVec, separationVec },
-				compFunc)
-			};
+
+			sf::Vector2f maxVec{ 0,0 };
+			for (int i = 0; i < calculatedMovementsVecs.size(); ++i) {
+				maxVec = std::max(calculatedMovementsVecs[i], maxVec, compFunc);
+			}
+
 			constexpr float colorBias = 100;
-			float alignStr = VectorSqrMagnitude(alignmentVec) / VectorSqrMagnitude(maxVec);
-			float cohesStr = VectorSqrMagnitude(cohesionVec) / VectorSqrMagnitude(maxVec);
-			float separStr = VectorSqrMagnitude(separationVec) / VectorSqrMagnitude(maxVec);
+			float alignStr = VectorSqrMagnitude(calculatedMovements[FlockBehaviourTypes::Alignment]) / VectorSqrMagnitude(maxVec);
+			float cohesStr = VectorSqrMagnitude(calculatedMovements[FlockBehaviourTypes::Cohesion]) / VectorSqrMagnitude(maxVec);
+			float separStr = VectorSqrMagnitude(calculatedMovements[FlockBehaviourTypes::Separation]) / VectorSqrMagnitude(maxVec);
 			float speedMag = mathAdditions::MapValue(VectorSqrMagnitude(accelerationVec), { 0.0f, MAX_SPEED }, { 0.0f, 1.0f });
 
 			boidsVerticesArr[i].color = {
@@ -103,71 +111,4 @@ std::vector<BoidAgentData*> BoidFlock::GetBoidsInView(const BoidAgentData& boid)
 		}
 	}
 	return boidsInView;
-}
-
-sf::Vector2f BoidFlock::CalculateAlignment(const BoidAgentData& currentBoid, const std::vector<BoidAgentData*>& boidsInView)
-{
-	if (boidsInView.size() <= 0) return currentBoid.acceleration;
-
-	sf::Vector2f alignmentMove(0, 0);
-
-	for (auto& heading : boidsInView) {
-		alignmentMove += heading->acceleration;
-	}
-
-	alignmentMove *= 1.0f / boidsInView.size();
-
-	return alignmentMove;
-}
-
-sf::Vector2f BoidFlock::CalculateCohesion(const BoidAgentData& currentBoid, const std::vector<BoidAgentData*>& boidsInView)
-{
-	if (boidsInView.size() <= 0) return sf::Vector2f(0, 0);
-
-	sf::Vector2f cohesionMove(0, 0);
-
-	//add all points together and average
-	for (auto& pos : boidsInView) {
-		cohesionMove += pos->position;
-	}
-	cohesionMove *= 1.0f / boidsInView.size();
-
-	//create offset from agent position
-	cohesionMove -= currentBoid.position;
-
-	return cohesionMove;
-}
-
-sf::Vector2f BoidFlock::CalculateSeparation(const BoidAgentData& currentBoid, const std::vector<BoidAgentData*>& boidsInView)
-{
-	if (boidsInView.size() <= 0) return sf::Vector2f(0, 0);
-
-	//add all points together and average
-	sf::Vector2f avoidanceMove(0, 0);
-	int nAvoid = 0;
-
-	sf::Vector2f closestAgentPos = boidsInView[0]->position;
-
-	for (auto& neighbourPos : boidsInView)
-	{
-
-		if (mathAdditions::VectorSqrMagnitude(neighbourPos->position - currentBoid.position) < BoidFlock::SQUARE_NEIGHBOUR_AVOIDANCE_RADIUS)
-		{
-			nAvoid++;
-			avoidanceMove += currentBoid.position - neighbourPos->position;
-		}
-	}
-
-	if (nAvoid > 0)
-	{
-		avoidanceMove *= 1.0f / (float)nAvoid;
-	}
-
-	return avoidanceMove;
-}
-
-sf::Vector2f BoidFlock::CalculateRandomMovement()
-{
-	sf::Vector2 randomMove{ 1 - (rand() % 200) / 100.0f,1 - (rand() % 200) / 100.0f };
-	return randomMove;
 }

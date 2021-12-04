@@ -19,17 +19,22 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AlignmentBehaviour.h" />
     <ClInclude Include="BoidAgentData.h" />
     <ClInclude Include="BoidFlock.h" />
     <ClInclude Include="BoidsApp.h" />
+    <ClInclude Include="CohesionBehaviour.h" />
     <ClInclude Include="Definitions.h" />
+    <ClInclude Include="FlockBehaviour.h" />
     <ClInclude Include="GameData.h" />
     <ClInclude Include="GraphicsEngine.h" />
     <ClInclude Include="LogicEngine.h" />
     <ClInclude Include="MathAdditions.h" />
     <ClInclude Include="Quadtree.h" />
+    <ClInclude Include="RandomMovementBehaviour.h" />
     <ClInclude Include="ResourceDefinitions.h" />
     <ClInclude Include="ResourceManager.h" />
+    <ClInclude Include="SeparationBehaviour.h" />
     <ClInclude Include="SFMLGameEngine.h" />
   </ItemGroup>
   <ItemGroup>
