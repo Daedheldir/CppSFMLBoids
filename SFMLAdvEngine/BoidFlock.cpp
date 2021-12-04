@@ -5,19 +5,25 @@
 
 #include "BoidFlock.h"
 
-#include "MathAdditions.h"
-#include "Definitions.h"
+
 
 using mathAdditions::VectorMagnitude;
 using mathAdditions::VectorSqrMagnitude;
 
 BoidFlock::BoidFlock(std::map<FlockBehaviourTypes, FlockBehaviour*> flockRules) :
 	boidsVerticesArr{ sf::PrimitiveType::Points, BOIDS_COUNT },
-	flockBehaviours{ flockRules }
+	flockBehaviours{ flockRules },
+	boidsQuadtree(nullptr,
+		dh::definitions::windowSize / 2.0f,
+		dh::definitions::windowSize / 2.0f,
+		0,
+		sf::Color::Red
+	)
 {
 	//initialize positions and vertex array
 	for (int i = 0; i < BOIDS_COUNT; ++i) {
 		boidsDataArr[i].position = sf::Vector2f((float)(rand() % dh::definitions::windowSizeX), (float)(rand() % dh::definitions::windowSizeY));
+		boidsQuadtree.insert(boidsDataArr[i].position, &boidsDataArr[i]);
 	}
 	for (int i = 0; i < BOIDS_COUNT; ++i) {
 		boidsVerticesArr[i] = (sf::Vertex{ boidsDataArr[i].position, sf::Color::Transparent });
@@ -37,7 +43,9 @@ void BoidFlock::Update()
 	try {
 		for (int i = 0; i < BOIDS_COUNT; ++i) {
 
-			std::vector<BoidAgentData*> boidsInView{ GetBoidsInView(boidsDataArr[i]) };
+			std::vector<BoidAgentData*> boidsInView{
+				GetBoidsInView<NeighbourFindingMethod::Quadtree>(boidsDataArr[i])
+			};
 
 			//calculate all added behaviours
 			std::map<FlockBehaviourTypes, sf::Vector2f> calculatedMovements;
@@ -100,15 +108,4 @@ void BoidFlock::Update()
 	catch (std::out_of_range e) {
 		return;
 	}
-}
-
-std::vector<BoidAgentData*> BoidFlock::GetBoidsInView(const BoidAgentData& boid)
-{
-	std::vector<BoidAgentData*> boidsInView;
-	for (auto& neighbour : boidsDataArr) {
-		if (&neighbour != &boid && mathAdditions::VectorSqrMagnitude(boid.position - neighbour.position) < BoidFlock::SQUARE_BOIDS_VIEW_RANGE) {
-			boidsInView.push_back(&neighbour);
-		}
-	}
-	return boidsInView;
 }

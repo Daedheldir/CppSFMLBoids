@@ -61,6 +61,7 @@ void BoidsApp::handleDrawing()
 	getGraphics().getRenderWindow().draw(this->m_gameData->FPSCounter);
 	fpsLock.unlock();
 
+	m_gameData->boidFlock.boidsQuadtree.draw(getGraphics().getRenderWindow());
 	getGraphics().getRenderWindow().display();
 }
 

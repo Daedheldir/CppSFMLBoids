@@ -99,6 +99,9 @@
     <ClInclude Include="RandomMovementBehaviour.h">
       <Filter>Header Files\Boids\FlockBehaviours</Filter>
     </ClInclude>
+    <ClInclude Include="VectorComparator.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LogicEngine.cpp">

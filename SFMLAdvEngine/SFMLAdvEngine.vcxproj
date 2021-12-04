@@ -36,6 +36,7 @@
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="SeparationBehaviour.h" />
     <ClInclude Include="SFMLGameEngine.h" />
+    <ClInclude Include="VectorComparator.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BoidAgentData.cpp" />
