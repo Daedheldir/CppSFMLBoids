@@ -13,7 +13,8 @@ using mathAdditions::VectorSqrMagnitude;
 
 BoidFlock::BoidFlock(std::map<FlockBehaviourTypes, FlockBehaviour*> flockRules) :
 	boidsVerticesArr{ sf::PrimitiveType::Points, BOIDS_COUNT },
-	flockBehaviours{ flockRules }
+	flockBehaviours{ flockRules },
+	ENABLE_TRAILS{ false }
 {
 	//initialize positions and vertex array
 	for (int i = 0; i < BOIDS_COUNT; ++i) {

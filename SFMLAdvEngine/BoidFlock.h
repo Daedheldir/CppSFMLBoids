@@ -35,7 +35,7 @@ public:
 	static constexpr float MAX_SPEED = 0.5f;
 	static constexpr float MAX_ACCELERATION_CHANGE = 0.05f; //range between 0-1f
 
-	static constexpr bool ENABLE_TRAILS = false;
+	bool ENABLE_TRAILS;
 
 	//variables
 	std::array<BoidAgentData, BOIDS_COUNT> boidsDataArr;

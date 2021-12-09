@@ -32,6 +32,10 @@ void BoidsApp::handleEvents(sf::Event& ev)
 {
 	if ((ev.type == sf::Event::KeyPressed && ev.key.code == sf::Keyboard::Escape) || ev.type == sf::Event::Closed)
 		this->dispose();
+	if (ev.type == sf::Event::KeyPressed && ev.key.code == sf::Keyboard::T) {
+		m_gameData->boidFlock.ENABLE_TRAILS = !m_gameData->boidFlock.ENABLE_TRAILS;
+		m_gameData->renderTexture.clear();
+	}
 }
 void BoidsApp::handleInput()
 {
@@ -51,7 +55,7 @@ void BoidsApp::handleDrawing()
 
 	getGraphics().getRenderWindow().clear();
 
-	if (BoidFlock::ENABLE_TRAILS) {
+	if (m_gameData->boidFlock.ENABLE_TRAILS) {
 		//update render texture
 		m_gameData->renderTexture.draw(m_gameData->boidFlock.boidsVerticesArr);
 		m_gameData->renderTexture.display();
