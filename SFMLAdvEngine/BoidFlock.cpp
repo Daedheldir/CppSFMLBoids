@@ -40,11 +40,22 @@ BoidFlock::~BoidFlock()
 
 void BoidFlock::Update()
 {
+	//update quadtree
+	_UpdateTimer.fTreeUpdateTimer += 1;
+
+	if (_UpdateTimer.fTreeUpdateTimer >= _UpdateTimer.fTreeUpdateInterval) {
+		_UpdateTimer.bRebuildTree = true;
+		_UpdateTimer.fTreeUpdateTimer -= _UpdateTimer.fTreeUpdateInterval;
+	}
+	else {
+		this->_UpdateTimer.bRebuildTree = false;
+	}
+
 	try {
 		for (int i = 0; i < BOIDS_COUNT; ++i) {
 
 			std::vector<BoidAgentData*> boidsInView{
-				GetBoidsInView<NeighbourFindingMethod::Quadtree>(boidsDataArr[i])
+				GetBoidsInView<NeighbourFindingMethod::BruteForce>(boidsDataArr[i])
 			};
 
 			//calculate all added behaviours
@@ -78,6 +89,10 @@ void BoidFlock::Update()
 			boidsDataArr[i].acceleration = accelerationVec;
 			boidsDataArr[i].position = boidPos;
 			boidsVerticesArr[i].position = boidsDataArr[i].position;
+
+			if (_UpdateTimer.bRebuildTree) {
+				boidsDataArr[i].currentNode->checkIfNodeChanged(boidsDataArr[i].position, &boidsDataArr[i]);
+			}
 
 			//do some coloring
 			auto compFunc = [](const sf::Vector2f& a, const sf::Vector2f& b) -> bool

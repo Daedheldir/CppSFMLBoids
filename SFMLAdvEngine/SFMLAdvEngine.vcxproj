@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClInclude Include="AlignmentBehaviour.h" />
     <ClInclude Include="BoidAgentData.h" />
+    <ClInclude Include="BoidComparator.h" />
     <ClInclude Include="BoidFlock.h" />
     <ClInclude Include="BoidsApp.h" />
     <ClInclude Include="CohesionBehaviour.h" />

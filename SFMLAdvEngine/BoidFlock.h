@@ -47,7 +47,7 @@ private:
 
 	template<>
 	std::vector<BoidAgentData*> GetBoidsInView<NeighbourFindingMethod::Quadtree>(const BoidAgentData& boid) {
-		std::list<BoidAgentData*> boidsInView = boidsQuadtree.queryRange(boid.position, { sqrt(SQUARE_BOIDS_VIEW_RANGE),sqrt(SQUARE_BOIDS_VIEW_RANGE) });
+		std::list<BoidAgentData*> boidsInView = boid.currentNode->queryRange(boid.position, { sqrt(SQUARE_BOIDS_VIEW_RANGE),sqrt(SQUARE_BOIDS_VIEW_RANGE) });
 		std::vector<BoidAgentData*> output;
 		output.reserve(boidsInView.size());
 		for (auto& boid : boidsInView) {
@@ -72,6 +72,13 @@ public:
 	//variables
 	std::array<BoidAgentData, BOIDS_COUNT> boidsDataArr;
 	dh::Quadtree<sf::Vector2f, BoidAgentData*> boidsQuadtree;
+
+	struct {
+		float fTreeUpdateInterval = 5.0f;
+		float fTreeUpdateTimer = 0.0f;
+		bool bRebuildTree = false;
+	}_UpdateTimer;
+
 	std::map<FlockBehaviourTypes, FlockBehaviour*> flockBehaviours;
 	sf::VertexArray boidsVerticesArr;
 };

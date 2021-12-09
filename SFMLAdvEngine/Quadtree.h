@@ -7,7 +7,7 @@
 #include <unordered_map>
 
 #include "SFML\Graphics.hpp"
-#include "VectorComparator.h"
+#include "BoidComparator.h"
 
 #include <mutex>
 
@@ -235,7 +235,7 @@ namespace dh {
 		};
 		~Quadtree() {};
 
-		bool insert(Key key, Data data)
+		bool insert(Key& key, Data data)
 		{
 			//if the node does not containt the point return false
 			if (!boundaries.ContainsPoint(key))
@@ -246,7 +246,7 @@ namespace dh {
 			{
 				std::scoped_lock<std::recursive_mutex> dataLock(dataAccess);
 				dataContainer.insert({ key,data });
-				//data->setContainingNode(this);
+				data->currentNode = { this };
 				return true;
 			}
 
@@ -276,7 +276,7 @@ namespace dh {
 				std::scoped_lock<std::recursive_mutex> dataLock(dataAccess);
 
 				dataContainer.insert({ position, data });
-				//data->setContainingNode(this);
+				data->currentNode = { this };
 				return true;
 			}
 			return false;
@@ -542,7 +542,7 @@ namespace dh {
 						if (parentNode->insertIntoThisNode(pos, data))
 						{
 							//if sucessful then remove data from this node
-							//iter->get()->setContainingNode(parentNode);
+							iter->second->currentNode = parentNode;
 							iter = dataContainer.erase(iter);
 						}
 						else
@@ -575,7 +575,7 @@ namespace dh {
 			}
 		};
 
-		bool checkIfNodeChanged(Key& position, Data& searchedData)
+		bool checkIfNodeChanged(Key& position, Data searchedData)
 		{
 			if (boundaries.ContainsPoint(position))
 				return false;
@@ -599,7 +599,7 @@ namespace dh {
 			return true;
 		};
 
-		void updatePositionInTree(Key& position, Data& searchedData)
+		void updatePositionInTree(Key& position, Data searchedData)
 		{
 			if (insert(position, searchedData))
 				return;
@@ -642,7 +642,7 @@ namespace dh {
 
 		sf::VertexArray vertex;
 
-		std::multimap<Key, Data, VectorComparator> dataContainer;
+		std::multimap<Key, Data, BoidComparator> dataContainer;
 
 		AABB boundaries;
 
