@@ -49,14 +49,19 @@ void BoidsApp::handleDrawing()
 	//update timing
 	getGraphics().UpdateClock();
 
-	//update render texture
-	m_gameData->renderTexture.draw(m_gameData->boidFlock.boidsVerticesArr);
-	m_gameData->renderTexture.display();
-
-	//draw stuff
 	getGraphics().getRenderWindow().clear();
-	getGraphics().getRenderWindow().draw(m_gameData->renderTextureRectShape);
 
+	if (BoidFlock::ENABLE_TRAILS) {
+		//update render texture
+		m_gameData->renderTexture.draw(m_gameData->boidFlock.boidsVerticesArr);
+		m_gameData->renderTexture.display();
+
+		//draw stuff
+		getGraphics().getRenderWindow().draw(m_gameData->renderTextureRectShape);
+	}
+	else {
+		getGraphics().getRenderWindow().draw(m_gameData->boidFlock.boidsVerticesArr);
+	}
 	std::unique_lock<std::mutex> fpsLock(lockFPSCounter);
 	getGraphics().getRenderWindow().draw(this->m_gameData->FPSCounter);
 	fpsLock.unlock();

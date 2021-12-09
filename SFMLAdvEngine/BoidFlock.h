@@ -30,10 +30,12 @@ private:
 public:
 	//parameters
 	static constexpr unsigned int BOIDS_COUNT = 2000u;
-	static constexpr float SQUARE_NEIGHBOUR_AVOIDANCE_RADIUS = 10.0f;
+	static constexpr float SQUARE_NEIGHBOUR_AVOIDANCE_RADIUS = 15.0f;
 	static constexpr float SQUARE_BOIDS_VIEW_RANGE = 400.0f;
 	static constexpr float MAX_SPEED = 0.5f;
 	static constexpr float MAX_ACCELERATION_CHANGE = 0.05f; //range between 0-1f
+
+	static constexpr bool ENABLE_TRAILS = false;
 
 	//variables
 	std::array<BoidAgentData, BOIDS_COUNT> boidsDataArr;
