@@ -7,72 +7,72 @@
 template <typename T = char>
 class BinTree {
 public:
-    BinTree() = default;
-    BinTree(const BinTree& a);
-    BinTree(const T& object);
-    BinTree(const T& object, const BinTree& al, const BinTree& ar);
-    
-    ~BinTree();
+	BinTree() = default;
+	BinTree(const BinTree& a);
+	BinTree(const T& object);
+	BinTree(const T& object, const BinTree& al, const BinTree& ar);
 
-    void insert(const T& object);
-    void remove(const T& object);
-    void makeEmpty();
-    bool isFind(const T& object)  const;
+	~BinTree();
 
-    void preOrder() const;
-    void postOrder() const;
-    void inOrder() const;
+	void insert(const T& object);
+	void remove(const T& object);
+	void makeEmpty();
+	bool isFind(const T& object)  const;
+
+	void preOrder() const;
+	void postOrder() const;
+	void inOrder() const;
 
 private:
-    struct nodeB {
-        T obj;
-        nodeB* left;
-        nodeB* right;
-    public:
-        nodeB(const T& object, nodeB* nleft, nodeB* nright) :obj(object), left(nleft), right(nright) {};
-        nodeB(const T& object) :obj(object), left(nullptr), right(nullptr) {};
-        nodeB(const nodeB& n) :obj(n->obj), left(n->left), right(n->right) {};
+	struct nodeB {
+		T obj;
+		nodeB* left;
+		nodeB* right;
+	public:
+		nodeB(const T& object, nodeB* nleft, nodeB* nright) :obj(object), left(nleft), right(nright) {};
+		nodeB(const T& object) :obj(object), left(nullptr), right(nullptr) {};
+		nodeB(const nodeB& n) :obj(n->obj), left(n->left), right(n->right) {};
 
-   
-    };
 
-    nodeB* root;
-    nodeB* clone(const nodeB* bNode);
-    void insert(const T& object, nodeB*& t);
-    void remove(const T& object, nodeB*& t);
-    void makeEmpty(nodeB*& t);
-    bool isFind(const T& object, nodeB* t)  const;
+	};
 
-    void preOrder(nodeB* bNode) const;
-    void postOrder(nodeB* bNode) const;
-    void inOrder(nodeB* bNode) const;
+	nodeB* root;
+	nodeB* clone(const nodeB* bNode);
+	void insert(const T& object, nodeB*& t);
+	void remove(const T& object, nodeB*& t);
+	void makeEmpty(nodeB*& t);
+	bool isFind(const T& object, nodeB* t)  const;
+
+	void preOrder(nodeB* bNode) const;
+	void postOrder(nodeB* bNode) const;
+	void inOrder(nodeB* bNode) const;
 };
 
 /*class Iterator {      // clase iterator anidada dentro de la clase arbin
-        friend class BinTree<T>;
-    public:
-        const T& observe() const throw(TreePositionException)
-        {
-            if (pnode == NULL) throw TreePositionException();
-            return pnode->getObj();
-        }
-        bool EmptyTree() const
-        {
-            return pnode == NULL;
-        }
-        bool operator!=(const Iterator& i) const
-        {
-            return (pnode != i.pnode);
-        }
-        bool operator==(const Iterator& i) const
-        {
-            return (pnode == i.pnode);
-        }
-        //int height() const;
-    private:
-        PtrnodeB pnode;
-        Iterator(PtrnodeB p) { pnode = p; }
-    };*/
+		friend class BinTree<T>;
+	public:
+		const T& observe() const throw(TreePositionException)
+		{
+			if (pnode == NULL) throw TreePositionException();
+			return pnode->getObj();
+		}
+		bool EmptyTree() const
+		{
+			return pnode == NULL;
+		}
+		bool operator!=(const Iterator& i) const
+		{
+			return (pnode != i.pnode);
+		}
+		bool operator==(const Iterator& i) const
+		{
+			return (pnode == i.pnode);
+		}
+		//int height() const;
+	private:
+		PtrnodeB pnode;
+		Iterator(PtrnodeB p) { pnode = p; }
+	};*/
 
 	/*template <typename T>
 	NodeB<T>* BinTree<T>::copy(PtrNodeB p) {
@@ -186,7 +186,7 @@ void BinTree<T>::makeEmpty(nodeB*& t) {
 	if (nullptr != t) {
 		makeEmpty(t->left);
 		makeEmpty(t->right);
-		//cout << "delete: " << t->obj << endl;
+		//std::cout << "delete: " << t->obj << endl;
 		delete t;
 	}
 	t = nullptr;
@@ -224,7 +224,7 @@ void BinTree<T>::postOrder() const {
 template< typename T>
 void BinTree<T>::preOrder(nodeB* bNode) const {
 	if (nullptr != bNode) {
-		cout << bNode->obj << " ";
+		std::cout << bNode->obj << " ";
 		preOrder(bNode->left);
 		preOrder(bNode->right);
 	}
@@ -235,7 +235,7 @@ template< typename T>
 void BinTree<T>::inOrder(nodeB* bNode) const {
 	if (nullptr != bNode) {
 		inOrder(bNode->left);
-		cout << bNode->obj << " ";
+		std::cout << bNode->obj << " ";
 		inOrder(bNode->right);
 	}
 };
@@ -246,7 +246,7 @@ void BinTree<T>::postOrder(nodeB* bNode) const {
 		postOrder(bNode->left);
 	if (bNode->right != NULL)
 		postOrder(bNode->right);
-	cout << bNode->obj << " ";
+	std::cout << bNode->obj << " ";
 };
 
 /*

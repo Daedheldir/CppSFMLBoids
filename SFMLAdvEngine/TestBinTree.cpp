@@ -8,43 +8,38 @@
 #include "BoidAgentData.h"
 #include "BinTree.h"
 
-#include "add.h"
-#include "mul.h"
-#include "div.h"
 
 using namespace std;
 
-int random(int a){
+int random(int a) {
 	int i = rand() % a; /* A random integer between 1 and 10 */;
 	return i;
 }
 
-int randomp(int a){
+int randomp(int a) {
 	int i = rand() % a + 1; /* A random integer between 1 and 10 */;
 	return i;//(float)i;
 }
 
-void set_xvals(int values){
+void set_xvals(int values) {
 	int* xvals = new int[values];
 	for (int i = 0; i < values; i++) {
 		xvals[i] = i;
 	}
 }
 
-void set_yvals(int values){
+void set_yvals(int values) {
 	int* yvals = new int[values];
 	for (int i = 0; i < values; i++) {
 		yvals[i] = i;
 	}
 }
 
-int testBinTree{
+int testBinTree() {
 	/*int* xvals = new int[0];
 	int* yvals = new int[0];
 	set_xvals(100);
 	set_yvals(100);*/
-
-	srand(time(NULL)); //initialize random seed
 
 	BoidAgentData test;
 
@@ -94,4 +89,6 @@ int testBinTree{
 
 	/*delete xvals[];
 	delete yvals[];*/
+
+	return 0;
 };
