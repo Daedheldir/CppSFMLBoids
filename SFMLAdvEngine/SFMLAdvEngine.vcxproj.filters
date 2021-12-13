@@ -99,6 +99,18 @@
     <ClInclude Include="RandomMovementBehaviour.h">
       <Filter>Header Files\Boids\FlockBehaviours</Filter>
     </ClInclude>
+    <ClInclude Include="BinTree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="add.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="mul.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="div.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LogicEngine.cpp">
@@ -120,6 +132,12 @@
       <Filter>Source Files\Engine</Filter>
     </ClCompile>
     <ClCompile Include="BoidsApp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="BinTree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="treetest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

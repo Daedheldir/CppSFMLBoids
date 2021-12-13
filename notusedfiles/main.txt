@@ -17,12 +17,12 @@ using namespace std;
 
 int random(int a) {
 	int i = rand() % a; /* A random integer between 1 and 10 */;
-	return i;
+	return (float)i;
 }
 
-int randomp(int a) {
+float randomp(int a) {
 	int i = rand() % a + 1; /* A random integer between 1 and 10 */;
-	return i;//(float)i;
+	return (float)i;
 }
 
 void set_xvals(int values) {
@@ -38,6 +38,24 @@ void set_yvals(int values) {
 		yvals[i] = i;
 	}
 }
+
+// This is the fitness function
+/*float fitness_function(S_Expression* s, int* hits) {
+
+	float total = 0;
+	*hits = 0;
+
+	for (int k = 0; k < number_of_fitness_cases; ++k) {
+		position.x = k;
+		float y = s->eval();
+		float diff = fabs(yvals[k] - y);
+		if (diff <= 0.001)
+			*hits += 1;
+		total += diff;
+	}
+
+	return total;
+}*/
 
 int main(int argc, char** argv) {
 	/*int* xvals = new int[0];
@@ -60,23 +78,16 @@ int main(int argc, char** argv) {
 
 	BinTree<char> btree(op);
 
-	op = operators[random(3)];
-	btree.insert(op);
-
 	int x = randomp(100);
 	test.position.x = x;
 	static_cast<char>(x);
 	btree.insert(x);
 
+
 	int y = randomp(100);
 	test.position.y = y;
 	static_cast<char>(y);
 	btree.insert(y);
-
-	int ac = randomp(100);
-	//test.acceleration = {100,100};
-	static_cast<char>(ac);
-	btree.insert(ac);
 
 	//test.acceleration = { randomp(100), randomp(100) };
 
@@ -93,64 +104,15 @@ int main(int argc, char** argv) {
 	btree.postOrder();
 
 
+
+	// Specify your terminal set  
+	// Specify your function set  
+	// Precalculate your set of fitness test cases  
+	// Declare the GP object  GP gp (fitness_function, population_size);  
+	// Specify any non-default GP parameters  
+	// Run the evolution!  gp.go (number_of_generations);  
+	// Examine results
+
 	/*delete xvals[];
 	delete yvals[];*/
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*#include "BoidsApp.h"
-
-int main() {
-
-
-	srand(0);
-	dh::GameDataRef m_gameData = std::make_shared<dh::GameData>();
-	BoidsApp boidsApp
-	(
-		m_gameData,
-		{ dh::definitions::windowSizeX, dh::definitions::windowSizeY },
-		"CPPBoids",
-		60,
-		60,
-		false
-	);
-	boidsApp.Run();
-	return 0;
-}//*/

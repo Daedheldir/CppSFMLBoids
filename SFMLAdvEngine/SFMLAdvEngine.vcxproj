@@ -19,17 +19,21 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="add.h" />
     <ClInclude Include="AlignmentBehaviour.h" />
+    <ClInclude Include="BinTree.h" />
     <ClInclude Include="BoidAgentData.h" />
     <ClInclude Include="BoidFlock.h" />
     <ClInclude Include="BoidsApp.h" />
     <ClInclude Include="CohesionBehaviour.h" />
     <ClInclude Include="Definitions.h" />
+    <ClInclude Include="div.h" />
     <ClInclude Include="FlockBehaviour.h" />
     <ClInclude Include="GameData.h" />
     <ClInclude Include="GraphicsEngine.h" />
     <ClInclude Include="LogicEngine.h" />
     <ClInclude Include="MathAdditions.h" />
+    <ClInclude Include="mul.h" />
     <ClInclude Include="Quadtree.h" />
     <ClInclude Include="RandomMovementBehaviour.h" />
     <ClInclude Include="ResourceDefinitions.h" />
@@ -38,6 +42,7 @@
     <ClInclude Include="SFMLGameEngine.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BinTree.cpp" />
     <ClCompile Include="BoidAgentData.cpp" />
     <ClCompile Include="BoidFlock.cpp" />
     <ClCompile Include="BoidsApp.cpp" />
@@ -45,6 +50,7 @@
     <ClCompile Include="LogicEngine.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SFMLGameEngine.cpp" />
+    <ClCompile Include="treetest.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
@@ -136,10 +142,12 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>C:\VS\SFML_x64\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
+      <AdditionalLibraryDirectories>C:\VS\SFML_x64\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
