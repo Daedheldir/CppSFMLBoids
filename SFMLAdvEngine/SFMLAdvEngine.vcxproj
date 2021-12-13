@@ -27,7 +27,7 @@
     <ClInclude Include="BoidsApp.h" />
     <ClInclude Include="CohesionBehaviour.h" />
     <ClInclude Include="Definitions.h" />
-    <ClInclude Include="div.h" />
+    <ClInclude Include="DivisionFunctor.h" />
     <ClInclude Include="FlockBehaviour.h" />
     <ClInclude Include="FunctorBase.h" />
     <ClInclude Include="GameData.h" />
@@ -35,7 +35,7 @@
     <ClInclude Include="TestBinTree.h" />
     <ClInclude Include="LogicEngine.h" />
     <ClInclude Include="MathAdditions.h" />
-    <ClInclude Include="mul.h" />
+    <ClInclude Include="MultiplicationFunctor.h" />
     <ClInclude Include="Quadtree.h" />
     <ClInclude Include="RandomMovementBehaviour.h" />
     <ClInclude Include="ResourceDefinitions.h" />

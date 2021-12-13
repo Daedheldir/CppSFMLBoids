@@ -105,13 +105,16 @@
     <ClInclude Include="AdditionFunctor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="mul.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="div.h">
+    <ClInclude Include="MultiplicationFunctor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FunctorBase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestBinTree.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DivisionFunctor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

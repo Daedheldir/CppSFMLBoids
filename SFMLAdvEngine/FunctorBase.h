@@ -9,7 +9,7 @@ public:
 	FunctorBase() : val{ 0 } {};
 	FunctorBase(int val2) :val{ val2 } {};
 
-	int operator () (int val2) {
+	int operator () (float val1, float val2) {
 		return val;
 	}
 };

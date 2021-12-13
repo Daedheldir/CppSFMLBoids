@@ -6,8 +6,8 @@ public:
 	AdditionFunctor() {};
 	AdditionFunctor(int val2) :FunctorBase{ val2 } {};
 
-	int operator () (int val2) {
-		return val + val2;
+	int operator () (float val1, float val2) {
+		return val1 + val2;
 	}
 };
 

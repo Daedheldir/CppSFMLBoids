@@ -2,6 +2,8 @@
 #include "BinTree.h"
 #include "FunctorBase.h"
 #include "AdditionFunctor.h"
+#include "MultiplicationFunctor.h"
+#include "DivisionFunctor.h"
 #include <vector>
 
 int main() {
@@ -21,17 +23,12 @@ int main() {
 	boidsApp.Run();
 	*/
 
-	//we need to get something like that working
-	//give me a sec
-	std::vector<FunctorBase*> vec;
-	vec.push_back(new AdditionFunctor(10));
-	vec.push_back(new AdditionFunctor(5));
+	BinTree<FunctorBase*> bTree;
 
-	int i = 0;
-	for (auto& func : vec) {
-		i += (*func)(i);
-	}
+	bTree.insert()
+		//we need to get something like that working
+		//give me a sec
 
-	std::cout << i << std::endl;
+		std::cout << i << std::endl;
 	return 0;
 }
