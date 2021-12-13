@@ -50,7 +50,6 @@
     <ClCompile Include="LogicEngine.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="SFMLGameEngine.cpp" />
-    <ClCompile Include="treetest.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>

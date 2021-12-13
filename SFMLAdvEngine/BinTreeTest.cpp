@@ -39,7 +39,7 @@ void set_yvals(int values) {
 	}
 }
 
-int testBinTree{
+void BinTreeTest{
 	/*int* xvals = new int[0];
 	int* yvals = new int[0];
 	set_xvals(100);
