@@ -1,7 +1,17 @@
 #include "BoidsApp.h"
-#include "BinTree.h"
+#include <cstdlib>
+#include "TestBinTree.h"
 
 int main() {
+
+	//BinTree test
+	TestBinTree Test;
+
+	Test.testBinTree();
+
+	system("pause");
+
+	//Boids:
 
 	srand(0);
 	dh::GameDataRef m_gameData = std::make_shared<dh::GameData>();

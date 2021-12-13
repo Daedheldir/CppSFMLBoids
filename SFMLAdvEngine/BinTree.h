@@ -4,6 +4,8 @@
 
 #include <iostream>
 
+using namespace std;
+
 template <typename T = char>
 class BinTree {
 public:
@@ -48,6 +50,8 @@ private:
     void inOrder(nodeB* bNode) const;
 };
 
+//ostream& operator<<(ostream& s, const BinTree& c); //class friend function
+
 /*class Iterator {      // clase iterator anidada dentro de la clase arbin
         friend class BinTree<T>;
     public:
@@ -87,6 +91,9 @@ private:
 		//root = new NodeB<T>(object, copy(ai.root), copy(ad.root))
 	}*/
 
+
+//constructors
+
 template <typename T>
 BinTree<T>::BinTree(const BinTree& a) {
 	if (nullptr != a.root) {
@@ -110,6 +117,7 @@ BinTree<T>::BinTree(const T& object, const BinTree& al, const BinTree& ar) {
 	root = new nodeB<T>(object, clone(al.root), clone(ar.root));
 }
 
+//destructor
 
 template <typename T>
 BinTree<T>::~BinTree() {
@@ -135,6 +143,8 @@ template< typename T>
 bool BinTree<T>::isFind(const T& object) const {
 	isFind(object, root);
 };
+
+//iteratives
 
 template <typename T>
 typename BinTree<T>::nodeB* BinTree<T>::clone(const nodeB* r) {
