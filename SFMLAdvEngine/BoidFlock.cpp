@@ -11,16 +11,18 @@
 using mathAdditions::VectorMagnitude;
 using mathAdditions::VectorSqrMagnitude;
 
-BoidFlock::BoidFlock(std::map<FlockBehaviourTypes, FlockBehaviour*> flockRules) :
-	boidsVerticesArr{ sf::PrimitiveType::Points, BOIDS_COUNT },
+BoidFlock::BoidFlock(size_t flockSize, std::map<FlockBehaviourTypes, FlockBehaviour*> flockRules) :
+	boidsVerticesArr{ sf::PrimitiveType::Points, flockSize },
 	flockBehaviours{ flockRules },
 	ENABLE_TRAILS{ false }
 {
 	//initialize positions and vertex array
-	for (int i = 0; i < BOIDS_COUNT; ++i) {
+	boidsDataArr.resize(flockSize);
+
+	for (int i = 0; i < flockSize; ++i) {
 		boidsDataArr[i].position = sf::Vector2f((float)(rand() % dh::definitions::windowSizeX), (float)(rand() % dh::definitions::windowSizeY));
 	}
-	for (int i = 0; i < BOIDS_COUNT; ++i) {
+	for (int i = 0; i < flockSize; ++i) {
 		boidsVerticesArr[i] = (sf::Vertex{ boidsDataArr[i].position, sf::Color::Transparent });
 	}
 }
@@ -36,7 +38,7 @@ BoidFlock::~BoidFlock()
 void BoidFlock::Update()
 {
 	try {
-		for (int i = 0; i < BOIDS_COUNT; ++i) {
+		for (int i = 0; i < boidsDataArr.size(); ++i) {
 
 			std::vector<BoidAgentData*> boidsInView{ GetBoidsInView(boidsDataArr[i]) };
 

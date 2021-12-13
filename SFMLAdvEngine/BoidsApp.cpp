@@ -3,6 +3,7 @@
 BoidsApp::BoidsApp(dh::GameDataRef m_gameData, sf::Vector2u uWindowSize, std::string appName, unsigned int maxUpdatesPerSecond, uint8_t fpsLimit, bool fullscreen)
 	: SFMLGameEngine(
 		m_gameData,
+		uWindowSize,
 		appName,
 		maxUpdatesPerSecond,
 		fpsLimit,
@@ -14,11 +15,11 @@ BoidsApp::BoidsApp(dh::GameDataRef m_gameData, sf::Vector2u uWindowSize, std::st
 	//m_gameData->FPSCounter.setPosition(this->getGraphics().getRenderWindow().mapPixelToCoords(sf::Vector2i(5, 5)));
 	m_gameData->FPSCounter.setPosition({ 0,0 });
 
-
 	m_gameData->renderTexture.create(dh::definitions::windowSizeX, dh::definitions::windowSizeY);
 	m_gameData->renderTextureRectShape.setSize({ dh::definitions::windowSizeX, dh::definitions::windowSizeY });
 	m_gameData->renderTextureRectShape.setPosition(0, 0);
 	m_gameData->renderTextureRectShape.setTexture(&m_gameData->renderTexture.getTexture());
+
 }
 void BoidsApp::LoadResources()
 {

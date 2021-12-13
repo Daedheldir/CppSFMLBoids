@@ -16,7 +16,7 @@ enum class FlockBehaviourTypes {
 class BoidFlock
 {
 public:
-	BoidFlock(std::map<FlockBehaviourTypes, FlockBehaviour*> flockRules);
+	BoidFlock(size_t flockSize, std::map<FlockBehaviourTypes, FlockBehaviour*> flockRules);
 	~BoidFlock();
 	void Update();
 
@@ -29,7 +29,6 @@ private:
 	sf::Vector2f CalculateRandomMovement();
 public:
 	//parameters
-	static constexpr unsigned int BOIDS_COUNT = 2000u;
 	static constexpr float SQUARE_NEIGHBOUR_AVOIDANCE_RADIUS = 15.0f;
 	static constexpr float SQUARE_BOIDS_VIEW_RANGE = 400.0f;
 	static constexpr float MAX_SPEED = 0.5f;
@@ -38,7 +37,7 @@ public:
 	bool ENABLE_TRAILS;
 
 	//variables
-	std::array<BoidAgentData, BOIDS_COUNT> boidsDataArr;
+	std::vector<BoidAgentData> boidsDataArr;
 
 	std::map<FlockBehaviourTypes, FlockBehaviour*> flockBehaviours;
 	sf::VertexArray boidsVerticesArr;

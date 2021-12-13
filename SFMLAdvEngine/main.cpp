@@ -11,10 +11,15 @@ int main() {
 	srand(0);	//seeding with 0 instead of time, so our simulation is deterministic
 
 	dh::GameDataRef m_gameData = std::make_shared<dh::GameData>();
+	if (m_gameData->inputImage.loadFromFile("../Data/input_img.bmp"))
+	{
+		std::cout << "Successfuly loaded input img." << std::endl;
+	}
+
 	BoidsApp boidsApp
 	(
 		m_gameData,
-		{ dh::definitions::windowSizeX, dh::definitions::windowSizeY },
+		{ m_gameData->inputImage.getSize().x, m_gameData->inputImage.getSize().y },
 		"CPPBoids",
 		60,
 		60,

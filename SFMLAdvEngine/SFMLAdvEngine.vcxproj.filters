@@ -46,6 +46,12 @@
     <Filter Include="Header Files\Boids\FlockBehaviours">
       <UniqueIdentifier>{e21bc6b7-4ed4-4f6c-9e63-0f76667261ef}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Genetic Programming">
+      <UniqueIdentifier>{f5f0e19f-2e0b-4363-80eb-bb25f46b6eac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Genetic Programming">
+      <UniqueIdentifier>{f23c887e-3c3f-4015-8ee0-8629bc908d7a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraphicsEngine.h">
@@ -117,6 +123,9 @@
     <ClInclude Include="DivisionFunctor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GPPopulation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LogicEngine.cpp">
@@ -141,6 +150,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TestBinTree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GPPopulation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

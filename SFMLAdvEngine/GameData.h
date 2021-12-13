@@ -19,7 +19,7 @@ namespace dh {
 		std::map<std::string, sf::View> viewsMap;
 
 		//boid flocks
-		BoidFlock boidFlock{ std::map<FlockBehaviourTypes, FlockBehaviour*>
+		BoidFlock boidFlock{ 1000, std::map<FlockBehaviourTypes, FlockBehaviour*>
 		{
 			{
 				{ FlockBehaviourTypes::Alignment, new AlignmentBehaviour{ 1.0f } },
@@ -29,6 +29,9 @@ namespace dh {
 			}
 		}
 		};
+
+		//input image
+		sf::Image inputImage;
 
 		//render texture for drawing
 		sf::RenderTexture	renderTexture;

@@ -31,6 +31,7 @@
     <ClInclude Include="FlockBehaviour.h" />
     <ClInclude Include="FunctorBase.h" />
     <ClInclude Include="GameData.h" />
+    <ClInclude Include="GPPopulation.h" />
     <ClInclude Include="GraphicsEngine.h" />
     <ClInclude Include="TestBinTree.h" />
     <ClInclude Include="LogicEngine.h" />
@@ -44,6 +45,7 @@
     <ClInclude Include="SFMLGameEngine.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GPPopulation.cpp" />
     <ClCompile Include="TestBinTree.cpp" />
     <ClCompile Include="BoidAgentData.cpp" />
     <ClCompile Include="BoidFlock.cpp" />
@@ -107,7 +109,7 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\DefaultSFMLPropertySheet-Releasex64.props" />
+    <Import Project="..\DefaultSFMLPropertySheet-Releasex64.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
