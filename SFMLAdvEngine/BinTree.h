@@ -92,7 +92,7 @@ private:
 	}*/
 
 
-//constructors
+	//constructors
 
 template <typename T>
 BinTree<T>::BinTree(const BinTree& a) {
@@ -207,7 +207,8 @@ bool BinTree<T>::isFind(const T& object, nodeB* t) const {
 	if (nullptr == t) {
 		return false;
 	}
-	else if (object < t->obj)
+
+	if (object < t->obj)
 		return isFind(object, t->left);
 	else if (object > t->element)
 		return isFind(object, t->right);
