@@ -42,7 +42,7 @@
     <ClInclude Include="SFMLGameEngine.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BinTree.cpp" />
+    <ClCompile Include="TestBinTree.cpp" />
     <ClCompile Include="BoidAgentData.cpp" />
     <ClCompile Include="BoidFlock.cpp" />
     <ClCompile Include="BoidsApp.cpp" />

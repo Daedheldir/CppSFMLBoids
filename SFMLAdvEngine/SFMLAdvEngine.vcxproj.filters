@@ -134,7 +134,7 @@
     <ClCompile Include="BoidsApp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BinTree.cpp">
+    <ClCompile Include="TestBinTree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
