@@ -102,13 +102,16 @@
     <ClInclude Include="BinTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="add.h">
+    <ClInclude Include="AdditionFunctor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="mul.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="div.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FunctorBase.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

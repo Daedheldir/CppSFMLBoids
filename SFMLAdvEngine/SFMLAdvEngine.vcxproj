@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="add.h" />
+    <ClInclude Include="AdditionFunctor.h" />
     <ClInclude Include="AlignmentBehaviour.h" />
     <ClInclude Include="BinTree.h" />
     <ClInclude Include="BoidAgentData.h" />
@@ -29,6 +29,7 @@
     <ClInclude Include="Definitions.h" />
     <ClInclude Include="div.h" />
     <ClInclude Include="FlockBehaviour.h" />
+    <ClInclude Include="FunctorBase.h" />
     <ClInclude Include="GameData.h" />
     <ClInclude Include="GraphicsEngine.h" />
     <ClInclude Include="LogicEngine.h" />
