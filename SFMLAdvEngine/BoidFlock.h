@@ -16,31 +16,30 @@ enum class FlockBehaviourTypes {
 class BoidFlock
 {
 public:
-	BoidFlock(size_t flockSize, std::map<FlockBehaviourTypes, FlockBehaviour*> flockRules);
-	~BoidFlock();
-	void Update();
+	BoidFlock(const BoidFlock& other);
+	BoidFlock(size_t flockSize, std::map<FlockBehaviourTypes, std::shared_ptr<FlockBehaviour>> flockRules);
+	BoidFlock& operator = (BoidFlock other);
+	~BoidFlock() = default;
+	void MoveBoids();
 
 private:
 	std::vector<BoidAgentData*> GetBoidsInView(const BoidAgentData& boid);
-
-	sf::Vector2f CalculateAlignment(const BoidAgentData& currentBoid, const std::vector<BoidAgentData*>& boidsInView);
-	sf::Vector2f CalculateCohesion(const BoidAgentData& currentBoid, const std::vector<BoidAgentData*>& boidsInView);
-	sf::Vector2f CalculateSeparation(const BoidAgentData& currentBoid, const std::vector<BoidAgentData*>& boidsInView);
-	sf::Vector2f CalculateRandomMovement();
+	sf::Vector2f CalculateBoidMovement(const BoidAgentData& boid);
 public:
 	//parameters
-	static constexpr float SQUARE_NEIGHBOUR_AVOIDANCE_RADIUS = 15.0f;
-	static constexpr float SQUARE_BOIDS_VIEW_RANGE = 400.0f;
-	static constexpr float MAX_SPEED = 0.5f;
-	static constexpr float MAX_ACCELERATION_CHANGE = 0.05f; //range between 0-1f
+	static const float SQUARE_NEIGHBOUR_AVOIDANCE_RADIUS;
+	static const float SQUARE_BOIDS_VIEW_RANGE;
+	static const float MAX_SPEED;
+	static const float MAX_ACCELERATION_CHANGE; //range between 0-1f
 
 	bool ENABLE_TRAILS;
 
 	//variables
 	std::vector<BoidAgentData> boidsDataArr;
 
-	std::map<FlockBehaviourTypes, FlockBehaviour*> flockBehaviours;
+	std::map<FlockBehaviourTypes, std::shared_ptr<FlockBehaviour>> flockBehaviours;
 	sf::VertexArray boidsVerticesArr;
+	sf::RenderTexture renderTexture;
 };
 
 

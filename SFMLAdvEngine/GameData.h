@@ -6,7 +6,7 @@
 #include "CohesionBehaviour.h"
 #include "SeparationBehaviour.h"
 #include "RandomMovementBehaviour.h"
-
+#include "GPPopulationController.h"
 #include <SFML/Graphics.hpp>
 
 namespace dh {
@@ -19,16 +19,7 @@ namespace dh {
 		std::map<std::string, sf::View> viewsMap;
 
 		//boid flocks
-		BoidFlock boidFlock{ 1000, std::map<FlockBehaviourTypes, FlockBehaviour*>
-		{
-			{
-				{ FlockBehaviourTypes::Alignment, new AlignmentBehaviour{ 1.0f } },
-				{ FlockBehaviourTypes::Cohesion, new CohesionBehaviour{0.1f} },
-				{ FlockBehaviourTypes::Separation, new SeparationBehaviour{1.5f} },
-				{ FlockBehaviourTypes::RandomMovement, new RandomMovementBehaviour{0.5f} }
-			}
-		}
-		};
+		GPPopulationController gpPopulationController{ inputImage , 5, 500, 1000 };
 
 		//input image
 		sf::Image inputImage;

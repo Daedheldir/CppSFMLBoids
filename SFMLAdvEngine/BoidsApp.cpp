@@ -18,7 +18,6 @@ BoidsApp::BoidsApp(dh::GameDataRef m_gameData, sf::Vector2u uWindowSize, std::st
 	m_gameData->renderTexture.create(dh::definitions::windowSizeX, dh::definitions::windowSizeY);
 	m_gameData->renderTextureRectShape.setSize({ dh::definitions::windowSizeX, dh::definitions::windowSizeY });
 	m_gameData->renderTextureRectShape.setPosition(0, 0);
-	m_gameData->renderTextureRectShape.setTexture(&m_gameData->renderTexture.getTexture());
 
 }
 void BoidsApp::LoadResources()
@@ -34,7 +33,6 @@ void BoidsApp::handleEvents(sf::Event& ev)
 	if ((ev.type == sf::Event::KeyPressed && ev.key.code == sf::Keyboard::Escape) || ev.type == sf::Event::Closed)
 		this->dispose();
 	if (ev.type == sf::Event::KeyPressed && ev.key.code == sf::Keyboard::T) {
-		m_gameData->boidFlock.ENABLE_TRAILS = !m_gameData->boidFlock.ENABLE_TRAILS;
 		m_gameData->renderTexture.clear();
 	}
 }
@@ -45,7 +43,7 @@ void BoidsApp::handleLogic()
 {
 	//update flock
 	TextUpdate();
-	m_gameData->boidFlock.Update();
+	m_gameData->gpPopulationController.UpdatePopulations();
 
 }
 
@@ -56,17 +54,13 @@ void BoidsApp::handleDrawing()
 
 	getGraphics().getRenderWindow().clear();
 
-	if (m_gameData->boidFlock.ENABLE_TRAILS) {
-		//update render texture
-		m_gameData->renderTexture.draw(m_gameData->boidFlock.boidsVerticesArr);
-		m_gameData->renderTexture.display();
+	//draw stuff
+	m_gameData->renderTextureRectShape.setTexture(&m_gameData->gpPopulationController.GetBestPopulationRenderTexture().getTexture());
+	//m_gameData->gpPopulationController.GetBestPopulationRenderTexture().clear();
+	m_gameData->gpPopulationController.GetBestPopulationRenderTexture().draw(m_gameData->gpPopulationController.GetBestPopulation().boidsVerticesArr);
+	m_gameData->gpPopulationController.GetBestPopulationRenderTexture().display();
+	getGraphics().getRenderWindow().draw(m_gameData->renderTextureRectShape);
 
-		//draw stuff
-		getGraphics().getRenderWindow().draw(m_gameData->renderTextureRectShape);
-	}
-	else {
-		getGraphics().getRenderWindow().draw(m_gameData->boidFlock.boidsVerticesArr);
-	}
 	std::unique_lock<std::mutex> fpsLock(lockFPSCounter);
 	getGraphics().getRenderWindow().draw(this->m_gameData->FPSCounter);
 	fpsLock.unlock();

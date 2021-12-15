@@ -123,7 +123,7 @@
     <ClInclude Include="DivisionFunctor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GPPopulation.h">
+    <ClInclude Include="GPPopulationController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -152,7 +152,7 @@
     <ClCompile Include="TestBinTree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GPPopulation.cpp">
+    <ClCompile Include="GPPopulationController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
