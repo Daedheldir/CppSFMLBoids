@@ -15,9 +15,12 @@ BoidsApp::BoidsApp(dh::GameDataRef m_gameData, sf::Vector2u uWindowSize, std::st
 	//m_gameData->FPSCounter.setPosition(this->getGraphics().getRenderWindow().mapPixelToCoords(sf::Vector2i(5, 5)));
 	m_gameData->FPSCounter.setPosition({ 0,0 });
 
-	m_gameData->renderTexture.create(dh::definitions::windowSizeX, dh::definitions::windowSizeY);
-	m_gameData->renderTextureRectShape.setSize({ dh::definitions::windowSizeX, dh::definitions::windowSizeY });
+	m_gameData->renderTexture.create(m_gameData->inputImage.getSize().x, m_gameData->inputImage.getSize().y);
+	m_gameData->renderTextureRectShape.setSize({ static_cast<float>(m_gameData->inputImage.getSize().x), static_cast<float>(m_gameData->inputImage.getSize().y) });
 	m_gameData->renderTextureRectShape.setPosition(0, 0);
+
+	m_gameData->renderTextureRectShape.setTexture(&m_gameData->renderTexture.getTexture());
+
 
 }
 void BoidsApp::LoadResources()
@@ -35,6 +38,9 @@ void BoidsApp::handleEvents(sf::Event& ev)
 	if (ev.type == sf::Event::KeyPressed && ev.key.code == sf::Keyboard::T) {
 		m_gameData->renderTexture.clear();
 	}
+	if (!m_gameData->gpPopulationController->simRunning) {
+		this->dispose();
+	}
 }
 void BoidsApp::handleInput()
 {
@@ -43,7 +49,7 @@ void BoidsApp::handleLogic()
 {
 	//update flock
 	TextUpdate();
-	m_gameData->gpPopulationController.UpdatePopulations();
+	m_gameData->gpPopulationController->UpdateGP();
 
 }
 
@@ -55,10 +61,9 @@ void BoidsApp::handleDrawing()
 	getGraphics().getRenderWindow().clear();
 
 	//draw stuff
-	m_gameData->renderTextureRectShape.setTexture(&m_gameData->gpPopulationController.GetBestPopulationRenderTexture().getTexture());
-	//m_gameData->gpPopulationController.GetBestPopulationRenderTexture().clear();
-	m_gameData->gpPopulationController.GetBestPopulationRenderTexture().draw(m_gameData->gpPopulationController.GetBestPopulation().boidsVerticesArr);
-	m_gameData->gpPopulationController.GetBestPopulationRenderTexture().display();
+	//m_gameData->renderTexture.clear();
+	m_gameData->renderTexture.draw(m_gameData->gpPopulationController->GetBestPopulation().boidsVerticesArr);
+	m_gameData->renderTexture.display();
 	getGraphics().getRenderWindow().draw(m_gameData->renderTextureRectShape);
 
 	std::unique_lock<std::mutex> fpsLock(lockFPSCounter);

@@ -13,46 +13,42 @@ using mathAdditions::VectorSqrMagnitude;
 
 const float BoidFlock::SQUARE_NEIGHBOUR_AVOIDANCE_RADIUS = 15.0f;
 const float BoidFlock::SQUARE_BOIDS_VIEW_RANGE = 400.0f;
-const float BoidFlock::MAX_SPEED = 1.0f;
+const float BoidFlock::MAX_SPEED = 0.8f;
 const float BoidFlock::MAX_ACCELERATION_CHANGE = 0.05f; //range between 0-1f
 
 BoidFlock::BoidFlock(const BoidFlock& other) :
 	boidsDataArr{ other.boidsDataArr },
 	boidsVerticesArr{ other.boidsVerticesArr },
 	flockBehaviours{ other.flockBehaviours },
-	ENABLE_TRAILS{ other.ENABLE_TRAILS }
+	boidPosBounds{ other.boidPosBounds }
 {
-	renderTexture.create(other.renderTexture.getSize().x, other.renderTexture.getSize().y);
 }
 
-BoidFlock::BoidFlock(size_t flockSize, std::map<FlockBehaviourTypes, std::shared_ptr<FlockBehaviour>> flockRules) :
+BoidFlock::BoidFlock(size_t flockSize, std::map<FlockBehaviourTypes, std::shared_ptr<FlockBehaviour>> flockRules, sf::Vector2u boidPositionBound) :
 	boidsVerticesArr{ sf::PrimitiveType::Points, flockSize },
 	flockBehaviours{ flockRules },
-	ENABLE_TRAILS{ false }
+	boidPosBounds{ boidPositionBound }
+
 {
 	//initialize positions and vertex array
 	boidsDataArr.resize(flockSize);
 
 	for (int i = 0; i < flockSize; ++i) {
-		boidsDataArr[i].position = sf::Vector2f((float)(rand() % dh::definitions::windowSizeX), (float)(rand() % dh::definitions::windowSizeY));
+		boidsDataArr[i].position = sf::Vector2f((float)(rand() % boidPosBounds.x), (float)(rand() % boidPosBounds.y));
 	}
 	for (int i = 0; i < flockSize; ++i) {
 		boidsVerticesArr[i] = (sf::Vertex{ boidsDataArr[i].position, sf::Color::Transparent });
-		boidsVerticesArr[i].color = boidsDataArr[i].color;
+		boidsVerticesArr[i].color = sf::Color::Black;
 	}
-
-	renderTexture.create(dh::definitions::windowSizeX + 1, dh::definitions::windowSizeY + 1);
 }
 BoidFlock& BoidFlock::operator=(BoidFlock other) {
 	std::swap(boidsDataArr, other.boidsDataArr);
 	std::swap(boidsVerticesArr, other.boidsVerticesArr);
 	std::swap(flockBehaviours, other.flockBehaviours);
-	std::swap(ENABLE_TRAILS, other.ENABLE_TRAILS);
-	renderTexture.create(other.renderTexture.getSize().x, other.renderTexture.getSize().y);
+	std::swap(boidPosBounds, other.boidPosBounds);
 
 	return *this;
 }
-
 
 void BoidFlock::MoveBoids()
 {
@@ -63,8 +59,6 @@ void BoidFlock::MoveBoids()
 			boidsDataArr[i].position += boidsDataArr[i].acceleration;
 
 			//preventing running off screen
-			sf::Vector2u boidPosBounds{ dh::definitions::windowSizeX, dh::definitions::windowSizeY };
-
 			if (boidsDataArr[i].position.x < 0) boidsDataArr[i].position.x = (float)boidPosBounds.x;
 			else if (boidsDataArr[i].position.x > boidPosBounds.x) boidsDataArr[i].position.x = 0.0f;
 			if (boidsDataArr[i].position.y < 0) boidsDataArr[i].position.y = (float)boidPosBounds.y;
@@ -78,19 +72,14 @@ void BoidFlock::MoveBoids()
 	}
 }
 
-
 sf::Vector2f BoidFlock::CalculateBoidMovement(const BoidAgentData& boid) {
 	std::vector<BoidAgentData*> boidsInView{ GetBoidsInView(boid) };
 
 	//calculate all added behaviours
-	std::map<FlockBehaviourTypes, sf::Vector2f> calculatedMovements;
-	std::vector<sf::Vector2f> calculatedMovementsVecs;
 	sf::Vector2f accelerationVec{ 0,0 };
 
 	for (auto& behaviour : flockBehaviours) {
-		calculatedMovements.insert({ behaviour.first,  (*behaviour.second)(boid, boidsInView) });
-		calculatedMovementsVecs.push_back(calculatedMovements[behaviour.first]);
-		accelerationVec += calculatedMovements[behaviour.first];
+		accelerationVec += (*behaviour.second)(boid, boidsInView);
 	}
 
 	//calculate acceleration change
@@ -106,15 +95,21 @@ sf::Vector2f BoidFlock::CalculateBoidMovement(const BoidAgentData& boid) {
 std::vector<BoidAgentData*> BoidFlock::GetBoidsInView(const BoidAgentData& boid)
 {
 	std::vector<BoidAgentData*> boidsInView;
+	boidsInView.reserve(std::round(boidsDataArr.size() * 0.8));
+
 	for (auto& neighbour : boidsDataArr) {
 		if (&neighbour != &boid) {
 			sf::Vector2f relativeVec = boid.position - neighbour.position;
 
-			if (relativeVec.x < BoidFlock::SQUARE_BOIDS_VIEW_RANGE
-				&& relativeVec.y < BoidFlock::SQUARE_BOIDS_VIEW_RANGE
-				&& mathAdditions::VectorSqrMagnitude(relativeVec) < BoidFlock::SQUARE_BOIDS_VIEW_RANGE)
+			if (relativeVec.x > BoidFlock::SQUARE_BOIDS_VIEW_RANGE
+				|| relativeVec.y > BoidFlock::SQUARE_BOIDS_VIEW_RANGE)
 			{
-				boidsInView.push_back(&neighbour);
+				continue;
+			}
+
+			if (mathAdditions::VectorSqrMagnitude(relativeVec) < BoidFlock::SQUARE_BOIDS_VIEW_RANGE)
+			{
+				boidsInView.emplace_back(&neighbour);
 			}
 		}
 	}

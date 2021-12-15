@@ -17,7 +17,7 @@ class BoidFlock
 {
 public:
 	BoidFlock(const BoidFlock& other);
-	BoidFlock(size_t flockSize, std::map<FlockBehaviourTypes, std::shared_ptr<FlockBehaviour>> flockRules);
+	BoidFlock(size_t flockSize, std::map<FlockBehaviourTypes, std::shared_ptr<FlockBehaviour>> flockRules, sf::Vector2u boidPositionBound);
 	BoidFlock& operator = (BoidFlock other);
 	~BoidFlock() = default;
 	void MoveBoids();
@@ -32,14 +32,13 @@ public:
 	static const float MAX_SPEED;
 	static const float MAX_ACCELERATION_CHANGE; //range between 0-1f
 
-	bool ENABLE_TRAILS;
+	sf::Vector2u boidPosBounds;
 
 	//variables
 	std::vector<BoidAgentData> boidsDataArr;
 
 	std::map<FlockBehaviourTypes, std::shared_ptr<FlockBehaviour>> flockBehaviours;
 	sf::VertexArray boidsVerticesArr;
-	sf::RenderTexture renderTexture;
 };
 
 

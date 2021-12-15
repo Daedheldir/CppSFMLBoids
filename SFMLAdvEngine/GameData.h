@@ -19,7 +19,7 @@ namespace dh {
 		std::map<std::string, sf::View> viewsMap;
 
 		//boid flocks
-		GPPopulationController gpPopulationController{ inputImage , 5, 500, 1000 };
+		GPPopulationController* gpPopulationController;
 
 		//input image
 		sf::Image inputImage;
