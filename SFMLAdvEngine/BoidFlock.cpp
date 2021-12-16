@@ -20,14 +20,22 @@ BoidFlock::BoidFlock(const BoidFlock& other) :
 	boidsDataArr{ other.boidsDataArr },
 	boidsVerticesArr{ other.boidsVerticesArr },
 	flockBehaviours{ other.flockBehaviours },
-	boidPosBounds{ other.boidPosBounds }
+	boidPosBounds{ other.boidPosBounds },
+	boidsQuadtree{ {
+		{boidPosBounds.x / 2.0f, boidPosBounds.y / 2.0f },
+		{boidPosBounds.x + 2.0f, boidPosBounds.y + 2.0f}
+		} }
 {
 }
 
 BoidFlock::BoidFlock(size_t flockSize, std::map<FlockBehaviourTypes, std::shared_ptr<FlockBehaviour>> flockRules, sf::Vector2u boidPositionBound) :
 	boidsVerticesArr{ sf::PrimitiveType::Points, flockSize },
 	flockBehaviours{ flockRules },
-	boidPosBounds{ boidPositionBound }
+	boidPosBounds{ boidPositionBound },
+	boidsQuadtree{ {
+		{boidPosBounds.x / 2.0f, boidPosBounds.y / 2.0f },
+		{boidPosBounds.x + 2.0f, boidPosBounds.y + 2.0f}
+		} }
 
 {
 	//initialize positions and vertex array
@@ -35,6 +43,7 @@ BoidFlock::BoidFlock(size_t flockSize, std::map<FlockBehaviourTypes, std::shared
 
 	for (int i = 0; i < flockSize; ++i) {
 		boidsDataArr[i].position = sf::Vector2f((float)(rand() % boidPosBounds.x), (float)(rand() % boidPosBounds.y));
+		boidsQuadtree.insertCopy(&boidsDataArr[i]);
 	}
 	for (int i = 0; i < flockSize; ++i) {
 		boidsVerticesArr[i] = (sf::Vertex{ boidsDataArr[i].position, sf::Color::Transparent });
@@ -52,6 +61,16 @@ BoidFlock& BoidFlock::operator=(BoidFlock other) {
 
 void BoidFlock::MoveBoids()
 {
+
+	UpdateTimer.fTreeUpdateTimer += 1;
+	if (UpdateTimer.fTreeUpdateTimer >= UpdateTimer.fTreeUpdateInterval) {
+		UpdateTimer.bRebuildTree = true;
+		UpdateTimer.fTreeUpdateTimer -= UpdateTimer.fTreeUpdateInterval;
+	}
+	else {
+		UpdateTimer.bRebuildTree = false;
+	}
+
 	try {
 		for (int i = 0; i < boidsDataArr.size(); ++i) {
 			//update boid pos
@@ -65,6 +84,11 @@ void BoidFlock::MoveBoids()
 			else if (boidsDataArr[i].position.y > boidPosBounds.y) boidsDataArr[i].position.y = 0.0f;
 
 			boidsVerticesArr[i].position = boidsDataArr[i].position;
+
+			if (UpdateTimer.bRebuildTree) {
+				BoidAgentData* p = &boidsDataArr[i];
+				boidsDataArr[i].containingNode->checkIfNodeChanged(p);
+			}
 		}
 	}
 	catch (std::out_of_range e) {
@@ -73,7 +97,8 @@ void BoidFlock::MoveBoids()
 }
 
 sf::Vector2f BoidFlock::CalculateBoidMovement(const BoidAgentData& boid) {
-	std::vector<BoidAgentData*> boidsInView{ GetBoidsInView(boid) };
+	std::vector<BoidAgentData*> boidsInView;
+	GetBoidsInView<NeighbourFindingMethod::Quadtree>(boid, boidsInView);
 
 	//calculate all added behaviours
 	sf::Vector2f accelerationVec{ 0,0 };
@@ -90,28 +115,4 @@ sf::Vector2f BoidFlock::CalculateBoidMovement(const BoidAgentData& boid) {
 	accelerationVec = mathAdditions::ClampVectorMagnitude(accelerationVec, MAX_SPEED);
 
 	return accelerationVec;
-}
-
-std::vector<BoidAgentData*> BoidFlock::GetBoidsInView(const BoidAgentData& boid)
-{
-	std::vector<BoidAgentData*> boidsInView;
-	boidsInView.reserve(std::round(boidsDataArr.size() * 0.8));
-
-	for (auto& neighbour : boidsDataArr) {
-		if (&neighbour != &boid) {
-			sf::Vector2f relativeVec = boid.position - neighbour.position;
-
-			if (relativeVec.x > BoidFlock::SQUARE_BOIDS_VIEW_RANGE
-				|| relativeVec.y > BoidFlock::SQUARE_BOIDS_VIEW_RANGE)
-			{
-				continue;
-			}
-
-			if (mathAdditions::VectorSqrMagnitude(relativeVec) < BoidFlock::SQUARE_BOIDS_VIEW_RANGE)
-			{
-				boidsInView.emplace_back(&neighbour);
-			}
-		}
-	}
-	return boidsInView;
 }

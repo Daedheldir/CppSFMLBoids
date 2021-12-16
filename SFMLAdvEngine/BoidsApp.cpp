@@ -38,6 +38,9 @@ void BoidsApp::handleEvents(sf::Event& ev)
 	if (ev.type == sf::Event::KeyPressed && ev.key.code == sf::Keyboard::T) {
 		m_gameData->renderTexture.clear();
 	}
+	if (ev.type == sf::Event::KeyPressed && ev.key.code == sf::Keyboard::Q) {
+		m_gameData->drawQuadtree = !m_gameData->drawQuadtree;
+	}
 	if (!m_gameData->gpPopulationController->simRunning) {
 		this->dispose();
 	}
@@ -66,6 +69,13 @@ void BoidsApp::handleDrawing()
 	m_gameData->renderTexture.display();
 	getGraphics().getRenderWindow().draw(m_gameData->renderTextureRectShape);
 
+	if (m_gameData->drawQuadtree) {
+		std::vector<sf::VertexArray> quadtreeVertices;
+		m_gameData->gpPopulationController->GetBestPopulation().boidsQuadtree.GetVertexArray(quadtreeVertices);
+		for (auto& vertexArray : quadtreeVertices) {
+			getGraphics().getRenderWindow().draw(vertexArray);
+		}
+	}
 	std::unique_lock<std::mutex> fpsLock(lockFPSCounter);
 	getGraphics().getRenderWindow().draw(this->m_gameData->FPSCounter);
 	fpsLock.unlock();
