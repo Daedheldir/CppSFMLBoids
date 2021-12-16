@@ -9,7 +9,7 @@
 
 #include <mutex>
 
-const size_t QT_BASE_BUCKET_SIZE = 10;
+const size_t QT_BASE_BUCKET_SIZE = 2;
 const size_t QT_BASE_DIVIDER = 2;
 const unsigned int MAX_TREE_DEPTH = ~0;
 
