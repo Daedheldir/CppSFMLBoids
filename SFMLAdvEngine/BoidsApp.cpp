@@ -52,7 +52,7 @@ void BoidsApp::handleLogic()
 {
 	//update flock
 	TextUpdate();
-	m_gameData->gpPopulationController->UpdateGP();
+	m_gameData->gpPopulationController->UpdateGP< GPPopulationController::threading>();
 
 }
 

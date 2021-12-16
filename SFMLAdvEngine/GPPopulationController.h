@@ -8,6 +8,7 @@
 #include "RandomMovementBehaviour.h"
 
 #include <vector>
+#include <functional>
 
 /*
 1. Bit - wise AND : X & Y(or R)
@@ -32,7 +33,7 @@ public:
 		posY = position.y;
 
 		uint8_t red = static_cast<uint8_t>(static_cast<int>(posX - posY + r) % 256);
-		uint8_t green = static_cast<uint8_t>(static_cast<int>(posX + posY * r) % 256);
+		uint8_t green = static_cast<uint8_t>(static_cast<int>(posX + posY - r) % 256);
 		uint8_t blue = static_cast<uint8_t>(static_cast<int>(posX / posY + r) % 256);
 
 		return sf::Color{ red, green, blue };
@@ -47,17 +48,100 @@ public:
 class GPPopulationController
 {
 public:
+	enum class Threading
+	{
+		Enabled,
+		Disabled
+	};
+
 	GPPopulationController(sf::Image& refImage, const size_t populationsSize, const size_t flockSize, const unsigned int iterationsBetweenEvaluation, const unsigned int totalIterations);
 	~GPPopulationController();
 	void CreatePopulations(const size_t populationsSize, const size_t flockSize);
-	void UpdateGP();
-	const BoidFlock& GetBestPopulation() const;
 
+	template<Threading T>
+	void UpdateGP();
+
+	template<>
+	void UpdateGP<Threading::Enabled>()
+	{
+		++iterationsCounter;
+		if (iterationsCounter > totalIterations) {
+			simRunning = false;
+			return;
+		}
+
+		for (int i = 0; i < threadPool.size(); ++i) {
+			threadPool[i] = std::move(std::thread(&GPPopulationController::UpdatePopulations, this, i + 1));
+		}
+
+		//job for this thread
+		UpdatePopulations(0);
+
+		for (auto& thread : threadPool)
+		{
+			if (thread.joinable())
+				thread.join();
+		}
+
+		if (iterationsCounter % iterationsBetweenEvaluation == 0
+			&& iterationsCounter < totalIterations)
+		{
+			for (int i = 0; i < populations.size(); ++i) {
+				EvaluatePopulations(i);
+			}
+			++evaluationsCounter;
+
+
+			//save evaluation iteration images
+			for (int i = 0; i < threadPool.size(); ++i) {
+				threadPool[i] = std::move(std::thread(&GPPopulationController::SaveEvaluationImage, this, i + 1, ""));
+			}
+			SaveEvaluationImage(0);
+			for (auto& thread : threadPool)
+			{
+				if (thread.joinable())
+					thread.join();
+			}
+
+			std::cout << "Evaluating Pop " << evaluationsCounter << std::endl;
+		}
+	};
+
+	template<>
+	void UpdateGP<Threading::Disabled>()
+	{
+		++iterationsCounter;
+		if (iterationsCounter > totalIterations) {
+			simRunning = false;
+			return;
+		}
+
+		for (int i = 0; i < populations.size(); ++i)
+			UpdatePopulations(i);
+
+		if (iterationsCounter % iterationsBetweenEvaluation == 0
+			&& iterationsCounter < totalIterations)
+		{
+			for (int i = 0; i < populations.size(); ++i)
+				EvaluatePopulations(i);
+
+			++evaluationsCounter;
+			//save evaluation iteration images
+			for (int i = 0; i < populationCanvases.size(); ++i) {
+				SaveEvaluationImage(i);
+			}
+			std::cout << "Evaluating Pop " << evaluationsCounter << std::endl;
+		}
+	};
+
+	const BoidFlock& GetBestPopulation() const;
 private:
-	void UpdatePopulations();
-	void EvaluatePopulations();
+	void UpdatePopulations(const unsigned int flockIndex);
+	void EvaluatePopulations(const unsigned int flockIndex);
+	void SaveEvaluationImage(const unsigned int flockIndex, std::string additionalFileText = "") const;
 public:
 	bool simRunning = true;
+	static constexpr Threading threading = Threading::Enabled;
 private:
 	unsigned int bestPopulationIndex = 0;
 	unsigned int iterationsCounter = 0;
@@ -77,5 +161,6 @@ private:
 	std::vector<int> populationScores;
 	std::vector<sf::Image> populationCanvases;
 	std::vector<BoidFlock> populations;
-};
 
+	std::vector<std::thread> threadPool;
+};

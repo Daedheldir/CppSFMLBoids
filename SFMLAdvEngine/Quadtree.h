@@ -149,11 +149,11 @@ public:
 	{
 	};
 	~Quadtree() {};
-	bool insertCopy(T data)
+	bool insertCopy(const T data)
 	{
 		return insert(data);
 	}
-	bool insert(T& data)
+	bool insert(const T& data)
 	{
 		//if the node does not containt the point return false
 		if (!boundaries.ContainsPoint(data->position))
@@ -184,7 +184,7 @@ public:
 		//if for some unknown reason node cannot be added throw exception
 		throw std::exception("ERROR! Quadtree can't insert node!\n");
 	};
-	bool insertIntoThisNode(T& data)
+	bool insertIntoThisNode(const T& data)
 	{
 		//if there's space in this node, add point here
 		if (dataContainer.size() < bucketSize || uDepth >= MAX_TREE_DEPTH)
@@ -293,7 +293,7 @@ public:
 		queryRange(range, pointsInRange);
 	};
 
-	Quadtree* findContainingNode(T& searchedData)
+	Quadtree* findContainingNode(const T& searchedData)
 	{
 		Quadtree* node = nullptr;
 
@@ -302,9 +302,9 @@ public:
 
 		std::unique_lock<std::recursive_mutex> dataLock(dataAccess);
 
-		for (auto iter = this->dataContainer.begin(); iter != this->dataContainer.end(); ++iter)
+		for (auto iter = dataContainer.begin(); iter != this->dataContainer.end(); ++iter)
 		{
-			if (*(*iter) == *searchedData)
+			if ((*iter) == searchedData)
 				return this;
 		}
 		dataLock.unlock();
@@ -326,14 +326,14 @@ public:
 		return node;
 	};
 
-	bool remove(T& searchedData)
+	bool remove(const T& searchedData)
 	{
 		if (!boundaries.ContainsPoint(searchedData->position))
 			return false;
 
 		for (auto iter = dataContainer.begin(); iter != dataContainer.end(); ++iter)
 		{
-			if (*(*iter) == *searchedData)
+			if ((*iter) == searchedData)
 			{
 				dataContainer.erase(iter);
 				moveDataUp();
@@ -355,14 +355,14 @@ public:
 		}
 		throw std::exception("Error! Deleting Failed!");
 	};
-	bool removeFromThisNode(T& data)
+	bool removeFromThisNode(const T& data)
 	{
 		std::scoped_lock<std::recursive_mutex> dataLock(dataAccess);
 
 		//check if this node contains data
 		for (auto iter = dataContainer.begin(); iter != dataContainer.end(); ++iter)
 		{
-			if (*(*iter) == *data)
+			if ((*iter) == data)
 			{
 				dataContainer.erase(iter);
 				moveDataUp();
@@ -468,7 +468,7 @@ public:
 		}
 	};
 
-	bool checkIfNodeChanged(T& searchedData)
+	bool checkIfNodeChanged(const T& searchedData)
 	{
 		if (boundaries.ContainsPoint(searchedData->position))
 			return false;
@@ -477,7 +477,7 @@ public:
 
 		for (auto iter = this->dataContainer.begin(); iter != this->dataContainer.end(); ++iter)
 		{
-			if (*(*iter) == *searchedData)
+			if ((*iter) == searchedData)
 			{
 				this->dataContainer.erase(iter);
 				break;
@@ -492,7 +492,7 @@ public:
 		return true;
 	};
 
-	void updatePositionInTree(T& searchedData)
+	void updatePositionInTree(const T& searchedData)
 	{
 		if (insert(searchedData))
 			return;
