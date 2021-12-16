@@ -14,6 +14,12 @@ GPPopulationController::GPPopulationController(sf::Image& refImage, const size_t
 		std::filesystem::remove_all(entry.path());
 	}
 
+	for (int i = 0; i < populations.size(); ++i) {
+		std::cout << "Place of population " + std::to_string(i) + ": " << &populations[i] << std::endl;
+		std::cout << "Place of population " + std::to_string(i) + " first flock member: " << &(populations[i].boidsDataArr[0]) << std::endl;
+		std::cout << "Place of population " + std::to_string(i) + " second flock member: " << &(populations[i].boidsDataArr[1]) << std::endl;
+	}
+
 	threadPool.resize(populationsSize - 1);
 }
 
