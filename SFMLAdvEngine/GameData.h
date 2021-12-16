@@ -6,7 +6,7 @@
 #include "CohesionBehaviour.h"
 #include "SeparationBehaviour.h"
 #include "RandomMovementBehaviour.h"
-
+#include "GPPopulationController.h"
 #include <SFML/Graphics.hpp>
 
 namespace dh {
@@ -14,21 +14,16 @@ namespace dh {
 	class GameData {
 	public:
 		bool bGameRunning = false;
+		bool drawQuadtree = false;
 
 		//views
 		std::map<std::string, sf::View> viewsMap;
 
 		//boid flocks
-		BoidFlock boidFlock{ std::map<FlockBehaviourTypes, FlockBehaviour*>
-		{
-			{
-				{ FlockBehaviourTypes::Alignment, new AlignmentBehaviour{ 1.0f } },
-				{ FlockBehaviourTypes::Cohesion, new CohesionBehaviour{0.1f} },
-				{ FlockBehaviourTypes::Separation, new SeparationBehaviour{1.5f} },
-				{ FlockBehaviourTypes::RandomMovement, new RandomMovementBehaviour{0.5f} }
-			}
-		}
-		};
+		GPPopulationController* gpPopulationController;
+
+		//input image
+		sf::Image inputImage;
 
 		//render texture for drawing
 		sf::RenderTexture	renderTexture;

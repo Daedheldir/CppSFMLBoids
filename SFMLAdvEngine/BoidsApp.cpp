@@ -3,6 +3,7 @@
 BoidsApp::BoidsApp(dh::GameDataRef m_gameData, sf::Vector2u uWindowSize, std::string appName, unsigned int maxUpdatesPerSecond, uint8_t fpsLimit, bool fullscreen)
 	: SFMLGameEngine(
 		m_gameData,
+		uWindowSize,
 		appName,
 		maxUpdatesPerSecond,
 		fpsLimit,
@@ -14,11 +15,13 @@ BoidsApp::BoidsApp(dh::GameDataRef m_gameData, sf::Vector2u uWindowSize, std::st
 	//m_gameData->FPSCounter.setPosition(this->getGraphics().getRenderWindow().mapPixelToCoords(sf::Vector2i(5, 5)));
 	m_gameData->FPSCounter.setPosition({ 0,0 });
 
-
-	m_gameData->renderTexture.create(dh::definitions::windowSizeX, dh::definitions::windowSizeY);
-	m_gameData->renderTextureRectShape.setSize({ dh::definitions::windowSizeX, dh::definitions::windowSizeY });
+	m_gameData->renderTexture.create(m_gameData->inputImage.getSize().x, m_gameData->inputImage.getSize().y);
+	m_gameData->renderTextureRectShape.setSize({ static_cast<float>(m_gameData->inputImage.getSize().x), static_cast<float>(m_gameData->inputImage.getSize().y) });
 	m_gameData->renderTextureRectShape.setPosition(0, 0);
+
 	m_gameData->renderTextureRectShape.setTexture(&m_gameData->renderTexture.getTexture());
+
+
 }
 void BoidsApp::LoadResources()
 {
@@ -33,8 +36,13 @@ void BoidsApp::handleEvents(sf::Event& ev)
 	if ((ev.type == sf::Event::KeyPressed && ev.key.code == sf::Keyboard::Escape) || ev.type == sf::Event::Closed)
 		this->dispose();
 	if (ev.type == sf::Event::KeyPressed && ev.key.code == sf::Keyboard::T) {
-		m_gameData->boidFlock.ENABLE_TRAILS = !m_gameData->boidFlock.ENABLE_TRAILS;
 		m_gameData->renderTexture.clear();
+	}
+	if (ev.type == sf::Event::KeyPressed && ev.key.code == sf::Keyboard::Q) {
+		m_gameData->drawQuadtree = !m_gameData->drawQuadtree;
+	}
+	if (!m_gameData->gpPopulationController->simRunning) {
+		this->dispose();
 	}
 }
 void BoidsApp::handleInput()
@@ -44,7 +52,7 @@ void BoidsApp::handleLogic()
 {
 	//update flock
 	TextUpdate();
-	m_gameData->boidFlock.Update();
+	m_gameData->gpPopulationController->UpdateGP();
 
 }
 
@@ -55,16 +63,18 @@ void BoidsApp::handleDrawing()
 
 	getGraphics().getRenderWindow().clear();
 
-	if (m_gameData->boidFlock.ENABLE_TRAILS) {
-		//update render texture
-		m_gameData->renderTexture.draw(m_gameData->boidFlock.boidsVerticesArr);
-		m_gameData->renderTexture.display();
+	//draw stuff
+	//m_gameData->renderTexture.clear();
+	m_gameData->renderTexture.draw(m_gameData->gpPopulationController->GetBestPopulation().boidsVerticesArr);
+	m_gameData->renderTexture.display();
+	getGraphics().getRenderWindow().draw(m_gameData->renderTextureRectShape);
 
-		//draw stuff
-		getGraphics().getRenderWindow().draw(m_gameData->renderTextureRectShape);
-	}
-	else {
-		getGraphics().getRenderWindow().draw(m_gameData->boidFlock.boidsVerticesArr);
+	if (m_gameData->drawQuadtree) {
+		std::vector<sf::VertexArray> quadtreeVertices;
+		m_gameData->gpPopulationController->GetBestPopulation().boidsQuadtree.GetVertexArray(quadtreeVertices);
+		for (auto& vertexArray : quadtreeVertices) {
+			getGraphics().getRenderWindow().draw(vertexArray);
+		}
 	}
 	std::unique_lock<std::mutex> fpsLock(lockFPSCounter);
 	getGraphics().getRenderWindow().draw(this->m_gameData->FPSCounter);

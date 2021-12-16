@@ -1,20 +1,26 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-
+#include "Quadtree.h"
 class BoidAgentData
 {
 public:
 	BoidAgentData();
-	BoidAgentData(sf::Vector2f position);
+	BoidAgentData(sf::Vector2f position, sf::Color color = sf::Color::Red);
 
-	/*float getx() const { return position.x };
-	void setx(float val){ position.x=val};
-	float gety() const { return position.y };
-	void sety(float val){ position.y=val};//*/
+	bool operator==(const BoidAgentData& other) const {
+		return position == other.position
+			&& acceleration == other.acceleration
+			&& color == other.color
+			&& leftColorsCounter == other.leftColorsCounter
+			&& containingNode == other.containingNode;
+	}
 
 	~BoidAgentData();
 public:
+	Quadtree<BoidAgentData*>* containingNode;
 	sf::Vector2f position;
 	sf::Vector2f acceleration;
+	sf::Color color;
+	unsigned int leftColorsCounter = 0;
 };
 
