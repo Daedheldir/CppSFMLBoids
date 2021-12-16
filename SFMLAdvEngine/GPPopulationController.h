@@ -9,6 +9,21 @@
 
 #include <vector>
 
+/*
+1. Bit - wise AND : X & Y(or R)
+2. Bit - wise OR : X | Y(or R)
+3. Bit - wise XOR : X ^ Y(or R)
+4. NOT : !X
+5. Left - shift : X << 2 (multiplied by 2)
+6. Right - shift : X >> 2 (divided by 2)
+7. ADD : X + Y(or R)
+8. SUB : X – Y(or R)
+9. MUL : X * Y(or R)
+10. DIV : X / Y(or R) if Y > 0
+11. SIN: sin(X) * 255
+12. COS : cos(X) * 255
+13. TAN : tan(X) * 255
+*/
 class GPColor : protected sf::Color {
 public:
 	GPColor() : r{ static_cast<float>(1 + rand() % 255) } {};
