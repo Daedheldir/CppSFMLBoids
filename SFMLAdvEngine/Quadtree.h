@@ -31,18 +31,12 @@ struct AABB {
 
 	bool ContainsPoint(const sf::Vector2f& point) const
 	{
-		if (rect.contains(point)) {
-			return true;
-		}
-		return false;
+		return rect.contains(point);
 	};
 
 	bool Intersects(const AABB& other) const
 	{
-		if (rect.intersects(other.rect)) {
-			return true;
-		}
-		return false;
+		return rect.intersects(other.rect);
 	};
 };
 template<typename T>

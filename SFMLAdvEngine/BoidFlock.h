@@ -45,8 +45,8 @@ private:
 			}
 			sf::Vector2f relativeVec = boid.position - neighbour.position;
 
-			if (relativeVec.x > BoidFlock::SQUARE_BOIDS_VIEW_RANGE
-				|| relativeVec.y > BoidFlock::SQUARE_BOIDS_VIEW_RANGE)
+			if (std::abs(relativeVec.x) > BoidFlock::SQUARE_BOIDS_VIEW_RANGE
+				|| std::abs(relativeVec.y) > BoidFlock::SQUARE_BOIDS_VIEW_RANGE)
 			{
 				continue;
 			}
