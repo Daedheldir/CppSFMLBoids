@@ -5,6 +5,8 @@
 #include <SFML/Graphics/VertexArray.hpp>
 #include "BoidAgentData.h"
 #include "FlockBehaviour.h"
+#include "Quadtree.h"
+#include "MathAdditions.h"
 
 enum class FlockBehaviourTypes {
 	Alignment,
@@ -12,7 +14,10 @@ enum class FlockBehaviourTypes {
 	Separation,
 	RandomMovement
 };
-
+enum class NeighbourFindingMethod {
+	BruteForce,
+	Quadtree
+};
 class BoidFlock
 {
 public:
@@ -23,8 +28,42 @@ public:
 	void MoveBoids();
 
 private:
-	std::vector<BoidAgentData*> GetBoidsInView(const BoidAgentData& boid);
 	sf::Vector2f CalculateBoidMovement(const BoidAgentData& boid);
+
+	template<NeighbourFindingMethod T>
+	void GetBoidsInView(const BoidAgentData& boid, std::vector<BoidAgentData*>& boidsInView) {
+		return std::vector<BoidAgentData*>();
+	};
+
+	template<>
+	void GetBoidsInView<NeighbourFindingMethod::BruteForce>(const BoidAgentData& boid, std::vector<BoidAgentData*>& boidsInView) {
+		boidsInView.reserve(std::round(boidsDataArr.size() * 0.8));
+
+		for (auto& neighbour : boidsDataArr) {
+			if (&neighbour == &boid) {
+				continue;
+			}
+			sf::Vector2f relativeVec = boid.position - neighbour.position;
+
+			if (relativeVec.x > BoidFlock::SQUARE_BOIDS_VIEW_RANGE
+				|| relativeVec.y > BoidFlock::SQUARE_BOIDS_VIEW_RANGE)
+			{
+				continue;
+			}
+
+			if (mathAdditions::VectorSqrMagnitude(relativeVec) < BoidFlock::SQUARE_BOIDS_VIEW_RANGE)
+			{
+				boidsInView.emplace_back(&neighbour);
+			}
+
+		}
+	};
+
+	template<>
+	void GetBoidsInView<NeighbourFindingMethod::Quadtree>(const BoidAgentData& boid, std::vector<BoidAgentData*>& boidsInView) {
+		boidsInView.reserve(std::round(boidsDataArr.size() * 0.8));
+		boidsQuadtree.queryRange(boid.position, { sqrt(SQUARE_BOIDS_VIEW_RANGE), sqrt(SQUARE_BOIDS_VIEW_RANGE) }, boidsInView);
+	};
 public:
 	//parameters
 	static const float SQUARE_NEIGHBOUR_AVOIDANCE_RADIUS;
@@ -36,7 +75,12 @@ public:
 
 	//variables
 	std::vector<BoidAgentData> boidsDataArr;
-
+	Quadtree<BoidAgentData*> boidsQuadtree;
+	struct {
+		float fTreeUpdateInterval = 5.0f;
+		float fTreeUpdateTimer = 0.0f;
+		bool bRebuildTree = false;
+	}UpdateTimer;
 	std::map<FlockBehaviourTypes, std::shared_ptr<FlockBehaviour>> flockBehaviours;
 	sf::VertexArray boidsVerticesArr;
 };

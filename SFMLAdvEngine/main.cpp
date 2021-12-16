@@ -15,7 +15,11 @@ int main() {
 	{
 		std::cout << "Successfuly loaded input img." << std::endl;
 	}
-	m_gameData->gpPopulationController = new GPPopulationController{ m_gameData->inputImage, 1, 500, 200, 20000 };
+	constexpr int boidPopulations = 3;
+	constexpr int boidPopSize = 5000;
+	constexpr int iterationBetweenEvaluation = boidPopSize / 100;
+	constexpr int totalIterations = iterationBetweenEvaluation * 100;
+	m_gameData->gpPopulationController = new GPPopulationController{ m_gameData->inputImage, boidPopulations, boidPopSize, iterationBetweenEvaluation, totalIterations };
 	BoidsApp boidsApp
 	(
 		m_gameData,

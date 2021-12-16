@@ -14,6 +14,7 @@ namespace dh {
 	class GameData {
 	public:
 		bool bGameRunning = false;
+		bool drawQuadtree = false;
 
 		//views
 		std::map<std::string, sf::View> viewsMap;

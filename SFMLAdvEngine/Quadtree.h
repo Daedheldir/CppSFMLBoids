@@ -9,8 +9,8 @@
 
 #include <mutex>
 
-const size_t QT_BASE_BUCKET_SIZE = 3;
-const size_t QT_BASE_DIVIDER = 3;
+const size_t QT_BASE_BUCKET_SIZE = 10;
+const size_t QT_BASE_DIVIDER = 2;
 const unsigned int MAX_TREE_DEPTH = ~0;
 
 struct AABB {
@@ -49,6 +49,9 @@ template<typename T>
 class Quadtree
 {
 public:
+	Quadtree(const AABB& boundaries, sf::Color color = sf::Color::Red)
+		:Quadtree{ nullptr, boundaries, 0, color }
+	{};
 
 	Quadtree(Quadtree* parentNode, const AABB& boundaries, unsigned int depth, sf::Color color = sf::Color::Red)
 		: parentNode{ parentNode },
@@ -94,51 +97,11 @@ public:
 
 		uDepth = depth;
 		bucketSize = static_cast<size_t>(pow(QT_BASE_BUCKET_SIZE, uDepth / QT_BASE_DIVIDER));
+		dataContainer.reserve(bucketSize);
 	};
 	Quadtree(Quadtree* parentNode, const sf::Vector2f& center, const sf::Vector2f& halfDimension, unsigned int depth, sf::Color color = sf::Color::Red)
-		: parentNode{ parentNode },
-		NodeNW{ nullptr },
-		NodeNE{ nullptr },
-		NodeSW{ nullptr },
-		NodeSE{ nullptr },
-		boundaries(center, halfDimension)
+		: Quadtree{ parentNode, {center, halfDimension}, depth, color }
 	{
-		sf::Vector2f boundariesVertex;
-
-		//NW
-		boundariesVertex.x = this->boundaries.center.x - (this->boundaries.halfDimensions.x);
-		boundariesVertex.y = this->boundaries.center.y - (this->boundaries.halfDimensions.y);
-
-		this->vertex.append(sf::Vertex(boundariesVertex, color));
-
-		//NE
-		boundariesVertex.x = this->boundaries.center.x + (this->boundaries.halfDimensions.x);
-		boundariesVertex.y = this->boundaries.center.y - (this->boundaries.halfDimensions.y);
-
-		this->vertex.append(sf::Vertex(boundariesVertex, color));
-
-		//SE
-		boundariesVertex.x = this->boundaries.center.x + (this->boundaries.halfDimensions.x);
-		boundariesVertex.y = this->boundaries.center.y + (this->boundaries.halfDimensions.y);
-
-		this->vertex.append(sf::Vertex(boundariesVertex, color));
-
-		//SW
-		boundariesVertex.x = this->boundaries.center.x - (this->boundaries.halfDimensions.x);
-		boundariesVertex.y = this->boundaries.center.y + (this->boundaries.halfDimensions.y);
-
-		this->vertex.append(sf::Vertex(boundariesVertex, color));
-
-		//NW
-		boundariesVertex.x = this->boundaries.center.x - (this->boundaries.halfDimensions.x);
-		boundariesVertex.y = this->boundaries.center.y - (this->boundaries.halfDimensions.y);
-
-		this->vertex.append(sf::Vertex(boundariesVertex, color));
-
-		this->vertex.setPrimitiveType(sf::PrimitiveType::LineStrip);
-
-		uDepth = depth;
-		bucketSize = static_cast<size_t>(pow(QT_BASE_BUCKET_SIZE, uDepth / QT_BASE_DIVIDER));
 	};
 
 	Quadtree(nullptr_t parentNode, const AABB& boundaries, unsigned int depth, sf::Color color = sf::Color::Red)
@@ -185,66 +148,29 @@ public:
 
 		uDepth = depth;
 		bucketSize = static_cast<size_t>(pow(QT_BASE_BUCKET_SIZE, uDepth / QT_BASE_DIVIDER));
+		dataContainer.reserve(bucketSize);
 	};
 	Quadtree(nullptr_t parentNode, const sf::Vector2f& center, const sf::Vector2f& halfDimension, unsigned int depth, sf::Color color = sf::Color::Red)
-		: parentNode{ nullptr },
-		NodeNW{ nullptr },
-		NodeNE{ nullptr },
-		NodeSW{ nullptr },
-		NodeSE{ nullptr },
-		boundaries(center, halfDimension)
+		: Quadtree{ parentNode, {center, halfDimension}, depth, color }
 	{
-		sf::Vector2f boundariesVertex;
-
-		//NW
-		boundariesVertex.x = this->boundaries.center.x - (this->boundaries.halfDimensions.x);
-		boundariesVertex.y = this->boundaries.center.y - (this->boundaries.halfDimensions.y);
-
-		this->vertex.append(sf::Vertex(boundariesVertex, color));
-
-		//NE
-		boundariesVertex.x = this->boundaries.center.x + (this->boundaries.halfDimensions.x);
-		boundariesVertex.y = this->boundaries.center.y - (this->boundaries.halfDimensions.y);
-
-		this->vertex.append(sf::Vertex(boundariesVertex, color));
-
-		//SE
-		boundariesVertex.x = this->boundaries.center.x + (this->boundaries.halfDimensions.x);
-		boundariesVertex.y = this->boundaries.center.y + (this->boundaries.halfDimensions.y);
-
-		this->vertex.append(sf::Vertex(boundariesVertex, color));
-
-		//SW
-		boundariesVertex.x = this->boundaries.center.x - (this->boundaries.halfDimensions.x);
-		boundariesVertex.y = this->boundaries.center.y + (this->boundaries.halfDimensions.y);
-
-		this->vertex.append(sf::Vertex(boundariesVertex, color));
-
-		//NW
-		boundariesVertex.x = this->boundaries.center.x - (this->boundaries.halfDimensions.x);
-		boundariesVertex.y = this->boundaries.center.y - (this->boundaries.halfDimensions.y);
-
-		this->vertex.append(sf::Vertex(boundariesVertex, color));
-
-		this->vertex.setPrimitiveType(sf::PrimitiveType::LineStrip);
-
-		uDepth = depth;
-		bucketSize = static_cast<size_t>(pow(QT_BASE_BUCKET_SIZE, uDepth / QT_BASE_DIVIDER));
 	};
 	~Quadtree() {};
-
+	bool insertCopy(T data)
+	{
+		return insert(data);
+	}
 	bool insert(T& data)
 	{
 		//if the node does not containt the point return false
-		if (!boundaries.ContainsPoint(data->getPosition()))
+		if (!boundaries.ContainsPoint(data->position))
 			return false;
 
 		//if there's space in this node, add point here
 		if (dataContainer.size() < bucketSize || uDepth >= MAX_TREE_DEPTH)
 		{
 			std::scoped_lock<std::recursive_mutex> dataLock(dataAccess);
-			dataContainer.push_back(data);
-			data->setContainingNode(this);
+			dataContainer.emplace_back(data);
+			data->containingNode = this;
 			return true;
 		}
 
@@ -271,8 +197,8 @@ public:
 		{
 			std::scoped_lock<std::recursive_mutex> dataLock(dataAccess);
 
-			dataContainer.push_back(data);
-			data->setContainingNode(this);
+			dataContainer.emplace_back(data);
+			data->containingNode = this;
 			return true;
 		}
 		return false;
@@ -328,7 +254,7 @@ public:
 		}
 	};
 
-	unsigned int getPointCount()
+	unsigned int getPointCount() const
 	{
 		unsigned int pointCount;
 
@@ -348,97 +274,43 @@ public:
 		return pointCount;
 	};
 
-	std::list<T> queryRange(const AABB& range)
+	void queryRange(const AABB& range, std::vector<T>& pointsInRange) const
 	{
-		std::list<std::shared_ptr<Animal>> pointsInRange;
-
 		if (!boundaries.Intersects(range))
-			return pointsInRange;
+			return;
 
 		for (auto& iter : dataContainer)
 		{
-			if (range.ContainsPoint(iter->getPosition()))
-				pointsInRange.push_back(iter);
+			if (range.ContainsPoint(iter->position))
+				pointsInRange.emplace_back(iter);
 		}
 
 		if (NodeNW == nullptr)
-			return pointsInRange;
+			return;
 
-		std::list<std::shared_ptr<Animal>> pointsInRangeNW;
-		std::list<std::shared_ptr<Animal>> pointsInRangeNE;
-		std::list<std::shared_ptr<Animal>> pointsInRangeSW;
-		std::list<std::shared_ptr<Animal>> pointsInRangeSE;
-
-		pointsInRangeNW = NodeNW->queryRange(range);
-		pointsInRangeNE = NodeNE->queryRange(range);
-		pointsInRangeSW = NodeSW->queryRange(range);
-		pointsInRangeSE = NodeSE->queryRange(range);
-
-		//size_t requiredSize = pointsInRangeNE.size() + pointsInRangeNW.size() + pointsInRangeSE.size() + pointsInRangeSW.size();
-
-		//if (pointsInRange.max_size() < requiredSize)
-		//	pointsInRange.reserve(2 * requiredSize);
-
-		pointsInRange.insert(pointsInRange.end(), pointsInRangeNW.begin(), pointsInRangeNW.end());
-		pointsInRange.insert(pointsInRange.end(), pointsInRangeNE.begin(), pointsInRangeNE.end());
-		pointsInRange.insert(pointsInRange.end(), pointsInRangeSW.begin(), pointsInRangeSW.end());
-		pointsInRange.insert(pointsInRange.end(), pointsInRangeSE.begin(), pointsInRangeSE.end());
-
-		return pointsInRange;
+		NodeNE->queryRange(range, pointsInRange);
+		NodeNW->queryRange(range, pointsInRange);
+		NodeSE->queryRange(range, pointsInRange);
+		NodeSW->queryRange(range, pointsInRange);
 	};
-	std::list<T> queryRange(const sf::Vector2f& center, const sf::Vector2f& halfDimension)
+	void queryRange(const sf::Vector2f& center, const sf::Vector2f& halfDimension, std::vector<T>& pointsInRange) const
 	{
-		AABB range(center, halfDimension);
-
-		std::list<std::shared_ptr<Animal>> pointsInRange;
-
-		if (!boundaries.Intersects(range))
-			return pointsInRange;
-
-		for (auto& iter : dataContainer)
-		{
-			if (range.ContainsPoint(iter->getPosition()))
-				pointsInRange.push_back(iter);
-		}
-
-		if (NodeNW == nullptr)
-			return pointsInRange;
-
-		std::list<std::shared_ptr<Animal>> pointsInRangeNE;
-		std::list<std::shared_ptr<Animal>> pointsInRangeNW;
-		std::list<std::shared_ptr<Animal>> pointsInRangeSE;
-		std::list<std::shared_ptr<Animal>> pointsInRangeSW;
-
-		pointsInRangeNE = NodeNE->queryRange(range);
-		pointsInRangeNW = NodeNW->queryRange(range);
-		pointsInRangeSE = NodeSE->queryRange(range);
-		pointsInRangeSW = NodeSW->queryRange(range);
-
-		//size_t requiredSize = pointsInRangeNE.size() + pointsInRangeNW.size() + pointsInRangeSE.size() + pointsInRangeSW.size();
-
-		//if (pointsInRange.max_size() < requiredSize)
-		//	pointsInRange.reserve(2 * requiredSize);
-
-		pointsInRange.insert(pointsInRange.end(), pointsInRangeNW.begin(), pointsInRangeNW.end());
-		pointsInRange.insert(pointsInRange.end(), pointsInRangeNE.begin(), pointsInRangeNE.end());
-		pointsInRange.insert(pointsInRange.end(), pointsInRangeSW.begin(), pointsInRangeSW.end());
-		pointsInRange.insert(pointsInRange.end(), pointsInRangeSE.begin(), pointsInRangeSE.end());
-
-		return pointsInRange;
+		const AABB range{ center, halfDimension };
+		queryRange(range, pointsInRange);
 	};
 
 	Quadtree* findContainingNode(T& searchedData)
 	{
 		Quadtree* node = nullptr;
 
-		if (!boundaries.ContainsPoint(searchedData))
+		if (!boundaries.ContainsPoint(searchedData->position))
 			return nullptr;
 
 		std::unique_lock<std::recursive_mutex> dataLock(dataAccess);
 
 		for (auto iter = this->dataContainer.begin(); iter != this->dataContainer.end(); ++iter)
 		{
-			if (*iter == searchedData)
+			if (*(*iter) == *searchedData)
 				return this;
 		}
 		dataLock.unlock();
@@ -462,12 +334,12 @@ public:
 
 	bool remove(T& searchedData)
 	{
-		if (!boundaries.ContainsPoint(searchedData))
+		if (!boundaries.ContainsPoint(searchedData->position))
 			return false;
 
 		for (auto iter = dataContainer.begin(); iter != dataContainer.end(); ++iter)
 		{
-			if (*iter == searchedData)
+			if (*(*iter) == *searchedData)
 			{
 				dataContainer.erase(iter);
 				moveDataUp();
@@ -496,7 +368,7 @@ public:
 		//check if this node contains data
 		for (auto iter = dataContainer.begin(); iter != dataContainer.end(); ++iter)
 		{
-			if (*iter == data)
+			if (*(*iter) == *data)
 			{
 				dataContainer.erase(iter);
 				moveDataUp();
@@ -569,7 +441,7 @@ public:
 					if (parentNode->insertIntoThisNode(*iter))
 					{
 						//if sucessful then remove data from this node
-						iter->get()->setContainingNode(parentNode);
+						(*iter)->containingNode = parentNode;
 						iter = dataContainer.erase(iter);
 					}
 					else
@@ -604,14 +476,14 @@ public:
 
 	bool checkIfNodeChanged(T& searchedData)
 	{
-		if (boundaries.ContainsPoint(searchedData->getPosition()))
+		if (boundaries.ContainsPoint(searchedData->position))
 			return false;
 
 		std::unique_lock<std::recursive_mutex> dataLock(dataAccess);
 
 		for (auto iter = this->dataContainer.begin(); iter != this->dataContainer.end(); ++iter)
 		{
-			if (*iter == searchedData)
+			if (*(*iter) == *searchedData)
 			{
 				this->dataContainer.erase(iter);
 				break;
@@ -634,7 +506,7 @@ public:
 		try
 		{
 			if (parentNode == nullptr)
-				throw std::exception("ERROR! Animal isn't contained by the tree!");
+				throw std::exception("ERROR! Point isn't contained by the tree!");
 			else
 				parentNode->updatePositionInTree(searchedData);
 		}
@@ -645,19 +517,26 @@ public:
 		}
 	};
 
-	void draw(sf::RenderWindow& window)
+	void GetVertexArray(std::vector<sf::VertexArray>& output) const
 	{
+		std::scoped_lock(dataAccess);
 		if (NodeNE == nullptr)
 		{
-			std::scoped_lock<std::recursive_mutex> lock(drawAccess);
-			window.draw(vertex);
+			output.emplace_back(vertex);
 		}
 		else
 		{
-			NodeNE->draw(window);
-			NodeNW->draw(window);
-			NodeSE->draw(window);
-			NodeSW->draw(window);
+			if (NodeNE != nullptr)
+				NodeNE->GetVertexArray(output);
+
+			if (NodeNW != nullptr)
+				NodeNW->GetVertexArray(output);
+
+			if (NodeSE != nullptr)
+				NodeSE->GetVertexArray(output);
+
+			if (NodeSW != nullptr)
+				NodeSW->GetVertexArray(output);
 		}
 	};
 
@@ -670,7 +549,7 @@ public:
 
 	sf::VertexArray vertex;
 
-	std::list<T> dataContainer;
+	std::vector<T> dataContainer;
 
 	AABB boundaries;
 
@@ -681,5 +560,5 @@ public:
 	std::shared_ptr<Quadtree> NodeSE;
 	std::shared_ptr<Quadtree> NodeSW;
 private:
-	std::recursive_mutex dataAccess, drawAccess;
+	std::recursive_mutex dataAccess;
 };
