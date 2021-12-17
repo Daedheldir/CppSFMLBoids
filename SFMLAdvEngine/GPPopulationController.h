@@ -26,6 +26,12 @@
 12. COS : cos(X) * 255
 13. TAN : tan(X) * 255
 */
+
+//deep blue
+//uint8_t red = static_cast<uint8_t>(static_cast<int>(posX / posY / r) % 256);
+//uint8_t green = static_cast<uint8_t>(static_cast<int>(posX / posY * r) % 256);
+//uint8_t blue = static_cast<uint8_t>(static_cast<int>(posX * posY / r) % 256);
+
 class GPColor : protected sf::Color {
 public:
 	GPColor() : r{ static_cast<float>(1 + rand() % 255) } {};
@@ -33,9 +39,9 @@ public:
 		posX = position.x;
 		posY = position.y;
 
-		uint8_t red = static_cast<uint8_t>(static_cast<int>(posX - posY + r) % 256);
-		uint8_t green = static_cast<uint8_t>(static_cast<int>(posX + posY + r) % 256);
-		uint8_t blue = static_cast<uint8_t>(static_cast<int>(posX + posY - r) % 256);
+		uint8_t red = static_cast<uint8_t>(static_cast<int>(posX / posY / r) % 256);
+		uint8_t green = static_cast<uint8_t>(static_cast<int>(posX / posY * r) % 256);
+		uint8_t blue = static_cast<uint8_t>(static_cast<int>(posX * posY / r) % 256);
 
 		return sf::Color{ red, green, blue };
 	}
@@ -74,7 +80,7 @@ public:
 		for (int i = 0; i < threadPool.size(); ++i) {
 			threadPool[i] = std::move(std::thread(&GPPopulationController::UpdatePopulations, this, i + 1));
 
-			DWORD_PTR dw = SetThreadAffinityMask(threadPool[i].native_handle(), DWORD_PTR(1) << ((1 + (i * 2)) % std::thread::hardware_concurrency()));
+			DWORD_PTR dw = SetThreadAffinityMask(threadPool[i].native_handle(), DWORD_PTR(1) << ((2 + (i * 2)) % std::thread::hardware_concurrency()));
 			if (dw == 0)
 			{
 				DWORD dwErr = GetLastError();
@@ -99,11 +105,10 @@ public:
 			}
 			++evaluationsCounter;
 
-
 			//save evaluation iteration images
 			for (int i = 0; i < threadPool.size(); ++i) {
 				threadPool[i] = std::move(std::thread(&GPPopulationController::SaveEvaluationImage, this, i + 1, ""));
-				DWORD_PTR dw = SetThreadAffinityMask(threadPool[i].native_handle(), DWORD_PTR(1) << ((1 + (i * 2)) % std::thread::hardware_concurrency()));
+				DWORD_PTR dw = SetThreadAffinityMask(threadPool[i].native_handle(), DWORD_PTR(1) << ((1 + i) % std::thread::hardware_concurrency()));
 				if (dw == 0)
 				{
 					DWORD dwErr = GetLastError();
