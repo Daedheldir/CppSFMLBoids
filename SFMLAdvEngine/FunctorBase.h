@@ -4,13 +4,22 @@
 
 class FunctorBase {
 protected:
-	int val;
+	float val;
 public:
 	FunctorBase() : val{ 0 } {};
-	FunctorBase(int val2) :val{ val2 } {};
+	FunctorBase(float val2) :val{ val2 } {};
+	const std::string var = "FunctorBase";
 
-	int operator () (float val1, float val2) {
+	virtual float operator () (float val1, float val2) {
+		return val;
+
+	}
+
+	virtual float getVal() {
 		return val;
 	}
+
+
 };
+
 

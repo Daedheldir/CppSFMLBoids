@@ -6,10 +6,14 @@ using namespace std;
 class DivisionFunctor : public FunctorBase {
 public:
 	DivisionFunctor() {};
-	DivisionFunctor(int val2) :FunctorBase{ val2 } {};
+	DivisionFunctor(float val2) :FunctorBase{ val2 } {};
+	const std::string var = "DivisionFunctor";
 
-	int operator () (float val1, float val2) {
-		return val1 / val2;
+	virtual float operator () (float val1, float val2) {
+		if (val2 == 0) 
+			return 1;
+		else
+			return val1 / val2;
 	}
 };
 

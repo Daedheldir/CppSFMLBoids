@@ -117,6 +117,15 @@
     <ClInclude Include="DivisionFunctor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="BinTreeException.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BinTreeBaseException.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeB.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LogicEngine.cpp">

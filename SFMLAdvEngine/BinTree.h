@@ -1,98 +1,154 @@
 #ifndef _ARBIN_H_
 #define _ARBIN_H_
 
-
 #include <iostream>
+
+#include <queue>
+#include <limits>
+
+#include "BinTreeException.h"
+
+#include "NodeB.h"
+
+#include "FunctorBase.h"
+
+//#include <iterator>
 
 using namespace std;
 
-template <typename T = char>
+template <typename T>
 class BinTree {
+	typedef NodeB<T>* PointerNodeB;
 public:
-	BinTree() = default;
-	BinTree(const BinTree& a);
-	BinTree(const T& object);
-	BinTree(const T& object, const BinTree& al, const BinTree& ar);
 
-	~BinTree();
-
-	void insert(const T& object);
-	void remove(const T& object);
-	void makeEmpty();
-	bool isFind(const T& object)  const;
-
-	void preOrder() const;
-	void postOrder() const;
-	void inOrder() const;
-
-private:
-	struct nodeB {
-		T obj;
-		nodeB* left;
-		nodeB* right;
+	class Iterator {      // iterator class nested into BinTree
+		friend class BinTree<T>;
 	public:
-		nodeB(const T& object, nodeB* nleft, nodeB* nright) :obj(object), left(nleft), right(nright) {};
-		nodeB(const T& object) :obj(object), left(nullptr), right(nullptr) {};
-		nodeB(const nodeB& n) :obj(n->obj), left(n->left), right(n->right) {};
-
-
+		const T& observe() const throw(TreePositionException) {
+			if (NodePointer == NULL) 
+				throw TreePositionException();
+			return NodePointer->getObj();
+		}
+		bool EmptyTree() const { return NodePointer == NULL; }
+		bool operator!=(const Iterator& i) const { return (NodePointer != i.NodePointer); }
+		bool operator==(const Iterator& i) const { return (NodePointer == i.NodePointer); }
+		int height() const;
+		PointerNodeB getNodePtr() const { return NodePointer; }
+	private:
+		PointerNodeB NodePointer;
+		Iterator(PointerNodeB pointer) { NodePointer = pointer; }
 	};
 
-	nodeB* root;
-	nodeB* clone(const nodeB* bNode);
-	void insert(const T& object, nodeB*& t);
-	void remove(const T& object, nodeB*& t);
-	void makeEmpty(nodeB*& t);
-	bool isFind(const T& object, nodeB* t)  const;
+	//constructors
+	
 
-	void preOrder(nodeB* bNode) const;
-	void postOrder(nodeB* bNode) const;
-	void inOrder(nodeB* bNode) const;
+	BinTree();
+	BinTree(const BinTree& a);
+	BinTree(const T& object);
+	BinTree(const T& object, const BinTree& bintreeleft, const BinTree& bintreeright);
+	BinTree(const PointerNodeB nodepointer);
+
+	//destructor
+	~BinTree();
+
+	BinTree& operator= (const BinTree& bintree) {
+		PointerNodeB nodepointer = clone(bintree.getRootPointer());
+		BinTree bt(bintree.getRootPointer());
+		return bt;
+	};
+	
+	Iterator getRoot() const {return root;};
+
+	Iterator SubRight(const Iterator& r) const throw(TreePositionException) {
+		if (r.NodePointer == NULL)
+			throw TreePositionException();
+		return Iterator(r.NodePointer->getRight());
+	};
+
+	Iterator SubLeft(const Iterator& r) const throw(TreePositionException) {
+		if (r.NodePointer == NULL)
+			throw TreePositionException();
+		return Iterator(r.NodePointer->getLeft());
+	};
+	
+	bool isEmpty() const;
+
+	int height() const { return getRoot().height(); };
+	
+	void insert(const T& object);
+	//void insert(const T& object, PointerNodeB& t);
+
+	const T& getLeftObj() const{
+		return root->getLeft()->getObj();
+	}
+
+	PointerNodeB getLeftPointer() const {
+		return root->getLeft();
+	}
+
+	const T& getRightObj() const {
+		return root->getRight()->getObj();
+	}
+
+	PointerNodeB getRightPointer() const {
+		return root->getRight();
+	}
+
+	PointerNodeB getRootPointer() const {
+		return root;
+	}
+
+	const T& getRootObj() const {
+		return root->getObj();
+	}
+
+	void setRoot(const T& object) {
+		root = new NodeB(object);
+	}
+
+protected:
+	PointerNodeB root;
+	PointerNodeB clone(const PointerNodeB NPointer) {
+		if (NPointer == NULL)
+			return NULL;
+		else
+			return (new NodeB<T>(NPointer->getObj(), clone(NPointer->getLeft()), clone(NPointer->getRight())));
+	};
+
+	void remove(PointerNodeB NPointer) {
+		if (NPointer == NULL)
+			return;
+		else {
+			if (NPointer->getLeft() == NULL && NPointer->getRight() == NULL) {
+				delete NPointer;
+				NPointer == NULL;
+			}
+			else if (NPointer->getLeft() != NULL && NPointer->getRight() != NULL) {
+				remove(NPointer->getLeft());
+				remove(NPointer->getRight());
+			}
+			else if (NPointer->getLeft() != NULL && NPointer->getRight() == NULL)
+				remove(NPointer->getLeft());
+			else if (NPointer->getLeft() == NULL && NPointer->getRight() != NULL)
+				remove(NPointer->getRight());
+			else {
+				//PointerNode oldNode = NPointer;
+				//NPointer = (NPointer->getLeft() != NULL) ? NPointer->getLeft() : NPointer->getRight();
+				//delete oldNode;
+			}
+		}
+	};
 };
 
 //ostream& operator<<(ostream& s, const BinTree& c); //class friend function
 
-/*class Iterator {      // clase iterator anidada dentro de la clase arbin
-		friend class BinTree<T>;
-	public:
-		const T& observe() const throw(TreePositionException)
-		{
-			if (pnode == NULL) throw TreePositionException();
-			return pnode->getObj();
-		}
-		bool EmptyTree() const
-		{
-			return pnode == NULL;
-		}
-		bool operator!=(const Iterator& i) const
-		{
-			return (pnode != i.pnode);
-		}
-		bool operator==(const Iterator& i) const
-		{
-			return (pnode == i.pnode);
-		}
-		//int height() const;
-	private:
-		PtrnodeB pnode;
-		Iterator(PtrnodeB p) { pnode = p; }
-	};*/
 
-	/*template <typename T>
-	NodeB<T>* BinTree<T>::copy(PtrNodeB p) {
-		if p = NULL
-			return NULL;
-		else
-			return new NodoB<T>(p->getObj(), copy(p->getLeft()), copy(p->getRight())
-	}*/
+//constructors
 
-	/*template <typename T>
-	BinTree<T>::BinTree() {
-		//root = new NodeB<T>(object, copy(ai.root), copy(ad.root))
-	}*/
-
-
-	//constructors
+template <typename T>
+BinTree<T>::BinTree() {
+	root = nullptr;
+}
 
 template <typename T>
 BinTree<T>::BinTree(const BinTree& a) {
@@ -106,196 +162,97 @@ BinTree<T>::BinTree(const BinTree& a) {
 
 template< typename T>
 BinTree<T>::BinTree(const T& object) {
-	root = new nodeB(object);
+	root = new NodeB(object);
 	/*root->obj = object;
 	root->left = nullptr;
 	root->right = nullptr;*/
 }
 
 template <typename T>
-BinTree<T>::BinTree(const T& object, const BinTree& al, const BinTree& ar) {
-	root = new nodeB<T>(object, clone(al.root), clone(ar.root));
+BinTree<T>::BinTree(const PointerNodeB nodepointer) {
+	root = nodepointer;
+}
+
+template <typename T>
+BinTree<T>::BinTree(const T& object, const BinTree& bintreeleft, const BinTree& bintreeright) {
+	root = new NodeB<T>(object, clone(bintreeleft.root), clone(bintreeright.root));
 }
 
 //destructor
 
 template <typename T>
 BinTree<T>::~BinTree() {
-	makeEmpty();
+	remove(root);
 }
+
+/*template <class T>
+const T& max(const T& a, const T& b) {
+	return (a < b) ? b : a;     // or: return comp(a,b)?b:a; for version (2)
+}*/
+
+template <typename T>
+int BinTree<T>::Iterator::height() const{
+	if (EmptyTree())
+		return 0;
+	else
+		return 1 + max((Iterator(NodePointer->getLeft()).height()), Iterator(NodePointer->getRight()).height());
+}
+
+template <typename T>
+bool BinTree<T>::isEmpty() const {
+	if (left == NULL && right == NULL)
+		return true;
+	else
+		return false;
+};
 
 template< typename T>
 void BinTree<T>::insert(const T& object) {
-	insert(object, root);
+	queue<typename BinTree<T>::Iterator> queu;
+	typename BinTree<T>::Iterator ic = root;
+	queu.push(ic);
+	PointerNodeB aux = new NodeB<T>(object);
+
+	//Do level order traversal until we find an empty place
+	while (!queu.empty()) {
+		ic = queu.front();
+		PointerNodeB aux2(ic.NodePointer);
+		queu.pop();
+
+		if (aux2->getLeft() == NULL) {
+			aux2->setLeft(aux);
+			break;
+		}
+		else
+			queu.push(aux2->getLeft());
+
+		if (aux2->getRight() == NULL) {
+			aux2->setRight(aux);
+			break;
+		}
+		else
+			queu.push(aux2->getRight());
+
+		//aux2 = NULL;
+		//delete aux2;
+	}
+	//aux = NULL;
+	//delete aux;
+	
+	//insert(object, root);
 }
 
-template< typename T>
-void BinTree<T>::remove(const T& object) {
-	remove(object, root);
-};
-
-template< typename T>
-void BinTree<T>::makeEmpty() {
-	makeEmpty(root);
-};
-
-template< typename T>
-bool BinTree<T>::isFind(const T& object) const {
-	isFind(object, root);
-};
-
-//iteratives
-
-template <typename T>
-typename BinTree<T>::nodeB* BinTree<T>::clone(const nodeB* r) {
-	if (nullptr == r) {
-		return nullptr;
-	}
-	else {
-		return  new nodeB(r->obj, clone(r->left), clone(r->right));
-	}
-};
-
-template< typename T>
-void BinTree<T>::insert(const T& object, nodeB*& t) {
-	if (nullptr == t)
-		t = new nodeB(object);
-	else if (object < t->obj)
-		insert(object, t->left);
-	else if (object > t->obj)
-		insert(object, t->right);
+/*template< typename T>
+void BinTree<T>::insert(const T& object, PointerNodeB& NodePointer) {
+	if (NodePointer == NULL)
+		NodePointer = new NodeB(object);
+	else if (object < NodePointer->getObj)
+		insert(object, NodePointer->getLeft);
+	else if (object > NodePointer->getObj)
+		insert(object, NodePointer->getRight);
 	else  //duplicate data is not inserted
 	{
 	}
-}
-
-template< typename T>
-void BinTree<T>::remove(const T& object, nodeB*& t) {
-	if (nullptr == t)
-		return;
-	else {
-		if (object < t->obj)
-			remove(t->left);
-		else if (object > t->obj)
-			remove(t->right);
-		else if (nullptr != t->left && nullptr != t->right) {
-
-			t->obj = min(t->right)->obj;
-			remove(t->obj, t->right);
-		}
-		else {
-			nodeB* oldNode = t;
-			t = (nullptr != t->left) ? t->left : t->right;
-			delete oldNode;
-		}
-	}
-}
-
-template< typename T>
-void BinTree<T>::makeEmpty(nodeB*& t) {
-	if (nullptr != t) {
-		makeEmpty(t->left);
-		makeEmpty(t->right);
-		//std::cout << "delete: " << t->obj << endl;
-		delete t;
-	}
-	t = nullptr;
-};
-
-template< typename T>
-bool BinTree<T>::isFind(const T& object, nodeB* t) const {
-	if (nullptr == t) {
-		return false;
-	}
-
-	if (object < t->obj)
-		return isFind(object, t->left);
-	else if (object > t->element)
-		return isFind(object, t->right);
-	else
-		return true;
-};
-
-template< typename T>
-void BinTree<T>::preOrder() const {
-	preOrder(root);
-};
-
-template< typename T>
-void BinTree<T>::inOrder() const {
-	inOrder(root);
-};
-
-
-template< typename T>
-void BinTree<T>::postOrder() const {
-	postOrder(root);
-};
-
-template< typename T>
-void BinTree<T>::preOrder(nodeB* bNode) const {
-	if (nullptr != bNode) {
-		std::cout << bNode->obj << " ";
-		preOrder(bNode->left);
-		preOrder(bNode->right);
-	}
-
-};
-
-template< typename T>
-void BinTree<T>::inOrder(nodeB* bNode) const {
-	if (nullptr != bNode) {
-		inOrder(bNode->left);
-		std::cout << bNode->obj << " ";
-		inOrder(bNode->right);
-	}
-};
-
-template< typename T>
-void BinTree<T>::postOrder(nodeB* bNode) const {
-	if (bNode->left != NULL)
-		postOrder(bNode->left);
-	if (bNode->right != NULL)
-		postOrder(bNode->right);
-	std::cout << bNode->obj << " ";
-};
-
-/*
-template <typename T>
-BinTree<T>::BinTree& operator=(const BinTree& a) {
-
-}
-
-template <typename T>
-BinTree<T>::Iterator getRoot() const;
-BinTree<T>::Iterator subLeft(const Iterator& r) const throw(TreePositionException) {
-	if r.pnode == NULL
-		throw TreePositionException();
-	return Iterator(r.pnodo->getLeft());
-};
-BinTree<T>::Iterator subRight(const Iterator& r) const throw(TreePositionException);
-
-bool BinTree<T>::isEmpty() const;
-
-int BinTree<T>::height() const {
-	return getRoot().height();
-};
-
-int BinTree<T>::Iterator::height() const {
-	if isEmpty()
-		return 0;
-	else
-		return 1 + max(Iterator(pnode->getLeft()).height(), Iterator(pnode->getRight());
-}
-
-*/
-
+}*/
 
 #endif
-
-
-
-
-
-
-
