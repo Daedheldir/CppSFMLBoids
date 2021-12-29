@@ -35,6 +35,9 @@ bld/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
+SFMLAdvEngine/[Vv][Tt]une Profiler Results/
+#VTune results
+
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
