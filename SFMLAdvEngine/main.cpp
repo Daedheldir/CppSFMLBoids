@@ -5,8 +5,18 @@
 #include "MultiplicationFunctor.h"
 #include "DivisionFunctor.h"
 #include <vector>
+#include "stdlib.h"
+#include "TestBinTree.h"
 
 int main() {
+
+	cout << "Prueba";
+
+	TestBinTree test;
+
+	test.testBinTree();
+
+	system("pause");
 
 	srand(0);	//seeding with 0 instead of time, so our simulation is deterministic
 

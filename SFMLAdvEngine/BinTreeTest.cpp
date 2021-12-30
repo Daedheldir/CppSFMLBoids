@@ -25,20 +25,6 @@ int randomp(int a) {
 	return i;//(float)i;
 }
 
-void set_xvals(int values) {
-	int* xvals = new int[values];
-	for (int i = 0; i < values; i++) {
-		xvals[i] = i;
-	}
-}
-
-void set_yvals(int values) {
-	int* yvals = new int[values];
-	for (int i = 0; i < values; i++) {
-		yvals[i] = i;
-	}
-}
-
 void BinTreeTest{
 	/*int* xvals = new int[0];
 	int* yvals = new int[0];
