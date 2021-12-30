@@ -30,6 +30,13 @@ void dh::LogicEngine::startLogicThread(const std::function<void()>& updateFunc)
 {
 	logicThreadRunning = true;
 	m_updateThread = std::thread(&dh::LogicEngine::m_logicThread, this, updateFunc);
+
+	DWORD_PTR dw = SetThreadAffinityMask(m_updateThread.native_handle(), DWORD_PTR(1));
+	if (dw == 0)
+	{
+		DWORD dwErr = GetLastError();
+		std::cerr << "SetThreadAffinityMask failed, GLE=" << dwErr << '\n';
+	}
 }
 
 float dh::LogicEngine::GetUpdateElapsedTime() const

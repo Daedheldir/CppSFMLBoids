@@ -17,11 +17,18 @@ public:
 
 		for (auto& neighbourPos : boidsInView)
 		{
+			sf::Vector2f relativeVec = currentBoid.position - neighbourPos->position;
 
-			if (mathAdditions::VectorSqrMagnitude(neighbourPos->position - currentBoid.position) < BoidFlock::SQUARE_NEIGHBOUR_AVOIDANCE_RADIUS)
+			if (std::abs(relativeVec.x) > BoidFlock::SQUARE_BOIDS_VIEW_RANGE
+				|| std::abs(relativeVec.y) > BoidFlock::SQUARE_BOIDS_VIEW_RANGE)
+			{
+				continue;
+			}
+
+			if (mathAdditions::VectorSqrMagnitude(relativeVec) < BoidFlock::SQUARE_NEIGHBOUR_AVOIDANCE_RADIUS)
 			{
 				nAvoid++;
-				avoidanceMove += currentBoid.position - neighbourPos->position;
+				avoidanceMove += relativeVec;
 			}
 		}
 
