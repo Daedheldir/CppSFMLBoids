@@ -1,7 +1,5 @@
 #include <iostream>
-#include "FunctorBase.h" 
-
-using namespace std;
+#include "FunctorBase.h"
 
 class DivisionFunctor : public FunctorBase {
 public:
@@ -10,11 +8,9 @@ public:
 	const std::string var = "DivisionFunctor";
 
 	virtual float operator () (float val1, float val2) {
-		if (val2 == 0) 
+		if (val2 == 0)
 			return 1;
 		else
 			return val1 / val2;
 	}
 };
-
-

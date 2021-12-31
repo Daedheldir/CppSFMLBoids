@@ -1,13 +1,10 @@
 #ifndef _NODEB_H_
 #define _NODEB_H_
 
-
 #include <iostream>
 #include <stdlib.h>
 
 #include "FunctorBase.h"
-
-using namespace std;
 
 template <typename T>
 class NodeB {

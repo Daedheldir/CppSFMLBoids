@@ -4,16 +4,11 @@
 #include <string>
 #include <stdexcept>
 
-using namespace std;
-
-class BinTreeBaseException : public runtime_error
+class BinTreeBaseException : public std::runtime_error
 {
 public:
-	BinTreeBaseException(const string& err) : runtime_error(err) { }
-	string msg() const { return what(); }
+	BinTreeBaseException(const std::string& err) : std::runtime_error(err) { }
+	std::string msg() const { return what(); }
 };
 
 #endif
-
-#pragma once
-

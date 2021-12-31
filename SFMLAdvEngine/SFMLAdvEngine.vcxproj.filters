@@ -126,6 +126,9 @@
     <ClInclude Include="NodeB.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GPPopulationController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LogicEngine.cpp">
@@ -150,6 +153,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="TestBinTree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GPPopulationController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

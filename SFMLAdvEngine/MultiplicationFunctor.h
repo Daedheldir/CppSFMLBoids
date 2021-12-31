@@ -1,6 +1,5 @@
 #include <iostream>
 #include "FunctorBase.h"
-using namespace std;
 
 class MultiplicationFunctor : public FunctorBase {
 public:
@@ -12,5 +11,3 @@ public:
 		return val1 * val2;
 	}
 };
-
-

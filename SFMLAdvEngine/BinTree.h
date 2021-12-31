@@ -14,8 +14,6 @@
 
 //#include <iterator>
 
-using namespace std;
-
 template <typename T>
 class BinTree {
 	typedef NodeB<T>* PointerNodeB;
@@ -25,11 +23,11 @@ public:
 		friend class BinTree<T>;
 	public:
 		const T& observe() const throw(TreePositionException) {
-			if (NodePointer == NULL) 
+			if (NodePointer == nullptr)
 				throw TreePositionException();
 			return NodePointer->getObj();
 		}
-		bool EmptyTree() const { return NodePointer == NULL; }
+		bool EmptyTree() const { return NodePointer == nullptr; }
 		bool operator!=(const Iterator& i) const { return (NodePointer != i.NodePointer); }
 		bool operator==(const Iterator& i) const { return (NodePointer == i.NodePointer); }
 		int height() const;
@@ -40,7 +38,6 @@ public:
 	};
 
 	//constructors
-	
 
 	BinTree();
 	BinTree(const BinTree& a);
@@ -56,29 +53,29 @@ public:
 		BinTree bt(bintree.getRootPointer());
 		return bt;
 	};
-	
-	Iterator getRoot() const {return root;};
+
+	Iterator getRoot() const { return root; };
 
 	Iterator SubRight(const Iterator& r) const throw(TreePositionException) {
-		if (r.NodePointer == NULL)
+		if (r.NodePointer == nullptr)
 			throw TreePositionException();
 		return Iterator(r.NodePointer->getRight());
 	};
 
 	Iterator SubLeft(const Iterator& r) const throw(TreePositionException) {
-		if (r.NodePointer == NULL)
+		if (r.NodePointer == nullptr)
 			throw TreePositionException();
 		return Iterator(r.NodePointer->getLeft());
 	};
-	
+
 	bool isEmpty() const;
 
 	int height() const { return getRoot().height(); };
-	
+
 	void insert(const T& object);
 	//void insert(const T& object, PointerNodeB& t);
 
-	const T& getLeftObj() const{
+	const T& getLeftObj() const {
 		return root->getLeft()->getObj();
 	}
 
@@ -109,31 +106,31 @@ public:
 protected:
 	PointerNodeB root;
 	PointerNodeB clone(const PointerNodeB NPointer) {
-		if (NPointer == NULL)
-			return NULL;
+		if (NPointer == nullptr)
+			return nullptr;
 		else
 			return (new NodeB<T>(NPointer->getObj(), clone(NPointer->getLeft()), clone(NPointer->getRight())));
 	};
 
 	void remove(PointerNodeB NPointer) {
-		if (NPointer == NULL)
+		if (NPointer == nullptr)
 			return;
 		else {
-			if (NPointer->getLeft() == NULL && NPointer->getRight() == NULL) {
+			if (NPointer->getLeft() == nullptr && NPointer->getRight() == nullptr) {
 				delete NPointer;
-				NPointer == NULL;
+				NPointer == nullptr;
 			}
-			else if (NPointer->getLeft() != NULL && NPointer->getRight() != NULL) {
+			else if (NPointer->getLeft() != nullptr && NPointer->getRight() != nullptr) {
 				remove(NPointer->getLeft());
 				remove(NPointer->getRight());
 			}
-			else if (NPointer->getLeft() != NULL && NPointer->getRight() == NULL)
+			else if (NPointer->getLeft() != nullptr && NPointer->getRight() == nullptr)
 				remove(NPointer->getLeft());
-			else if (NPointer->getLeft() == NULL && NPointer->getRight() != NULL)
+			else if (NPointer->getLeft() == nullptr && NPointer->getRight() != nullptr)
 				remove(NPointer->getRight());
 			else {
 				//PointerNode oldNode = NPointer;
-				//NPointer = (NPointer->getLeft() != NULL) ? NPointer->getLeft() : NPointer->getRight();
+				//NPointer = (NPointer->getLeft() != nullptr) ? NPointer->getLeft() : NPointer->getRight();
 				//delete oldNode;
 			}
 		}
@@ -141,7 +138,6 @@ protected:
 };
 
 //ostream& operator<<(ostream& s, const BinTree& c); //class friend function
-
 
 //constructors
 
@@ -164,8 +160,8 @@ template< typename T>
 BinTree<T>::BinTree(const T& object) {
 	root = new NodeB(object);
 	/*root->obj = object;
-	root->left = nullptr;
-	root->right = nullptr;*/
+	root->left = nullptrptr;
+	root->right = nullptrptr;*/
 }
 
 template <typename T>
@@ -191,7 +187,7 @@ const T& max(const T& a, const T& b) {
 }*/
 
 template <typename T>
-int BinTree<T>::Iterator::height() const{
+int BinTree<T>::Iterator::height() const {
 	if (EmptyTree())
 		return 0;
 	else
@@ -200,7 +196,7 @@ int BinTree<T>::Iterator::height() const{
 
 template <typename T>
 bool BinTree<T>::isEmpty() const {
-	if (left == NULL && right == NULL)
+	if (getLeftPointer() == nullptr && getRightPointer() == nullptr)
 		return true;
 	else
 		return false;
@@ -208,7 +204,7 @@ bool BinTree<T>::isEmpty() const {
 
 template< typename T>
 void BinTree<T>::insert(const T& object) {
-	queue<typename BinTree<T>::Iterator> queu;
+	std::queue<typename BinTree<T>::Iterator> queu;
 	typename BinTree<T>::Iterator ic = root;
 	queu.push(ic);
 	PointerNodeB aux = new NodeB<T>(object);
@@ -219,32 +215,32 @@ void BinTree<T>::insert(const T& object) {
 		PointerNodeB aux2(ic.NodePointer);
 		queu.pop();
 
-		if (aux2->getLeft() == NULL) {
+		if (aux2->getLeft() == nullptr) {
 			aux2->setLeft(aux);
 			break;
 		}
 		else
 			queu.push(aux2->getLeft());
 
-		if (aux2->getRight() == NULL) {
+		if (aux2->getRight() == nullptr) {
 			aux2->setRight(aux);
 			break;
 		}
 		else
 			queu.push(aux2->getRight());
 
-		//aux2 = NULL;
+		//aux2 = nullptr;
 		//delete aux2;
 	}
-	//aux = NULL;
+	//aux = nullptr;
 	//delete aux;
-	
+
 	//insert(object, root);
 }
 
 /*template< typename T>
 void BinTree<T>::insert(const T& object, PointerNodeB& NodePointer) {
-	if (NodePointer == NULL)
+	if (NodePointer == nullptr)
 		NodePointer = new NodeB(object);
 	else if (object < NodePointer->getObj)
 		insert(object, NodePointer->getLeft);
