@@ -3,6 +3,18 @@
 #include <iostream>
 
 class FunctorBase {
+public:
+	enum class FunctorTypes {
+		Addition,
+		Subtraction,
+		Division,
+		Multiplication,
+		BitwiseOR,
+		BitwiseAND,
+		Sine,
+		LeftShift
+	};
+	static constexpr int FunctorTypesCount = 8;
 protected:
 	float* val;
 public:

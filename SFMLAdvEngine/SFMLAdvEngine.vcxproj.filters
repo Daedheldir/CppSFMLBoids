@@ -138,6 +138,18 @@
     <ClInclude Include="SubtractionFunctor.h">
       <Filter>Header Files\Functors</Filter>
     </ClInclude>
+    <ClInclude Include="BitwiseANDFunctor.h">
+      <Filter>Header Files\Functors</Filter>
+    </ClInclude>
+    <ClInclude Include="BitwiseORFunctor.h">
+      <Filter>Header Files\Functors</Filter>
+    </ClInclude>
+    <ClInclude Include="SineFunctor.h">
+      <Filter>Header Files\Functors</Filter>
+    </ClInclude>
+    <ClInclude Include="LeftShiftFunctor.h">
+      <Filter>Header Files\Functors</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LogicEngine.cpp">

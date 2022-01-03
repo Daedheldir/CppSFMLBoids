@@ -1,6 +1,7 @@
 #include "GPPopulationController.h"
 #include <numeric>
 #include <filesystem>
+#include <algorithm>
 
 GPPopulationController::GPPopulationController(sf::Image& refImage, const size_t populationsSize, const size_t flockSize, const unsigned int iterationsBetweenEvaluation, const unsigned int totalIterations) :
 	refImage{ refImage },
@@ -12,12 +13,6 @@ GPPopulationController::GPPopulationController(sf::Image& refImage, const size_t
 	//clear folder for evaluation images
 	for (const auto& entry : std::filesystem::directory_iterator("../Data/Evaluations/")) {
 		std::filesystem::remove_all(entry.path());
-	}
-
-	for (int i = 0; i < populations.size(); ++i) {
-		std::cout << "Place of population " + std::to_string(i) + ": " << &populations[i] << std::endl;
-		std::cout << "Place of population " + std::to_string(i) + " first flock member: " << &(populations[i].boidsDataArr[0]) << std::endl;
-		std::cout << "Place of population " + std::to_string(i) + " second flock member: " << &(populations[i].boidsDataArr[1]) << std::endl;
 	}
 
 	threadPool.resize(populationsSize - 1);
@@ -35,6 +30,7 @@ void GPPopulationController::CreatePopulations(const size_t populationsSize, con
 	populations.clear();
 	populations.reserve(populationsSize);
 	populationColors.resize(populationsSize);
+	populationAvailableFunctors.resize(populationsSize);
 	populationCanvases.resize(populationsSize);
 	populationScores.resize(populationsSize);
 	populationBoidScores.resize(populationsSize);
@@ -42,7 +38,33 @@ void GPPopulationController::CreatePopulations(const size_t populationsSize, con
 	for (int i = 0; i < populationsSize; ++i) {
 		populationColors[i].resize(flockSize);
 
-		//boid flocks
+		std::vector<FunctorBase::FunctorTypes> availableElements;
+		for (int j = 0; j < FunctorBase::FunctorTypesCount; ++j) {
+			availableElements.push_back(static_cast<FunctorBase::FunctorTypes>(j));
+		}
+		std::vector<int> selectedElements;
+		for (int j = 0; j < FunctorBase::FunctorTypesCount / 2; ++j) {
+			int randVal = rand() % availableElements.size();
+
+			if (std::find(selectedElements.begin(), selectedElements.end(), randVal) != selectedElements.end()) {
+				//if element was found then try again
+				--j;
+				continue;
+			}
+			selectedElements.push_back(randVal);
+			continue;
+		}
+		for (int j = 0; j < selectedElements.size(); ++j) {
+			populationAvailableFunctors[i].push_back(static_cast<FunctorBase::FunctorTypes>(selectedElements[j]));
+		}
+
+		//		populationAvailableFunctors[i] = { {
+		//				FunctorBase::FunctorTypes::Addition,
+		//				FunctorBase::FunctorTypes::Multiplication,
+		//				FunctorBase::FunctorTypes::Division
+		//} };
+
+				//boid flocks
 		populations.emplace_back(flockSize, std::map<FlockBehaviourTypes, std::shared_ptr<FlockBehaviour>>
 		{
 			{
@@ -143,7 +165,7 @@ void GPPopulationController::EvaluatePopulations(const unsigned int flockIndex)
 		availableParentsIndices.erase(availableParentsIndices.begin() + vectorRowToDeleteIndex);
 
 		//evolve discarded boid color
-		populationColors[i][discardedBoidIndex].Evolve(populationColors[i][randParentIndex]);
+		populationColors[i][discardedBoidIndex].Evolve(populationColors[i][randParentIndex], populationAvailableFunctors[i]);
 
 		//"spawn" boid at its parent position
 		boidsDataArr[discardedBoidIndex].position = boidsDataArr[randParentIndex].position;

@@ -24,6 +24,8 @@
     <ClInclude Include="BinTree.h" />
     <ClInclude Include="BinTreeBaseException.h" />
     <ClInclude Include="BinTreeException.h" />
+    <ClInclude Include="BitwiseANDFunctor.h" />
+    <ClInclude Include="BitwiseORFunctor.h" />
     <ClInclude Include="BoidAgentData.h" />
     <ClInclude Include="BoidFlock.h" />
     <ClInclude Include="BoidsApp.h" />
@@ -36,7 +38,9 @@
     <ClInclude Include="GPColor.h" />
     <ClInclude Include="GPPopulationController.h" />
     <ClInclude Include="GraphicsEngine.h" />
+    <ClInclude Include="LeftShiftFunctor.h" />
     <ClInclude Include="NodeB.h" />
+    <ClInclude Include="SineFunctor.h" />
     <ClInclude Include="SubtractionFunctor.h" />
     <ClInclude Include="TestBinTree.h" />
     <ClInclude Include="LogicEngine.h" />
