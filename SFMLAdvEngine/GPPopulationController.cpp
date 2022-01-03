@@ -43,7 +43,7 @@ void GPPopulationController::CreatePopulations(const size_t populationsSize, con
 			availableElements.push_back(static_cast<FunctorBase::FunctorTypes>(j));
 		}
 		std::vector<int> selectedElements;
-		for (int j = 0; j < FunctorBase::FunctorTypesCount / 2; ++j) {
+		for (int j = 0; j < FunctorBase::FunctorTypesCount; ++j) {
 			int randVal = rand() % availableElements.size();
 
 			if (std::find(selectedElements.begin(), selectedElements.end(), randVal) != selectedElements.end()) {

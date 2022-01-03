@@ -20,7 +20,9 @@ GPColor::GPColor() :
 }
 
 GPColor::GPColor(const std::vector<FunctorBase::FunctorTypes>& availableFunctors) :
-	r{ static_cast<float>(1 + rand() % 255) },
+	randRed{ static_cast<float>(1 + rand() % 255) },
+	randGreen{ static_cast<float>(1 + rand() % 255) },
+	randBlue{ static_cast<float>(1 + rand() % 255) },
 	redTree{ std::make_shared<AdditionFunctor>(), BinTree<std::shared_ptr<FunctorBase>>(), BinTree<std::shared_ptr<FunctorBase>>() },
 	greenTree{ std::make_shared<AdditionFunctor>(), BinTree<std::shared_ptr<FunctorBase>>(), BinTree<std::shared_ptr<FunctorBase>>() },
 	blueTree{ std::make_shared<AdditionFunctor>(), BinTree<std::shared_ptr<FunctorBase>>(), BinTree<std::shared_ptr<FunctorBase>>() }
@@ -28,21 +30,21 @@ GPColor::GPColor(const std::vector<FunctorBase::FunctorTypes>& availableFunctors
 	//(x / y) / r
 	redTree.getRoot().getNodePtr()->setObj(GetRandFunctor(availableFunctors));
 	redTree.insert(GetRandFunctor(availableFunctors));
-	redTree.insert(std::make_shared<FunctorBase>(&r));
+	redTree.insert(std::make_shared<FunctorBase>(&randRed));
 	redTree.insert(std::make_shared<FunctorBase>(&posX));
 	redTree.insert(std::make_shared<FunctorBase>(&posY));
 
 	//(x / y) * r
 	greenTree.getRoot().getNodePtr()->setObj(GetRandFunctor(availableFunctors));
 	greenTree.insert(GetRandFunctor(availableFunctors));
-	greenTree.insert(std::make_shared<FunctorBase>(&r));
+	greenTree.insert(std::make_shared<FunctorBase>(&randGreen));
 	greenTree.insert(std::make_shared<FunctorBase>(&posX));
 	greenTree.insert(std::make_shared<FunctorBase>(&posY));
 
 	//(x * y) / r
 	blueTree.getRoot().getNodePtr()->setObj(GetRandFunctor(availableFunctors));
 	blueTree.insert(GetRandFunctor(availableFunctors));
-	blueTree.insert(std::make_shared<FunctorBase>(&r));
+	blueTree.insert(std::make_shared<FunctorBase>(&randBlue));
 	blueTree.insert(std::make_shared<FunctorBase>(&posX));
 	blueTree.insert(std::make_shared<FunctorBase>(&posY));
 }
@@ -56,7 +58,7 @@ sf::Color GPColor::GetColor(sf::Vector2f position)
 
 	uint8_t green = static_cast<uint8_t>(static_cast<int>(TestBinTree::calculate<std::shared_ptr<FunctorBase>>(greenTree, greenTree.getRoot())) % 256);
 
-	uint8_t blue = static_cast<uint8_t>(static_cast<int>(TestBinTree::calculate<std::shared_ptr<FunctorBase>>(greenTree, greenTree.getRoot())) % 256);
+	uint8_t blue = static_cast<uint8_t>(static_cast<int>(TestBinTree::calculate<std::shared_ptr<FunctorBase>>(blueTree, blueTree.getRoot())) % 256);
 
 	return sf::Color{ red, green, blue };
 }
@@ -74,7 +76,9 @@ void GPColor::Evolve(const GPColor& parentColor, const std::vector<FunctorBase::
 		TestBinTree::getRandFunctorNode(blueTree, blueTree.getRoot())->setObj(GetRandFunctor(availableFunctors));
 
 	//slightly mutate 'r'
-	r = parentColor.r + ((1000 - rand() % 2000) / 200.0f);
+	randRed = parentColor.randRed + ((1000 - rand() % 2000) / 200.0f);
+	randGreen = parentColor.randGreen + ((1000 - rand() % 2000) / 200.0f);
+	randBlue = parentColor.randBlue + ((1000 - rand() % 2000) / 200.0f);
 }
 
 std::shared_ptr<FunctorBase> GPColor::GetRandFunctor(const std::vector<FunctorBase::FunctorTypes>& availableFunctors)

@@ -13,7 +13,9 @@ private:
 public:
 	float posX = 0;
 	float posY = 0;
-	float r = 0;
+	float randRed = 0;
+	float randGreen = 0;
+	float randBlue = 0;
 private:
 	BinTree < std::shared_ptr<FunctorBase>> redTree;
 	BinTree < std::shared_ptr<FunctorBase>> greenTree;
