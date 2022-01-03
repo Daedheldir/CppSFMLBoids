@@ -1,9 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "BinTree.h"
-#include "AdditionFunctor.h"
-#include "DivisionFunctor.h"
-#include "MultiplicationFunctor.h"
 
 class GPColor : protected sf::Color {
 public:

@@ -37,6 +37,7 @@
     <ClInclude Include="GPPopulationController.h" />
     <ClInclude Include="GraphicsEngine.h" />
     <ClInclude Include="NodeB.h" />
+    <ClInclude Include="SubtractionFunctor.h" />
     <ClInclude Include="TestBinTree.h" />
     <ClInclude Include="LogicEngine.h" />
     <ClInclude Include="MathAdditions.h" />

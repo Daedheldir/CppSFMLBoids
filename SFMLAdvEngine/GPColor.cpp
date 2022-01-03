@@ -1,26 +1,34 @@
 #include "GPColor.h"
 #include "TestBinTree.h"
 
+#include "AdditionFunctor.h"
+#include "DivisionFunctor.h"
+#include "MultiplicationFunctor.h"
+#include "SubtractionFunctor.h"
+
 GPColor::GPColor() :
 	r{ static_cast<float>(1 + rand() % 255) },
-	redTree{ std::make_shared<DivisionFunctor>(), BinTree<std::shared_ptr<FunctorBase>>(), BinTree<std::shared_ptr<FunctorBase>>() },
-	greenTree{ std::make_shared<MultiplicationFunctor>(), BinTree<std::shared_ptr<FunctorBase>>(), BinTree<std::shared_ptr<FunctorBase>>() },
-	blueTree{ std::make_shared<DivisionFunctor>(), BinTree<std::shared_ptr<FunctorBase>>(), BinTree<std::shared_ptr<FunctorBase>>() }
+	redTree{ std::make_shared<FunctorBase>(nullptr), BinTree<std::shared_ptr<FunctorBase>>(), BinTree<std::shared_ptr<FunctorBase>>() },
+	greenTree{ std::make_shared<FunctorBase>(nullptr), BinTree<std::shared_ptr<FunctorBase>>(), BinTree<std::shared_ptr<FunctorBase>>() },
+	blueTree{ std::make_shared<FunctorBase>(nullptr), BinTree<std::shared_ptr<FunctorBase>>(), BinTree<std::shared_ptr<FunctorBase>>() }
 {
-	//(x + y) / r
+	//(x / y) / r
+	redTree.getRoot().getNodePtr()->setObj(std::make_shared<DivisionFunctor>());
 	redTree.insert(std::make_shared<DivisionFunctor>());
 	redTree.insert(std::make_shared<FunctorBase>(&r));
 	redTree.insert(std::make_shared<FunctorBase>(&posX));
 	redTree.insert(std::make_shared<FunctorBase>(&posY));
 
 	//(x / y) * r
-	greenTree.insert(std::make_shared<DivisionFunctor>());
+	greenTree.getRoot().getNodePtr()->setObj(std::make_shared<AdditionFunctor>());
+	greenTree.insert(std::make_shared<SubtractionFunctor>());
 	greenTree.insert(std::make_shared<FunctorBase>(&r));
 	greenTree.insert(std::make_shared<FunctorBase>(&posX));
 	greenTree.insert(std::make_shared<FunctorBase>(&posY));
 
 	//(x * y) / r
-	blueTree.insert(std::make_shared<MultiplicationFunctor>());
+	blueTree.getRoot().getNodePtr()->setObj(std::make_shared<AdditionFunctor>());
+	blueTree.insert(std::make_shared<AdditionFunctor>());
 	blueTree.insert(std::make_shared<FunctorBase>(&r));
 	blueTree.insert(std::make_shared<FunctorBase>(&posX));
 	blueTree.insert(std::make_shared<FunctorBase>(&posY));
@@ -58,7 +66,7 @@ void GPColor::Evolve(const GPColor& parentColor)
 
 std::shared_ptr<FunctorBase> GPColor::GetRandFunctor()
 {
-	int choice = rand() % 3;
+	int choice = rand() % 4;
 
 	switch (choice)
 	{
@@ -73,6 +81,10 @@ std::shared_ptr<FunctorBase> GPColor::GetRandFunctor()
 	case 2:
 	{
 		return std::make_shared<DivisionFunctor>();
+	}
+	case 3:
+	{
+		return std::make_shared<SubtractionFunctor>();
 	}
 	}
 }
