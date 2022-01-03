@@ -4,22 +4,17 @@
 
 class FunctorBase {
 protected:
-	float val;
+	float* val;
 public:
-	FunctorBase() : val{ 0 } {};
-	FunctorBase(float val2) :val{ val2 } {};
+	FunctorBase(float* val2) :val{ val2 } {};
+	virtual ~FunctorBase() {};
 	const std::string var = "FunctorBase";
 
-	virtual float operator () (float val1, float val2) {
-		return val;
-
+	virtual float operator ()(float val1, float val2) const {
+		return getVal();
 	}
 
-	virtual float getVal() {
-		return val;
+	virtual float getVal() const {
+		return (val == nullptr) ? 0 : *val;
 	}
-
-
 };
-
-

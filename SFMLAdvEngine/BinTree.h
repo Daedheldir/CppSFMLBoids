@@ -16,13 +16,13 @@
 
 template <typename T>
 class BinTree {
-	typedef NodeB<T>* PointerNodeB;
+	typedef std::shared_ptr<NodeB<T>> PointerNodeB;
 public:
 
 	class Iterator {      // iterator class nested into BinTree
 		friend class BinTree<T>;
 	public:
-		const T& observe() const throw(TreePositionException) {
+		const T& observe() const {
 			if (NodePointer == nullptr)
 				throw TreePositionException();
 			return NodePointer->getObj();
@@ -56,13 +56,13 @@ public:
 
 	Iterator getRoot() const { return root; };
 
-	Iterator SubRight(const Iterator& r) const throw(TreePositionException) {
+	Iterator SubRight(const Iterator& r) const {
 		if (r.NodePointer == nullptr)
 			throw TreePositionException();
 		return Iterator(r.NodePointer->getRight());
 	};
 
-	Iterator SubLeft(const Iterator& r) const throw(TreePositionException) {
+	Iterator SubLeft(const Iterator& r) const {
 		if (r.NodePointer == nullptr)
 			throw TreePositionException();
 		return Iterator(r.NodePointer->getLeft());
@@ -100,7 +100,7 @@ public:
 	}
 
 	void setRoot(const T& object) {
-		root = new NodeB(object);
+		root = std::make_shared<NodeB<T>>(object);
 	}
 
 protected:
@@ -109,30 +109,7 @@ protected:
 		if (NPointer == nullptr)
 			return nullptr;
 		else
-			return (new NodeB<T>(NPointer->getObj(), clone(NPointer->getLeft()), clone(NPointer->getRight())));
-	};
-
-	void remove(PointerNodeB NPointer) {
-		if (NPointer == nullptr)
-			return;
-
-		if (NPointer->getLeft() == nullptr && NPointer->getRight() == nullptr) {
-			delete NPointer;
-			NPointer == nullptr;
-		}
-		else if (NPointer->getLeft() != nullptr && NPointer->getRight() != nullptr) {
-			remove(NPointer->getLeft());
-			remove(NPointer->getRight());
-		}
-		else if (NPointer->getLeft() != nullptr && NPointer->getRight() == nullptr)
-			remove(NPointer->getLeft());
-		else if (NPointer->getLeft() == nullptr && NPointer->getRight() != nullptr)
-			remove(NPointer->getRight());
-		else {
-			//PointerNode oldNode = NPointer;
-			//NPointer = (NPointer->getLeft() != nullptr) ? NPointer->getLeft() : NPointer->getRight();
-			//delete oldNode;
-		}
+			return std::make_shared<NodeB<T>>(NPointer->getObj(), clone(NPointer->getLeft()), clone(NPointer->getRight()));
 	};
 };
 
@@ -157,7 +134,7 @@ BinTree<T>::BinTree(const BinTree& a) {
 
 template< typename T>
 BinTree<T>::BinTree(const T& object) {
-	root = new NodeB(object);
+	root = std::make_shared<NodeB<T>>(object);
 	/*root->obj = object;
 	root->left = nullptrptr;
 	root->right = nullptrptr;*/
@@ -170,20 +147,14 @@ BinTree<T>::BinTree(const PointerNodeB nodepointer) {
 
 template <typename T>
 BinTree<T>::BinTree(const T& object, const BinTree& bintreeleft, const BinTree& bintreeright) {
-	root = new NodeB<T>(object, clone(bintreeleft.root), clone(bintreeright.root));
+	root = std::make_shared<NodeB<T>>(object, clone(bintreeleft.root), clone(bintreeright.root));
 }
 
 //destructor
 
 template <typename T>
 BinTree<T>::~BinTree() {
-	remove(root);
 }
-
-/*template <class T>
-const T& max(const T& a, const T& b) {
-	return (a < b) ? b : a;     // or: return comp(a,b)?b:a; for version (2)
-}*/
 
 template <typename T>
 int BinTree<T>::Iterator::height() const {
@@ -206,7 +177,7 @@ void BinTree<T>::insert(const T& object) {
 	std::queue<typename BinTree<T>::Iterator> queu;
 	typename BinTree<T>::Iterator ic = root;
 	queu.push(ic);
-	PointerNodeB aux = new NodeB<T>(object);
+	PointerNodeB aux = std::make_shared<NodeB<T>>(object);
 
 	//Do level order traversal until we find an empty place
 	while (!queu.empty()) {

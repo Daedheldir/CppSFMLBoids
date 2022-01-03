@@ -5,11 +5,10 @@
 
 class MultiplicationFunctor : public FunctorBase {
 public:
-	MultiplicationFunctor() {};
-	MultiplicationFunctor(float val2) : FunctorBase{ val2 } {};
+	MultiplicationFunctor() : FunctorBase(nullptr) {};
 	const std::string var = "MultiplicationFunctor";
 
-	virtual float operator () (float val1, float val2) {
+	virtual float operator () (float val1, float val2) const {
 		return val1 * val2;
 	}
 };

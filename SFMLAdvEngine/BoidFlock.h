@@ -37,7 +37,7 @@ private:
 
 	template<>
 	void GetBoidsInView<NeighbourFindingMethod::BruteForce>(const BoidAgentData& boid, std::vector<BoidAgentData*>& boidsInView) {
-		boidsInView.reserve(std::round(boidsDataArr.size() * 0.8));
+		boidsInView.reserve(static_cast<size_t>(std::round(boidsDataArr.size() * 0.8)));
 
 		for (auto& neighbour : boidsDataArr) {
 			if (&neighbour == &boid) {
@@ -55,13 +55,12 @@ private:
 			{
 				boidsInView.emplace_back(&neighbour);
 			}
-
 		}
 	};
 
 	template<>
 	void GetBoidsInView<NeighbourFindingMethod::Quadtree>(const BoidAgentData& boid, std::vector<BoidAgentData*>& boidsInView) {
-		boidsInView.reserve(std::round(boidsDataArr.size() * 0.8));
+		boidsInView.reserve(static_cast<size_t>(std::round(boidsDataArr.size() * 0.8)));
 		boidsQuadtree.queryRange(boid.position, { sqrt(SQUARE_BOIDS_VIEW_RANGE), sqrt(SQUARE_BOIDS_VIEW_RANGE) }, boidsInView);
 	};
 public:
@@ -84,5 +83,3 @@ public:
 	std::map<FlockBehaviourTypes, std::shared_ptr<FlockBehaviour>> flockBehaviours;
 	sf::VertexArray boidsVerticesArr;
 };
-
-

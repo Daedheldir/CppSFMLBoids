@@ -69,8 +69,6 @@ void GPPopulationController::CreatePopulations(const size_t populationsSize, con
 	}
 }
 
-
-
 const BoidFlock& GPPopulationController::GetBestPopulation() const
 {
 	return populations[bestPopulationIndex];
@@ -89,8 +87,8 @@ void GPPopulationController::UpdatePopulations(const unsigned int flockIndex)
 		boid.color = populationColors[i][j].GetColor(boid.position);
 
 		//compare colors with ref image
-		sf::Color imageColor = refImage.getPixel(std::floorl(boid.position.x), std::floorl(boid.position.y));
-		sf::Color currentColor = populationCanvases[i].getPixel(std::floorl(boid.position.x), std::floorl(boid.position.y));
+		sf::Color imageColor = refImage.getPixel(static_cast<unsigned int>(std::floorl(boid.position.x)), static_cast<unsigned int>(std::floorl(boid.position.y)));
+		sf::Color currentColor = populationCanvases[i].getPixel(static_cast<unsigned int>(std::floorl(boid.position.x)), static_cast<unsigned int>(std::floorl(boid.position.y)));
 
 		int currentDiff = std::abs(imageColor.r - currentColor.r) + std::abs(imageColor.g - currentColor.g) + std::abs(imageColor.b - currentColor.b);
 		int boidDiff = std::abs(imageColor.r - boid.color.r) + std::abs(imageColor.g - boid.color.g) + std::abs(imageColor.b - boid.color.b);
@@ -99,7 +97,7 @@ void GPPopulationController::UpdatePopulations(const unsigned int flockIndex)
 			//deposit boid color
 			//for drawing on render texture boid alpha to 255 else to 0
 			boid.color.a = 255;
-			populationCanvases[i].setPixel(std::floorl(boid.position.x), std::floorl(boid.position.y), boid.color);
+			populationCanvases[i].setPixel(static_cast<unsigned int>(std::floorl(boid.position.x)), static_cast<unsigned int>(std::floorl(boid.position.y)), boid.color);
 			populationBoidScores[i][j].second += 1;
 		}
 		else {
@@ -108,7 +106,6 @@ void GPPopulationController::UpdatePopulations(const unsigned int flockIndex)
 		populations[i].boidsVerticesArr[j].color = boid.color;
 	}
 }
-
 
 void GPPopulationController::EvaluatePopulations(const unsigned int flockIndex)
 {
@@ -128,11 +125,11 @@ void GPPopulationController::EvaluatePopulations(const unsigned int flockIndex)
 	//evolve spawn new boids in place of discarded ones
 
 	auto& boidsDataArr = populations[i].boidsDataArr;
-	const unsigned int discardedBoidsPivot = std::round(boidDiscardPercentage * (populations[i].boidsDataArr.size() - 1));
+	const unsigned int discardedBoidsPivot = static_cast<unsigned int>(std::round(boidDiscardPercentage * (populations[i].boidsDataArr.size() - 1)));
 
 	std::vector<unsigned int> availableParentsIndices(boidsDataArr.size() - discardedBoidsPivot);
 
-	for (int j = 0; j < discardedBoidsPivot; ++j) {
+	for (unsigned int j = 0; j < discardedBoidsPivot; ++j) {
 		availableParentsIndices[j] = (populationBoidScores[i][j].first);
 	}
 
@@ -146,14 +143,13 @@ void GPPopulationController::EvaluatePopulations(const unsigned int flockIndex)
 		availableParentsIndices.erase(availableParentsIndices.begin() + vectorRowToDeleteIndex);
 
 		//evolve discarded boid color
-		populationColors[i][discardedBoidIndex].r = populationColors[i][randParentIndex].r + (5 - rand() % 10);
+		populationColors[i][discardedBoidIndex].Evolve(populationColors[i][randParentIndex]);
 
 		//"spawn" boid at its parent position
 		boidsDataArr[discardedBoidIndex].position = boidsDataArr[randParentIndex].position;
 		//set boid color to invisible so it isn't visible until its new color is calculated
 		boidsDataArr[discardedBoidIndex].color = sf::Color::Transparent;
 	}
-
 
 	//reset all boid scores for new evolution iteration
 	std::for_each(populationBoidScores[i].begin(), populationBoidScores[i].end(), [](auto& pair)->void {pair.second = 0; });
@@ -175,5 +171,4 @@ void GPPopulationController::SaveEvaluationImage(const unsigned int flockIndex, 
 		+ "_iter" + std::to_string(iterationsCounter)
 		+ additionalFileText
 		+ ".jpg");
-
 }

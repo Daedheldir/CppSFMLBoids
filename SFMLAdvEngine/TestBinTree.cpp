@@ -21,24 +21,14 @@
 
 using namespace std;
 
-typedef NodeB<FunctorBase*>* PointerNodeB;
-
-int random(int a) {
-	int i = rand() % a; /* A random integer between 1 and 10 */;
-	return i;
-}
-
-float randomp(int a) {
-	float i = rand() % a + 1; /* A random integer between 1 and 10 */;
-	return i;//(float)i;
-}
+typedef NodeB<std::shared_ptr<FunctorBase>>* PointerNodeB;
 
 template <typename T>
 void inorder(const BinTree<T>& bintree, const typename BinTree<T>::Iterator& it) {
 	if (!it.EmptyTree()) {
 		inorder(bintree, bintree.SubLeft(it));
 		//cout <<  << " ";
-		FunctorBase* base = it.observe();
+		T base = it.observe();
 		cout << base->getVal() << " ";
 		inorder(bintree, bintree.SubRight(it));
 	}
@@ -48,7 +38,7 @@ template <typename T>
 void preorder(const BinTree<T>& bintree, const typename BinTree<T>::Iterator& it) {
 	if (!it.EmptyTree()) {
 		//cout <<  << " ";
-		FunctorBase* base = it.observe();
+		T base = it.observe();
 		cout << base->getVal() << " ";
 		preorder(bintree, bintree.SubLeft(it));
 		preorder(bintree, bintree.SubRight(it));
@@ -61,7 +51,7 @@ void postorder(const BinTree<T>& bintree, const typename BinTree<T>::Iterator& i
 		postorder(bintree, bintree.SubLeft(it));
 		postorder(bintree, bintree.SubRight(it));
 		//cout <<  << " ";
-		FunctorBase* base = it.observe();
+		T base = it.observe();
 		cout << base->getVal() << " ";
 	}
 }
@@ -237,7 +227,7 @@ bool hasChildNodes(const BinTree<T>& bintree, const typename BinTree<T>::Iterato
 template <typename T>
 float calculatewithpointer(const BinTree<T>& bintree) {
 	float result = 0;
-	//typedef NodeB<FunctorBase*>* PointerNodeB;
+	//typedef NodeB<T>* PointerNodeB;
 
 	while (!bintree.isEmpty()) {
 		//BinTree<float> testsubtree = get2nodesSubTree(bintree);
@@ -280,45 +270,25 @@ float calculatewithpointer(const BinTree<T>& bintree) {
 //template <typename T>
 void TestBinTree::testBinTree() {
 	//craeting tree
-	//typedef NodeB<FunctorBase*>* PtrNodeB;
-	typedef FunctorBase* FunctorBasePtr;
-
-	FunctorBasePtr a(new FunctorBase(1));
+	//typedef NodeB<T>* PtrNodeB;
+	typedef std::shared_ptr<FunctorBase> FunctorBasePtr;
+	float af = 1;
+	float bf = 2;
+	float cf = 3;
+	float df = 0;
+	FunctorBasePtr a(new FunctorBase(&af));
 	FunctorBasePtr add_ab(new AdditionFunctor());
-	FunctorBasePtr b(new FunctorBase(2));
+	FunctorBasePtr b(new FunctorBase(&bf));
 	FunctorBasePtr add_ab_cd(new MultiplicationFunctor());
-	FunctorBasePtr c(new FunctorBase(3));
+	FunctorBasePtr c(new FunctorBase(&cf));
 	FunctorBasePtr add_cd(new DivisionFunctor());
-	FunctorBasePtr d(new FunctorBase(0));
+	FunctorBasePtr d(new FunctorBase(&df));
 
 	//                add_ab_cd
 	//                /        \
     //            add_ab      add_cd
 	//           /      \    /      \
     //          a       b    c      d
-
-	/*PointerNodeB node_add_ab_cd = new NodeB();
-	node_add_ab_cd->setObj(add_ab_cd);
-
-	PointerNodeB node_add_ab = new NodeB();
-	node_add_ab.setRoot(add_ab_cd);
-	node_add_ab->setObj(add_ab);
-	PointerNodeB node_a = new NodeB();
-	node_a.setRoot(node_add_ab);
-	node_a->setObj(a);
-	PointerNodeB node_b = new NodeB();
-	node_b.setRoot(node_add_ab);
-	node_b->setObj(b);
-
-	PointerNodeB node_add_cd = new NodeB();
-	node_add_cd.setRoot(add_ab_cd);
-	node_add_cd->setObj(add_ab);
-	PointerNodeB node_c = new NodeB();
-	node_c.setRoot(node_add_cd);
-	node_c->setObj(c);
-	PointerNodeB node_d = new NodeB();
-	node_d.setRoot(node_add_cd);
-	node_d->setObj(d);*/
 
 	BinTree<FunctorBasePtr> test1(add_ab_cd, BinTree<FunctorBasePtr>(), BinTree<FunctorBasePtr>());
 	test1.insert(add_ab);
@@ -343,7 +313,7 @@ void TestBinTree::testBinTree() {
 
 	system("cls");
 
-	cout << "Calculation:" << endl << TestBinTree::calculate<FunctorBase*>(test1, test1.getRoot());
+	cout << "Calculation:" << endl << TestBinTree::calculate(test1, test1.getRoot());
 
 	cout << endl << "End calculation";
 

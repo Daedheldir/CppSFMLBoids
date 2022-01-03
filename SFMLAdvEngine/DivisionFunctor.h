@@ -5,11 +5,11 @@
 
 class DivisionFunctor : public FunctorBase {
 public:
-	DivisionFunctor() {};
-	DivisionFunctor(float val2) :FunctorBase{ val2 } {};
+	DivisionFunctor() :FunctorBase(nullptr) {};
+
 	const std::string var = "DivisionFunctor";
 
-	virtual float operator () (float val1, float val2) {
+	virtual float operator () (float val1, float val2) const {
 		if (val2 == 0)
 			return 1;
 		else

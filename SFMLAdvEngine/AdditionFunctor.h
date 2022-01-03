@@ -5,11 +5,10 @@
 
 class AdditionFunctor : public FunctorBase {
 public:
-	AdditionFunctor() {};
-	AdditionFunctor(float val2) :FunctorBase{ val2 } {};
+	AdditionFunctor() : FunctorBase{ nullptr } {};
 	const std::string var = "AdditionFunctor";
 
-	virtual float operator () (float val1, float val2) {
+	virtual float operator () (float val1, float val2) const {
 		return val1 + val2;
 	}
 };
