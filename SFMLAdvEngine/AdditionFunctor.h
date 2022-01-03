@@ -1,3 +1,5 @@
+#pragma once
+
 #include <iostream>
 #include "FunctorBase.h"
 
@@ -11,4 +13,3 @@ public:
 		return val1 + val2;
 	}
 };
-

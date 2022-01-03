@@ -46,6 +46,9 @@
     <Filter Include="Header Files\Boids\FlockBehaviours">
       <UniqueIdentifier>{e21bc6b7-4ed4-4f6c-9e63-0f76667261ef}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Functors">
+      <UniqueIdentifier>{4ce4e750-e3df-4c98-91e5-3aab4f03bd32}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GraphicsEngine.h">
@@ -102,19 +105,7 @@
     <ClInclude Include="BinTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AdditionFunctor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MultiplicationFunctor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="FunctorBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TestBinTree.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DivisionFunctor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BinTreeException.h">
@@ -128,6 +119,21 @@
     </ClInclude>
     <ClInclude Include="GPPopulationController.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GPColor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AdditionFunctor.h">
+      <Filter>Header Files\Functors</Filter>
+    </ClInclude>
+    <ClInclude Include="DivisionFunctor.h">
+      <Filter>Header Files\Functors</Filter>
+    </ClInclude>
+    <ClInclude Include="FunctorBase.h">
+      <Filter>Header Files\Functors</Filter>
+    </ClInclude>
+    <ClInclude Include="MultiplicationFunctor.h">
+      <Filter>Header Files\Functors</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -156,6 +162,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GPPopulationController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GPColor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

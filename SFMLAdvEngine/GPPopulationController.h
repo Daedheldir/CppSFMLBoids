@@ -1,6 +1,6 @@
 #pragma once
 #include "BoidFlock.h"
-#include "BinTree.h"
+#include "GPColor.h"
 #include "FunctorBase.h"
 #include "AlignmentBehaviour.h"
 #include "CohesionBehaviour.h"
@@ -32,26 +32,6 @@
 //uint8_t green = static_cast<uint8_t>(static_cast<int>(posX / posY * r) % 256);
 //uint8_t blue = static_cast<uint8_t>(static_cast<int>(posX * posY / r) % 256);
 
-class GPColor : protected sf::Color {
-public:
-	GPColor() : r{ static_cast<float>(1 + rand() % 255) } {};
-	sf::Color GetColor(sf::Vector2f position) {
-		posX = position.x;
-		posY = position.y;
-
-		uint8_t red = static_cast<uint8_t>(static_cast<int>(posX / posY / r) % 256);
-		uint8_t green = static_cast<uint8_t>(static_cast<int>(posX / posY * r) % 256);
-		uint8_t blue = static_cast<uint8_t>(static_cast<int>(posX * posY / r) % 256);
-
-		return sf::Color{ red, green, blue };
-	}
-	float posX = 0;
-	float posY = 0;
-	float r = 0;
-	//BinTree < std::shared_ptr<FunctorBase>> redTree;
-	//BinTree < std::shared_ptr<FunctorBase>> greenTree;
-	//BinTree < std::shared_ptr<FunctorBase>> blueTree;
-};
 class GPPopulationController
 {
 public:

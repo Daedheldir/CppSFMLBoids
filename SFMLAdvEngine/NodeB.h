@@ -14,6 +14,10 @@ public:
 	NodeB(const T& object, PointerNodeB nleft, PointerNodeB nright) :obj(object), left(nleft), right(nright) {};
 	NodeB(const T& object) :obj(object), left(nullptr), right(nullptr) {};
 	NodeB(const NodeB& n) :obj(n.obj), left(n.left), right(n.right) {};
+	~NodeB() {
+		if (left != nullptr) delete left;
+		if (right != nullptr) delete right;
+	}
 	const T& getObj() const { return obj; };
 	PointerNodeB getLeft() const { return left; };
 	PointerNodeB getRight() const { return right; };

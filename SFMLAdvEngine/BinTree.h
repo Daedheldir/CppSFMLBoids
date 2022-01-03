@@ -115,24 +115,23 @@ protected:
 	void remove(PointerNodeB NPointer) {
 		if (NPointer == nullptr)
 			return;
+
+		if (NPointer->getLeft() == nullptr && NPointer->getRight() == nullptr) {
+			delete NPointer;
+			NPointer == nullptr;
+		}
+		else if (NPointer->getLeft() != nullptr && NPointer->getRight() != nullptr) {
+			remove(NPointer->getLeft());
+			remove(NPointer->getRight());
+		}
+		else if (NPointer->getLeft() != nullptr && NPointer->getRight() == nullptr)
+			remove(NPointer->getLeft());
+		else if (NPointer->getLeft() == nullptr && NPointer->getRight() != nullptr)
+			remove(NPointer->getRight());
 		else {
-			if (NPointer->getLeft() == nullptr && NPointer->getRight() == nullptr) {
-				delete NPointer;
-				NPointer == nullptr;
-			}
-			else if (NPointer->getLeft() != nullptr && NPointer->getRight() != nullptr) {
-				remove(NPointer->getLeft());
-				remove(NPointer->getRight());
-			}
-			else if (NPointer->getLeft() != nullptr && NPointer->getRight() == nullptr)
-				remove(NPointer->getLeft());
-			else if (NPointer->getLeft() == nullptr && NPointer->getRight() != nullptr)
-				remove(NPointer->getRight());
-			else {
-				//PointerNode oldNode = NPointer;
-				//NPointer = (NPointer->getLeft() != nullptr) ? NPointer->getLeft() : NPointer->getRight();
-				//delete oldNode;
-			}
+			//PointerNode oldNode = NPointer;
+			//NPointer = (NPointer->getLeft() != nullptr) ? NPointer->getLeft() : NPointer->getRight();
+			//delete oldNode;
 		}
 	};
 };

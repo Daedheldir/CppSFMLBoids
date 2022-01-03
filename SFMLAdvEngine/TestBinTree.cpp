@@ -19,7 +19,6 @@
 #include "MultiplicationFunctor.h"
 #include "DivisionFunctor.h"
 
-
 using namespace std;
 
 typedef NodeB<FunctorBase*>* PointerNodeB;
@@ -100,7 +99,7 @@ const BinTree<T>* get2nodesSubTree(const BinTree<T>& bintree, const typename Bin
 	//from here at least the root is not empty
 	else if (bintree.SubLeft(iterator).EmptyTree() && bintree.SubRight(iterator).EmptyTree())//case 1: there is root but not subleft or subright
 		return new BinTree<T>(iterator.observe()); //returns a tree with just the root which means that it will be a int value >0 (negatives == operators)
-	else if(!bintree.SubLeft(iterator).EmptyTree() && bintree.SubRight(iterator).EmptyTree()) //case 2: root == operator and left so left passes to be the root of that subtree
+	else if (!bintree.SubLeft(iterator).EmptyTree() && bintree.SubRight(iterator).EmptyTree()) //case 2: root == operator and left so left passes to be the root of that subtree
 		return new BinTree<T>(bintree.SubLeft(iterator).observe());
 	else if (bintree.SubLeft(iterator).EmptyTree() && !bintree.SubRight(iterator).EmptyTree()) //case 3: same as case 2 but with right
 		return new BinTree<T>(bintree.SubRight(iterator).observe());
@@ -114,11 +113,11 @@ const BinTree<T>* get2nodesSubTree(const BinTree<T>& bintree, const typename Bin
 			return get2nodesSubTree(bintree, bintree.SubRight(iterator));
 	}
 
-		//return new BinTree<T>(iterator.observe(), iterator.getLeft(), iterator.getRight());
-			/*
-			*get3nodesSubTree(bintree, bintree.SubLeft(iterator)),
-			*get3nodesSubTree(bintree, bintree.SubRight(iterator)));
-			*/
+	//return new BinTree<T>(iterator.observe(), iterator.getLeft(), iterator.getRight());
+		/*
+		*get3nodesSubTree(bintree, bintree.SubLeft(iterator)),
+		*get3nodesSubTree(bintree, bintree.SubRight(iterator)));
+		*/
 }
 
 /*template <typename T>
@@ -150,10 +149,9 @@ const PointerNodeB* get2nodesSubTreePointer(const BinTree<T>& bintree, const typ
 	}
 
 	//return new BinTree<T>(iterator.observe(), iterator.getLeft(), iterator.getRight());
-		
+
 		//get3nodesSubTree(bintree, bintree.SubLeft(iterator)),
 		//get3nodesSubTree(bintree, bintree.SubRight(iterator)));
-		
 }*/
 
 template <typename T>
@@ -177,17 +175,15 @@ int functor(const BinTree<T>& bintree) {
 float calculate(const BinTree<T>& bintree) {
 	float result=0;
 	typedef NodeB<float>* PointerNodeB;
-	
+
 	while (!bintree.isEmpty()) {
 		BinTree<float> testsubtree = get2nodesSubTree(bintree);
 		//PointerNodeB testsubtree = get2nodesSubTreePointer(bintree);;
 		int NodeValue = testsubtree.getRoot().observe(); //test2.getRoot().observe();
 
-
 		if (NodeValue > 0) { //it means its not an operator
 			cout << endl << "BinTree has finished with value: " << bintree.getRoot().observe() << endl;
 			system("pause");
-
 		}
 		else if (NodeValue == -1) { // +
 			AdditionFunctor add;
@@ -210,7 +206,6 @@ float calculate(const BinTree<T>& bintree) {
 			testsubtree.setRoot(result);
 		}
 
-
 		cout << endl;
 		system("pause");
 
@@ -229,44 +224,6 @@ const T& calculate(const BinTree<T>& bintree) {
 	return bintree.getRootObj();
 }*/
 
-template <typename T>
-float calculate(const BinTree<T>& bintree, const typename BinTree<T>::Iterator& iterator) {
-	//typedef NodeB<FunctorBase*>* PointerNode;
-	//typedef FunctorBase* FunctorBasePtr;
-	
-	PointerNodeB rootpointer = iterator.getNodePtr(); //bintree.getRootPointer();
-	if (hasChildNodes(rootpointer) && !iterator.EmptyTree()) {
-		/*FunctorBase* rght = new FunctorBase(calculate(bintree, bintree.SubRight(iterator)));
-		//PointerNodeB right(rght);
-		bintree.getRootPointer()->setRight(new NodeB<FunctorBase*>{ rght });
-
-		FunctorBase* lft = new FunctorBase(calculate(bintree, bintree.SubLeft(iterator)));
-		//PointerNodeB left(lft);
-		bintree.getRootPointer()->setLeft(new NodeB<FunctorBase*>{ lft });*/
-		FunctorBase* FunctorPtr = rootpointer->getObj();
-		float leftval = calculate(bintree, bintree.SubLeft(iterator));
-		float rightval = calculate(bintree, bintree.SubRight(iterator));
-		float val = (*FunctorPtr)(leftval,rightval);
-
-		return val;
-	}
-
-	FunctorBase* base = iterator.observe(); //bintree.getRootObj();
-	float val = base->getVal();
-	return val;
-}
-
-bool hasChildNodes(PointerNodeB NodePointer) { //1
-	if (NodePointer->getLeft() != nullptr && NodePointer->getRight() != nullptr)
-		if ((NodePointer->getLeft()->getLeft() == nullptr && NodePointer->getLeft()->getRight() == nullptr ) && 
-			((NodePointer->getRight()->getLeft() == nullptr) && NodePointer->getRight()->getRight() == nullptr))
-			return true;
-		else
-			return hasChildNodes(NodePointer->getLeft()) || hasChildNodes(NodePointer->getRight());
-	else
-		return false;
-}
-
 /*template <typename T>
 bool hasChildNodes(const BinTree<T>& bintree, const typename BinTree<T>::Iterator& iterator) { //1
 	if (bintree.getLeftPointer() != nullptr && bintree.getRightPointer() != nullptr)
@@ -278,7 +235,7 @@ bool hasChildNodes(const BinTree<T>& bintree, const typename BinTree<T>::Iterato
 }*/
 
 template <typename T>
-float calculatewithpointer(const BinTree<T>& bintree){
+float calculatewithpointer(const BinTree<T>& bintree) {
 	float result = 0;
 	//typedef NodeB<FunctorBase*>* PointerNodeB;
 
@@ -287,11 +244,9 @@ float calculatewithpointer(const BinTree<T>& bintree){
 		PointerNodeB testsubtree = get2nodesSubTreePointer(bintree);;
 		int NodeValue = testsubtree->getObj(); //testsubtree.getRoot().observe(); //test2.getRoot().observe();
 
-
 		if (NodeValue > 0) { //it means its not an operator
 			cout << endl << "BinTree has finished with value: " << bintree.getRoot().observe() << endl;
 			system("pause");
-
 		}
 		else if (NodeValue == -1) { // +
 			AdditionFunctor add;
@@ -314,7 +269,6 @@ float calculatewithpointer(const BinTree<T>& bintree){
 			testsubtree->setLeft(nullptr);
 			testsubtree->setRight(nullptr);
 		}
-
 
 		cout << endl;
 		system("pause");
@@ -389,13 +343,11 @@ void TestBinTree::testBinTree() {
 
 	system("cls");
 
-	
-	cout << "Calculation:" << endl << calculate(test1, test1.getRoot());
+	cout << "Calculation:" << endl << TestBinTree::calculate<FunctorBase*>(test1, test1.getRoot());
 
 	cout << endl << "End calculation";
 
 	system("pause");
 
 	system("cls");
-
 };

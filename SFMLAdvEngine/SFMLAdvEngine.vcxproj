@@ -33,6 +33,7 @@
     <ClInclude Include="FlockBehaviour.h" />
     <ClInclude Include="FunctorBase.h" />
     <ClInclude Include="GameData.h" />
+    <ClInclude Include="GPColor.h" />
     <ClInclude Include="GPPopulationController.h" />
     <ClInclude Include="GraphicsEngine.h" />
     <ClInclude Include="NodeB.h" />
@@ -48,6 +49,7 @@
     <ClInclude Include="SFMLGameEngine.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="GPColor.cpp" />
     <ClCompile Include="GPPopulationController.cpp" />
     <ClCompile Include="TestBinTree.cpp" />
     <ClCompile Include="BoidAgentData.cpp" />

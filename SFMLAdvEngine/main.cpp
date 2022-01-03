@@ -9,14 +9,13 @@
 #include "TestBinTree.h"
 
 int main() {
+	//cout << "Prueba";
 
-	cout << "Prueba";
+	//TestBinTree test;
 
-	TestBinTree test;
+	//test.testBinTree();
 
-	test.testBinTree();
-
-	system("pause");
+	//system("pause");
 
 	srand(0);	//seeding with 0 instead of time, so our simulation is deterministic
 
