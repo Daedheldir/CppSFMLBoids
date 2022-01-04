@@ -6,10 +6,11 @@
 #include <unordered_set>
 
 #include "SFML\Graphics.hpp"
+#include "MathAdditions.h"
 
 #include <mutex>
 
-const size_t QT_BASE_BUCKET_SIZE = 2;
+const size_t QT_BASE_BUCKET_SIZE = 5;
 const size_t QT_BASE_DIVIDER = 2;
 const unsigned int MAX_TREE_DEPTH = ~0;
 
@@ -38,6 +39,32 @@ struct AABB {
 	{
 		return rect.intersects(other.rect);
 	};
+	bool Intersects(const sf::Vector2f& circleCenter, const float& radius) const {
+		float minX = std::min(rect.left, static_cast<float>(rect.left + rect.width));
+		float maxX = std::max(rect.left, static_cast<float>(rect.left + rect.width));
+		float minY = std::min(rect.top, static_cast<float>(rect.top + rect.height));
+		float maxY = std::max(rect.top, static_cast<float>(rect.top + rect.height));
+
+		//check if circle lies inside rect
+		if (circleCenter.x >= minX && circleCenter.y <= maxX
+			&& circleCenter.y >= minY && circleCenter.y <= maxY) {
+			//circle lies inside rectangle
+			return true;
+		}
+
+		float distMinX = std::abs(circleCenter.x - minX);
+		float distMaxX = std::abs(circleCenter.x - maxX);
+		float distMinY = std::abs(circleCenter.y - minY);
+		float distMaxY = std::abs(circleCenter.y - maxY);
+
+		if (distMinX <= radius || distMaxX <= radius
+			|| distMinY <= radius || distMaxY <= radius)
+		{
+			return true;
+		}
+
+		return false;
+	}
 };
 template<typename T>
 class Quadtree
@@ -268,6 +295,28 @@ public:
 		return pointCount;
 	};
 
+	void queryRange(const sf::Vector2f& center, const float& squareRadius, std::vector<T>& pointsInRange) const {
+		if (!boundaries.Intersects(center, squareRadius))
+			return;
+
+		for (auto& iter : dataContainer)
+		{
+			float distance = mathAdditions::VectorSqrMagnitude(center - iter->position);
+			if (distance > squareRadius)
+				continue;
+
+			pointsInRange.emplace_back(iter);
+		}
+
+		if (NodeNW == nullptr)
+			return;
+
+		NodeNE->queryRange(center, squareRadius, pointsInRange);
+		NodeNW->queryRange(center, squareRadius, pointsInRange);
+		NodeSE->queryRange(center, squareRadius, pointsInRange);
+		NodeSW->queryRange(center, squareRadius, pointsInRange);
+	}
+
 	void queryRange(const AABB& range, std::vector<T>& pointsInRange) const
 	{
 		if (!boundaries.Intersects(range))
@@ -372,7 +421,6 @@ public:
 		}
 		return false;
 	};
-
 
 	bool subnodesEmpty()
 	{
@@ -533,7 +581,6 @@ public:
 				NodeSW->GetVertexArray(output);
 		}
 	};
-
 
 public:
 

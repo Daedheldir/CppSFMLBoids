@@ -26,7 +26,7 @@ int main() {
 	}
 	constexpr int boidPopulations = 1;
 	constexpr int boidPopSize = 3000;
-	constexpr int iterationBetweenEvaluation = 1000;
+	constexpr int iterationBetweenEvaluation = 200;
 	constexpr int totalIterations = iterationBetweenEvaluation * 500;
 	m_gameData->gpPopulationController = new GPPopulationController{ m_gameData->inputImage, boidPopulations, boidPopSize, iterationBetweenEvaluation, totalIterations };
 	BoidsApp boidsApp

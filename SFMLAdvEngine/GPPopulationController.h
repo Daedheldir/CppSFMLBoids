@@ -155,7 +155,7 @@ private:
 	std::vector<std::vector<GPColor>> populationColors;
 	std::vector<std::vector <FunctorBase::FunctorTypes>> populationAvailableFunctors;
 
-	const float boidDiscardPercentage = 0.5f; //discarding worst boids
+	const float boidDiscardPercentage = 0.8f; //discarding worst boids
 	std::vector<std::vector<std::pair<unsigned int, int>>> populationBoidScores;	//flocks -> boids -> pair of boid index in vector and boid score
 	//population related vecs
 	std::vector<int> populationScores;

@@ -43,7 +43,7 @@ void GPPopulationController::CreatePopulations(const size_t populationsSize, con
 			availableElements.push_back(static_cast<FunctorBase::FunctorTypes>(j));
 		}
 		std::vector<int> selectedElements;
-		for (int j = 0; j < FunctorBase::FunctorTypesCount; ++j) {
+		for (int j = 0; j < 8; ++j) {
 			int randVal = rand() % availableElements.size();
 
 			if (std::find(selectedElements.begin(), selectedElements.end(), randVal) != selectedElements.end()) {
@@ -86,7 +86,8 @@ void GPPopulationController::CreatePopulations(const size_t populationsSize, con
 			populationBoidScores[i].emplace_back(std::pair{ j, 0 });
 
 			//colors
-			populations[i].boidsDataArr[j].color = populationColors[i][j].GetColor(populations[i].boidsDataArr[j].position);
+			populationColors[i][j].SetPosition(populations[i].boidsDataArr[j].position);
+			populations[i].boidsDataArr[j].color = populationColors[i][j].GetColor();
 		}
 	}
 }
@@ -106,7 +107,8 @@ void GPPopulationController::UpdatePopulations(const unsigned int flockIndex)
 		BoidAgentData& boid = populations[i].boidsDataArr[j];
 
 		//update boid color
-		boid.color = populationColors[i][j].GetColor(boid.position);
+		populationColors[i][j].SetPosition(boid.position);
+		boid.color = populationColors[i][j].GetColor();
 
 		//compare colors with ref image
 		sf::Color imageColor = refImage.getPixel(static_cast<unsigned int>(std::floorl(boid.position.x)), static_cast<unsigned int>(std::floorl(boid.position.y)));
@@ -151,7 +153,7 @@ void GPPopulationController::EvaluatePopulations(const unsigned int flockIndex)
 
 	std::vector<unsigned int> availableParentsIndices(boidsDataArr.size() - discardedBoidsPivot);
 
-	for (unsigned int j = 0; j < discardedBoidsPivot; ++j) {
+	for (unsigned int j = 0; j < populationBoidScores[i].size() - discardedBoidsPivot; ++j) {
 		availableParentsIndices[j] = (populationBoidScores[i][j].first);
 	}
 

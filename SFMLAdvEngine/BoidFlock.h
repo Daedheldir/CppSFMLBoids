@@ -16,7 +16,8 @@ enum class FlockBehaviourTypes {
 };
 enum class NeighbourFindingMethod {
 	BruteForce,
-	Quadtree
+	QuadtreeQueryRadius,
+	QuadtreeQueryRect
 };
 class BoidFlock
 {
@@ -59,14 +60,22 @@ private:
 	};
 
 	template<>
-	void GetBoidsInView<NeighbourFindingMethod::Quadtree>(const BoidAgentData& boid, std::vector<BoidAgentData*>& boidsInView) {
-		boidsInView.reserve(static_cast<size_t>(std::round(boidsDataArr.size() * 0.8)));
-		boidsQuadtree.queryRange(boid.position, { sqrt(SQUARE_BOIDS_VIEW_RANGE), sqrt(SQUARE_BOIDS_VIEW_RANGE) }, boidsInView);
+	void GetBoidsInView<NeighbourFindingMethod::QuadtreeQueryRadius>(const BoidAgentData& boid, std::vector<BoidAgentData*>& boidsInView) {
+		boidsInView.reserve(static_cast<size_t>(std::round(boidsDataArr.size() * 0.6)));
+		boidsQuadtree.queryRange(boid.position, SQUARE_BOIDS_VIEW_RANGE, boidsInView);
+	};
+
+	template<>
+	void GetBoidsInView<NeighbourFindingMethod::QuadtreeQueryRect>(const BoidAgentData& boid, std::vector<BoidAgentData*>& boidsInView) {
+		boidsInView.reserve(static_cast<size_t>(std::round(boidsDataArr.size() * 0.6)));
+		boidsQuadtree.queryRange(boid.position, { BOIDS_VIEW_RANGE, BOIDS_VIEW_RANGE }, boidsInView);
 	};
 public:
 	//parameters
 	static const float SQUARE_NEIGHBOUR_AVOIDANCE_RADIUS;
+	static const float NEIGHBOUR_AVOIDANCE_RADIUS;
 	static const float SQUARE_BOIDS_VIEW_RANGE;
+	static const float BOIDS_VIEW_RANGE;
 	static const float MAX_SPEED;
 	static const float MAX_ACCELERATION_CHANGE; //range between 0-1f
 

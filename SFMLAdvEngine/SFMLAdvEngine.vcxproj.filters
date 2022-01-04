@@ -150,6 +150,9 @@
     <ClInclude Include="LeftShiftFunctor.h">
       <Filter>Header Files\Functors</Filter>
     </ClInclude>
+    <ClInclude Include="FunctorFactory.h">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LogicEngine.cpp">
@@ -181,6 +184,9 @@
     </ClCompile>
     <ClCompile Include="GPColor.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FunctorFactory.cpp">
+      <Filter>Source Files\Utilities</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

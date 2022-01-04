@@ -13,6 +13,8 @@ using mathAdditions::VectorSqrMagnitude;
 
 const float BoidFlock::SQUARE_NEIGHBOUR_AVOIDANCE_RADIUS = 15.0f;
 const float BoidFlock::SQUARE_BOIDS_VIEW_RANGE = 400.0f;
+const float BoidFlock::NEIGHBOUR_AVOIDANCE_RADIUS = sqrtf(SQUARE_NEIGHBOUR_AVOIDANCE_RADIUS);
+const float BoidFlock::BOIDS_VIEW_RANGE = sqrtf(SQUARE_BOIDS_VIEW_RANGE);
 const float BoidFlock::MAX_SPEED = 0.8f;
 const float BoidFlock::MAX_ACCELERATION_CHANGE = 0.05f; //range between 0-1f
 
@@ -40,12 +42,27 @@ BoidFlock::BoidFlock(size_t flockSize, std::map<FlockBehaviourTypes, std::shared
 {
 	//initialize positions and vertex array
 	boidsDataArr.resize(flockSize);
+	int flockGroups = 100;
+	int groupRadius = 100;
 
-	for (int i = 0; i < flockSize; ++i) {
-		boidsDataArr[i].position = sf::Vector2f((float)(rand() % boidPosBounds.x), (float)(rand() % boidPosBounds.y));
-		boidsQuadtree.insertCopy(&boidsDataArr[i]);
+	for (int group = 0; group < flockGroups; ++group) {
+		sf::Vector2f groupCenter{ (float)(rand() % boidPosBounds.x), (float)(rand() % boidPosBounds.y) };
+		for (int i = 0; i < flockSize / flockGroups; ++i) {
+			sf::Vector2f boidPos{
+				(float)(groupCenter.x + (groupRadius / 2 - rand() % groupRadius)),
+				(float)(groupCenter.y + (groupRadius / 2 - rand() % groupRadius))
+			};
+
+			if (boidPos.x < 0) boidPos.x = 0;
+			else if (boidPos.x > boidPosBounds.x) boidPos.x = boidPosBounds.x;
+			if (boidPos.y < 0) boidPos.y = 0;
+			else if (boidPos.y > boidPosBounds.y) boidPos.y = boidPosBounds.y;
+
+			boidsDataArr[i].position = boidPos;
+		}
 	}
-	for (int i = 0; i < flockSize; ++i) {
+	for (int i = 0; i < boidsDataArr.size(); ++i) {
+		boidsQuadtree.insertCopy(&boidsDataArr[i]);
 		boidsVerticesArr[i] = (sf::Vertex{ boidsDataArr[i].position, sf::Color::Transparent });
 		boidsVerticesArr[i].color = sf::Color::Black;
 	}
@@ -61,7 +78,6 @@ BoidFlock& BoidFlock::operator=(BoidFlock other) {
 
 void BoidFlock::MoveBoids()
 {
-
 	UpdateTimer.fTreeUpdateTimer += 1;
 	if (UpdateTimer.fTreeUpdateTimer >= UpdateTimer.fTreeUpdateInterval) {
 		UpdateTimer.bRebuildTree = true;
@@ -98,7 +114,7 @@ void BoidFlock::MoveBoids()
 
 sf::Vector2f BoidFlock::CalculateBoidMovement(const BoidAgentData& boid) {
 	std::vector<BoidAgentData*> boidsInView;
-	GetBoidsInView<NeighbourFindingMethod::Quadtree>(boid, boidsInView);
+	GetBoidsInView<NeighbourFindingMethod::QuadtreeQueryRadius>(boid, boidsInView);
 
 	//calculate all added behaviours
 	sf::Vector2f accelerationVec{ 0,0 };

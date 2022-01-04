@@ -9,7 +9,7 @@ public:
 	const std::string var = "SineFunctor";
 
 	virtual float operator () (float val1, float val2) const {
-		return std::sinf(val1) + std::sinf(val2);
+		return std::sinf(val1) * val2;
 	}
 };
 #pragma once

@@ -1,59 +1,60 @@
 #include "GPColor.h"
 #include "TestBinTree.h"
 
-#include "AdditionFunctor.h"
-#include "DivisionFunctor.h"
-#include "MultiplicationFunctor.h"
-#include "SubtractionFunctor.h"
-#include "BitwiseANDFunctor.h"
-#include "BitwiseORFunctor.h"
-#include "SineFunctor.h"
-#include "LeftShiftFunctor.h"
+#include "FunctorFactory.h"
 
 GPColor::GPColor() :
 	GPColor{ {{
 			FunctorBase::FunctorTypes::Addition,
 			FunctorBase::FunctorTypes::Multiplication,
-			FunctorBase::FunctorTypes::Division
+			FunctorBase::FunctorTypes::Division,
+			FunctorBase::FunctorTypes::BitwiseAND,
+			FunctorBase::FunctorTypes::BitwiseOR,
+			FunctorBase::FunctorTypes::Subtraction,
+			FunctorBase::FunctorTypes::LeftShift,
+			FunctorBase::FunctorTypes::Sine
 }} }
 {
 }
 
 GPColor::GPColor(const std::vector<FunctorBase::FunctorTypes>& availableFunctors) :
-	randRed{ static_cast<float>(1 + rand() % 255) },
-	randGreen{ static_cast<float>(1 + rand() % 255) },
-	randBlue{ static_cast<float>(1 + rand() % 255) },
+	randRed{ static_cast<float>((-100 + rand() % 200) / 100) },
+	randGreen{ static_cast<float>((-100 + rand() % 200) / 100) },
+	randBlue{ static_cast<float>((-100 + rand() % 200) / 100) },
 	redTree{ std::make_shared<AdditionFunctor>(), BinTree<std::shared_ptr<FunctorBase>>(), BinTree<std::shared_ptr<FunctorBase>>() },
 	greenTree{ std::make_shared<AdditionFunctor>(), BinTree<std::shared_ptr<FunctorBase>>(), BinTree<std::shared_ptr<FunctorBase>>() },
 	blueTree{ std::make_shared<AdditionFunctor>(), BinTree<std::shared_ptr<FunctorBase>>(), BinTree<std::shared_ptr<FunctorBase>>() }
 {
 	//(x / y) / r
-	redTree.getRoot().getNodePtr()->setObj(GetRandFunctor(availableFunctors));
-	redTree.insert(GetRandFunctor(availableFunctors));
+	redTree.getRoot().getNodePtr()->setObj(FunctorFactory::CreateFunctor(availableFunctors[rand() % availableFunctors.size()]));
+	redTree.insert(FunctorFactory::CreateFunctor(availableFunctors[rand() % availableFunctors.size()]));
 	redTree.insert(std::make_shared<FunctorBase>(&randRed));
 	redTree.insert(std::make_shared<FunctorBase>(&posX));
 	redTree.insert(std::make_shared<FunctorBase>(&posY));
 
 	//(x / y) * r
-	greenTree.getRoot().getNodePtr()->setObj(GetRandFunctor(availableFunctors));
-	greenTree.insert(GetRandFunctor(availableFunctors));
+	greenTree.getRoot().getNodePtr()->setObj(FunctorFactory::CreateFunctor(availableFunctors[rand() % availableFunctors.size()]));
+	greenTree.insert(FunctorFactory::CreateFunctor(availableFunctors[rand() % availableFunctors.size()]));
 	greenTree.insert(std::make_shared<FunctorBase>(&randGreen));
 	greenTree.insert(std::make_shared<FunctorBase>(&posX));
 	greenTree.insert(std::make_shared<FunctorBase>(&posY));
 
 	//(x * y) / r
-	blueTree.getRoot().getNodePtr()->setObj(GetRandFunctor(availableFunctors));
-	blueTree.insert(GetRandFunctor(availableFunctors));
+	blueTree.getRoot().getNodePtr()->setObj(FunctorFactory::CreateFunctor(availableFunctors[rand() % availableFunctors.size()]));
+	blueTree.insert(FunctorFactory::CreateFunctor(availableFunctors[rand() % availableFunctors.size()]));
 	blueTree.insert(std::make_shared<FunctorBase>(&randBlue));
 	blueTree.insert(std::make_shared<FunctorBase>(&posX));
 	blueTree.insert(std::make_shared<FunctorBase>(&posY));
 }
 
-sf::Color GPColor::GetColor(sf::Vector2f position)
+void GPColor::SetPosition(sf::Vector2f position)
 {
 	posX = position.x;
 	posY = position.y;
+}
 
+sf::Color GPColor::GetColor() const
+{
 	uint8_t red = static_cast<uint8_t>(static_cast<int>(TestBinTree::calculate<std::shared_ptr<FunctorBase>>(redTree, redTree.getRoot())) % 256);
 
 	uint8_t green = static_cast<uint8_t>(static_cast<int>(TestBinTree::calculate<std::shared_ptr<FunctorBase>>(greenTree, greenTree.getRoot())) % 256);
@@ -67,57 +68,16 @@ void GPColor::Evolve(const GPColor& parentColor, const std::vector<FunctorBase::
 {
 	//mutation chance for each of trees
 	if (rand() % 100 < 10)
-		TestBinTree::getRandFunctorNode(redTree, redTree.getRoot())->setObj(GetRandFunctor(availableFunctors));
+		TestBinTree::getRandFunctorNode(redTree, redTree.getRoot())->setObj(FunctorFactory::CreateFunctor(availableFunctors[rand() % availableFunctors.size()]));
 
 	if (rand() % 100 < 10)
-		TestBinTree::getRandFunctorNode(greenTree, greenTree.getRoot())->setObj(GetRandFunctor(availableFunctors));
+		TestBinTree::getRandFunctorNode(greenTree, greenTree.getRoot())->setObj(FunctorFactory::CreateFunctor(availableFunctors[rand() % availableFunctors.size()]));
 
 	if (rand() % 100 < 10)
-		TestBinTree::getRandFunctorNode(blueTree, blueTree.getRoot())->setObj(GetRandFunctor(availableFunctors));
+		TestBinTree::getRandFunctorNode(blueTree, blueTree.getRoot())->setObj(FunctorFactory::CreateFunctor(availableFunctors[rand() % availableFunctors.size()]));
 
 	//slightly mutate 'r'
 	randRed = parentColor.randRed + ((1000 - rand() % 2000) / 200.0f);
 	randGreen = parentColor.randGreen + ((1000 - rand() % 2000) / 200.0f);
 	randBlue = parentColor.randBlue + ((1000 - rand() % 2000) / 200.0f);
-}
-
-std::shared_ptr<FunctorBase> GPColor::GetRandFunctor(const std::vector<FunctorBase::FunctorTypes>& availableFunctors)
-{
-	int choice = rand() % availableFunctors.size();
-
-	switch (availableFunctors[choice])
-	{
-	case FunctorBase::FunctorTypes::Addition:
-	{
-		return std::make_shared<AdditionFunctor>();
-	}
-	case FunctorBase::FunctorTypes::Multiplication:
-	{
-		return std::make_shared<MultiplicationFunctor>();
-	}
-	case FunctorBase::FunctorTypes::Division:
-	{
-		return std::make_shared<DivisionFunctor>();
-	}
-	case FunctorBase::FunctorTypes::Subtraction:
-	{
-		return std::make_shared<SubtractionFunctor>();
-	}
-	case FunctorBase::FunctorTypes::BitwiseAND:
-	{
-		return std::make_shared<BitwiseANDFunctor>();
-	}
-	case FunctorBase::FunctorTypes::BitwiseOR:
-	{
-		return std::make_shared<BitwiseORFunctor>();
-	}
-	case FunctorBase::FunctorTypes::Sine:
-	{
-		return std::make_shared<SineFunctor>();
-	}
-	case FunctorBase::FunctorTypes::LeftShift:
-	{
-		return std::make_shared<LeftShiftFunctor>();
-	}
-	}
 }
