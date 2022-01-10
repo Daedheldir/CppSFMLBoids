@@ -11,7 +11,7 @@
 using mathAdditions::VectorMagnitude;
 using mathAdditions::VectorSqrMagnitude;
 
-const float BoidFlock::SQUARE_NEIGHBOUR_AVOIDANCE_RADIUS = 15.0f;
+const float BoidFlock::SQUARE_NEIGHBOUR_AVOIDANCE_RADIUS = 20.0f;
 const float BoidFlock::SQUARE_BOIDS_VIEW_RANGE = 400.0f;
 const float BoidFlock::NEIGHBOUR_AVOIDANCE_RADIUS = sqrtf(SQUARE_NEIGHBOUR_AVOIDANCE_RADIUS);
 const float BoidFlock::BOIDS_VIEW_RANGE = sqrtf(SQUARE_BOIDS_VIEW_RANGE);
@@ -24,8 +24,8 @@ BoidFlock::BoidFlock(const BoidFlock& other) :
 	flockBehaviours{ other.flockBehaviours },
 	boidPosBounds{ other.boidPosBounds },
 	boidsQuadtree{ {
-		{boidPosBounds.x / 2.0f, boidPosBounds.y / 2.0f },
-		{boidPosBounds.x + 2.0f, boidPosBounds.y + 2.0f}
+		{ boidPosBounds.x / 2.0f, boidPosBounds.y / 2.0f },
+		{ boidPosBounds.x + 2.0f, boidPosBounds.y + 2.0f }
 		} }
 {
 }
@@ -35,22 +35,22 @@ BoidFlock::BoidFlock(size_t flockSize, std::map<FlockBehaviourTypes, std::shared
 	flockBehaviours{ flockRules },
 	boidPosBounds{ boidPositionBound },
 	boidsQuadtree{ {
-		{boidPosBounds.x / 2.0f, boidPosBounds.y / 2.0f },
-		{boidPosBounds.x + 2.0f, boidPosBounds.y + 2.0f}
+		{ boidPosBounds.x / 2.0f, boidPosBounds.y / 2.0f },
+		{ boidPosBounds.x + 2.0f, boidPosBounds.y + 2.0f }
 		} }
 
 {
 	//initialize positions and vertex array
 	boidsDataArr.resize(flockSize);
-	int flockGroups = 100;
-	int groupRadius = 100;
+	int flockGroups = 10;
+	int groupRadius = 10;
 
 	for (int group = 0; group < flockGroups; ++group) {
 		sf::Vector2f groupCenter{ (float)(rand() % boidPosBounds.x), (float)(rand() % boidPosBounds.y) };
-		for (int i = 0; i < flockSize / flockGroups; ++i) {
+		for (int i = 0; i < (flockSize / flockGroups); ++i) {
 			sf::Vector2f boidPos{
-				(float)(groupCenter.x + (groupRadius / 2 - rand() % groupRadius)),
-				(float)(groupCenter.y + (groupRadius / 2 - rand() % groupRadius))
+				(float)(groupCenter.x + ((groupRadius / 2) - (rand() % groupRadius))),
+				(float)(groupCenter.y + ((groupRadius / 2) - (rand() % groupRadius)))
 			};
 
 			if (boidPos.x < 0) boidPos.x = 0;
@@ -63,7 +63,7 @@ BoidFlock::BoidFlock(size_t flockSize, std::map<FlockBehaviourTypes, std::shared
 	}
 	for (int i = 0; i < boidsDataArr.size(); ++i) {
 		boidsQuadtree.insertCopy(&boidsDataArr[i]);
-		boidsVerticesArr[i] = (sf::Vertex{ boidsDataArr[i].position, sf::Color::Transparent });
+		boidsVerticesArr[i] = sf::Vertex{ boidsDataArr[i].position, sf::Color::Transparent };
 		boidsVerticesArr[i].color = sf::Color::Black;
 	}
 }

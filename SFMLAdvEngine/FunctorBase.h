@@ -12,9 +12,10 @@ public:
 		BitwiseOR,
 		BitwiseAND,
 		Sine,
+		Cosine,
 		LeftShift
 	};
-	static constexpr int FunctorTypesCount = 8;
+	static constexpr int FunctorTypesCount = 9;
 protected:
 	float* val;
 public:

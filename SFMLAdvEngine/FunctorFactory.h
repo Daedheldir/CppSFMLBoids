@@ -8,8 +8,8 @@
 #include "BitwiseANDFunctor.h"
 #include "BitwiseORFunctor.h"
 #include "SineFunctor.h"
+#include "CosineFunctor.h"
 #include "LeftShiftFunctor.h"
-
 class FunctorFactory
 {
 private:

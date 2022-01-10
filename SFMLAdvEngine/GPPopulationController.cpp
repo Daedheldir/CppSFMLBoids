@@ -3,12 +3,19 @@
 #include <filesystem>
 #include <algorithm>
 
-GPPopulationController::GPPopulationController(sf::Image& refImage, const size_t populationsSize, const size_t flockSize, const unsigned int iterationsBetweenEvaluation, const unsigned int totalIterations) :
+#include "DebugFlags.h"
+
+GPPopulationController::GPPopulationController(sf::Image& refImage, const size_t populationsSize, const size_t flockSize, const unsigned int iterationsBetweenEvaluation, const unsigned int iterationsBetweenImageSave, const unsigned int totalIterations) :
 	refImage{ refImage },
 	iterationsBetweenEvaluation{ iterationsBetweenEvaluation },
+	iterationsBetweenImageSave{ iterationsBetweenImageSave },
 	totalIterations{ totalIterations }
 {
 	CreatePopulations(populationsSize, flockSize);
+
+	//if folder for evaluation images doesn't exist then create it
+	if (!std::filesystem::exists("../Data/Evaluations/"))
+		std::filesystem::create_directories("../Data/Evaluations/");
 
 	//clear folder for evaluation images
 	for (const auto& entry : std::filesystem::directory_iterator("../Data/Evaluations/")) {
@@ -36,14 +43,12 @@ void GPPopulationController::CreatePopulations(const size_t populationsSize, con
 	populationBoidScores.resize(populationsSize);
 
 	for (int i = 0; i < populationsSize; ++i) {
-		populationColors[i].resize(flockSize);
-
 		std::vector<FunctorBase::FunctorTypes> availableElements;
 		for (int j = 0; j < FunctorBase::FunctorTypesCount; ++j) {
 			availableElements.push_back(static_cast<FunctorBase::FunctorTypes>(j));
 		}
 		std::vector<int> selectedElements;
-		for (int j = 0; j < 8; ++j) {
+		for (int j = 0; j < 3; ++j) {
 			int randVal = rand() % availableElements.size();
 
 			if (std::find(selectedElements.begin(), selectedElements.end(), randVal) != selectedElements.end()) {
@@ -64,7 +69,11 @@ void GPPopulationController::CreatePopulations(const size_t populationsSize, con
 		//				FunctorBase::FunctorTypes::Division
 		//} };
 
-				//boid flocks
+		populationColors[i].resize(flockSize);
+		for (int j = 0; j < flockSize; ++j) {
+			populationColors[i][j].Initialize(populationAvailableFunctors[i]);
+		}
+		//boid flocks
 		populations.emplace_back(flockSize, std::map<FlockBehaviourTypes, std::shared_ptr<FlockBehaviour>>
 		{
 			{
@@ -114,20 +123,84 @@ void GPPopulationController::UpdatePopulations(const unsigned int flockIndex)
 		sf::Color imageColor = refImage.getPixel(static_cast<unsigned int>(std::floorl(boid.position.x)), static_cast<unsigned int>(std::floorl(boid.position.y)));
 		sf::Color currentColor = populationCanvases[i].getPixel(static_cast<unsigned int>(std::floorl(boid.position.x)), static_cast<unsigned int>(std::floorl(boid.position.y)));
 
+		sf::Vector3i currentSeparateDiff = { std::abs(imageColor.r - currentColor.r) , std::abs(imageColor.g - currentColor.g) , std::abs(imageColor.b - currentColor.b) };
+		sf::Vector3i boidSeparateDiff = { std::abs(imageColor.r - boid.color.r) , std::abs(imageColor.g - boid.color.g) , std::abs(imageColor.b - boid.color.b) };
 		int currentDiff = std::abs(imageColor.r - currentColor.r) + std::abs(imageColor.g - currentColor.g) + std::abs(imageColor.b - currentColor.b);
-		int boidDiff = std::abs(imageColor.r - boid.color.r) + std::abs(imageColor.g - boid.color.g) + std::abs(imageColor.b - boid.color.b);
+		long boidDiff = std::abs(imageColor.r - boid.color.r) + std::abs(imageColor.g - boid.color.g) + std::abs(imageColor.b - boid.color.b);
 
-		if (boidDiff < currentDiff) {
-			//deposit boid color
-			//for drawing on render texture boid alpha to 255 else to 0
-			boid.color.a = 255;
-			populationCanvases[i].setPixel(static_cast<unsigned int>(std::floorl(boid.position.x)), static_cast<unsigned int>(std::floorl(boid.position.y)), boid.color);
-			populationBoidScores[i][j].second += 1;
+		sf::Vector2u pixelPos{ static_cast<unsigned int>(std::floorl(boid.position.x)), static_cast<unsigned int>(std::floorl(boid.position.y)) };
+		sf::Color newColor = populationCanvases[i].getPixel(pixelPos.x, pixelPos.y);
+
+		boid.color.a = 0;
+		if (DebugFlags::GP_POP_USE_SEPARATE_COLORS_DEPOSITS) {
+			if (boidSeparateDiff.x < currentSeparateDiff.x) {
+				boid.color.a = 255;
+				newColor.r = boid.color.r;
+				populationBoidScores[i][j].second += boidSeparateDiff.x;
+			}
+			if (boidSeparateDiff.y < currentSeparateDiff.y) {
+				boid.color.a = 255;
+				newColor.g = boid.color.g;
+				populationBoidScores[i][j].second += boidSeparateDiff.y;
+			}
+			if (boidSeparateDiff.z < currentSeparateDiff.z) {
+				boid.color.a = 255;
+				newColor.b = boid.color.b;
+				populationBoidScores[i][j].second += boidSeparateDiff.z;
+			}
 		}
 		else {
-			boid.color.a = 0;
+			if (boidDiff - currentDiff < 10) {
+				boid.color.a = 255;
+				newColor = boid.color;
+				populationBoidScores[i][j].second += boidDiff;
+			}
 		}
-		populations[i].boidsVerticesArr[j].color = boid.color;
+
+		//drawing with a bigger brush
+		populationCanvases[i].setPixel(pixelPos.x, pixelPos.y, newColor);
+		if (pixelPos.x > 0) {
+			sf::Color currentColor = populationCanvases[i].getPixel(pixelPos.x - 1, pixelPos.y);
+			populationCanvases[i].setPixel(pixelPos.x - 1, pixelPos.y,
+				{
+					static_cast<uint8_t>((currentColor.r + newColor.r) / 2),
+					static_cast<uint8_t>((currentColor.g + newColor.g) / 2),
+					static_cast<uint8_t>((currentColor.b + newColor.b) / 2)
+				});
+		}
+		if (pixelPos.x < refImage.getSize().x - 1) {
+			sf::Color currentColor = populationCanvases[i].getPixel(pixelPos.x + 1, pixelPos.y);
+			populationCanvases[i].setPixel(pixelPos.x + 1, pixelPos.y,
+				{
+					static_cast<uint8_t>((currentColor.r + newColor.r) / 2),
+					static_cast<uint8_t>((currentColor.g + newColor.g) / 2),
+					static_cast<uint8_t>((currentColor.b + newColor.b) / 2)
+				});
+		}
+		if (pixelPos.y > 0) {
+			sf::Color currentColor = populationCanvases[i].getPixel(pixelPos.x, pixelPos.y - 1);
+			populationCanvases[i].setPixel(pixelPos.x, pixelPos.y - 1,
+				{
+					static_cast<uint8_t>((currentColor.r + newColor.r) / 2),
+					static_cast<uint8_t>((currentColor.g + newColor.g) / 2),
+					static_cast<uint8_t>((currentColor.b + newColor.b) / 2)
+				});
+		}
+		if (pixelPos.y < refImage.getSize().y - 1) {
+			sf::Color currentColor = populationCanvases[i].getPixel(pixelPos.x, pixelPos.y + 1);
+			populationCanvases[i].setPixel(pixelPos.x, pixelPos.y + 1,
+				{
+					static_cast<uint8_t>((currentColor.r + newColor.r) / 2),
+					static_cast<uint8_t>((currentColor.g + newColor.g) / 2),
+					static_cast<uint8_t>((currentColor.b + newColor.b) / 2)
+				});
+		}
+		populations[i].boidsVerticesArr[j].color = newColor;
+	}
+
+	//save iteration image
+	if (iterationsCounter % iterationsBetweenImageSave == 0) {
+		SaveEvaluationImage(flockIndex);
 	}
 }
 
@@ -184,15 +257,30 @@ void GPPopulationController::SaveEvaluationImage(const unsigned int flockIndex, 
 	sf::Image outImg;
 	const sf::Image& currentImg = populationCanvases[flockIndex];
 
-	outImg.create(currentImg.getSize().x + refImage.getSize().x, currentImg.getSize().y > refImage.getSize().y ? currentImg.getSize().y : refImage.getSize().y);
-	outImg.copy(refImage, 0, 0);
-	outImg.copy(currentImg, refImage.getSize().x, 0);
+	//if image height is bigger then width then position images horizontally
+	if (currentImg.getSize().x < currentImg.getSize().y) {
+		outImg.create(currentImg.getSize().x + refImage.getSize().x, currentImg.getSize().y > refImage.getSize().y ? currentImg.getSize().y : refImage.getSize().y);
+		outImg.copy(refImage, 0, 0);
+		outImg.copy(currentImg, refImage.getSize().x, 0);
+	}
+	else {
+		outImg.create(currentImg.getSize().x > refImage.getSize().x ? currentImg.getSize().x : refImage.getSize().x, currentImg.getSize().y + refImage.getSize().y);
+		outImg.copy(refImage, 0, 0);
+		outImg.copy(currentImg, 0, refImage.getSize().y);
+	}
+	std::string functorsStr = "";
+
+	for (const auto& func : populationAvailableFunctors[flockIndex])
+	{
+		functorsStr += std::to_string(static_cast<int>(func));
+	}
 
 	outImg.saveToFile(
 		"../Data/Evaluations/Canvas_"
 		+ std::to_string(flockIndex)
 		+ "_eval" + std::to_string(evaluationsCounter)
 		+ "_iter" + std::to_string(iterationsCounter)
+		+ "_funct" + functorsStr
 		+ additionalFileText
 		+ ".jpg");
 }

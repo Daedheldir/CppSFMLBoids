@@ -41,7 +41,7 @@ public:
 		Disabled
 	};
 
-	GPPopulationController(sf::Image& refImage, const size_t populationsSize, const size_t flockSize, const unsigned int iterationsBetweenEvaluation, const unsigned int totalIterations);
+	GPPopulationController(sf::Image& refImage, const size_t populationsSize, const size_t flockSize, const unsigned int iterationsBetweenEvaluation, const unsigned int iterationsBetweenImageSave, const unsigned int totalIterations);
 	~GPPopulationController();
 	void CreatePopulations(const size_t populationsSize, const size_t flockSize);
 
@@ -147,6 +147,7 @@ private:
 	unsigned int evaluationsCounter = 0;
 
 	const unsigned int iterationsBetweenEvaluation;
+	const unsigned int iterationsBetweenImageSave;
 	const unsigned int totalIterations;
 
 	const sf::Image& refImage;
@@ -156,7 +157,7 @@ private:
 	std::vector<std::vector <FunctorBase::FunctorTypes>> populationAvailableFunctors;
 
 	const float boidDiscardPercentage = 0.8f; //discarding worst boids
-	std::vector<std::vector<std::pair<unsigned int, int>>> populationBoidScores;	//flocks -> boids -> pair of boid index in vector and boid score
+	std::vector<std::vector<std::pair<unsigned int, unsigned long int>>> populationBoidScores;	//flocks -> boids -> pair of boid index in vector and boid score
 	//population related vecs
 	std::vector<int> populationScores;
 	std::vector<sf::Image> populationCanvases;

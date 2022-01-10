@@ -32,6 +32,10 @@ std::shared_ptr<FunctorBase> FunctorFactory::CreateFunctor(const FunctorBase::Fu
 	{
 		return std::make_shared<SineFunctor>();
 	}
+	case FunctorBase::FunctorTypes::Cosine:
+	{
+		return std::make_shared<CosineFunctor>();
+	}
 	case FunctorBase::FunctorTypes::LeftShift:
 	{
 		return std::make_shared<LeftShiftFunctor>();

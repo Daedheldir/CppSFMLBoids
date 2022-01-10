@@ -4,26 +4,15 @@
 #include "FunctorFactory.h"
 
 GPColor::GPColor() :
-	GPColor{ {{
-			FunctorBase::FunctorTypes::Addition,
-			FunctorBase::FunctorTypes::Multiplication,
-			FunctorBase::FunctorTypes::Division,
-			FunctorBase::FunctorTypes::BitwiseAND,
-			FunctorBase::FunctorTypes::BitwiseOR,
-			FunctorBase::FunctorTypes::Subtraction,
-			FunctorBase::FunctorTypes::LeftShift,
-			FunctorBase::FunctorTypes::Sine
-}} }
-{
-}
-
-GPColor::GPColor(const std::vector<FunctorBase::FunctorTypes>& availableFunctors) :
-	randRed{ static_cast<float>((-100 + rand() % 200) / 100) },
-	randGreen{ static_cast<float>((-100 + rand() % 200) / 100) },
-	randBlue{ static_cast<float>((-100 + rand() % 200) / 100) },
+	randRed{ 0 },
+	randGreen{ 0 },
+	randBlue{ 0 },
 	redTree{ std::make_shared<AdditionFunctor>(), BinTree<std::shared_ptr<FunctorBase>>(), BinTree<std::shared_ptr<FunctorBase>>() },
 	greenTree{ std::make_shared<AdditionFunctor>(), BinTree<std::shared_ptr<FunctorBase>>(), BinTree<std::shared_ptr<FunctorBase>>() },
 	blueTree{ std::make_shared<AdditionFunctor>(), BinTree<std::shared_ptr<FunctorBase>>(), BinTree<std::shared_ptr<FunctorBase>>() }
+{}
+
+void GPColor::Initialize(const std::vector<FunctorBase::FunctorTypes>& availableFunctors)
 {
 	//(x / y) / r
 	redTree.getRoot().getNodePtr()->setObj(FunctorFactory::CreateFunctor(availableFunctors[rand() % availableFunctors.size()]));
@@ -66,18 +55,32 @@ sf::Color GPColor::GetColor() const
 
 void GPColor::Evolve(const GPColor& parentColor, const std::vector<FunctorBase::FunctorTypes>& availableFunctors)
 {
-	//mutation chance for each of trees
-	if (rand() % 100 < 10)
-		TestBinTree::getRandFunctorNode(redTree, redTree.getRoot())->setObj(FunctorFactory::CreateFunctor(availableFunctors[rand() % availableFunctors.size()]));
+	//slightly mutate one of 'r's
+	switch (rand() % 3) {
+	case 0:
+		randRed = parentColor.randRed + ((10 - (rand() % 21)) / 10.0f);
+		break;
+	case 1:
+		randGreen = parentColor.randGreen + ((10 - (rand() % 21)) / 10.0f);
+		break;
+	case 3:
+		randBlue = parentColor.randBlue + ((10 - (rand() % 21)) / 10.0f);
+		break;
+	}
 
-	if (rand() % 100 < 10)
-		TestBinTree::getRandFunctorNode(greenTree, greenTree.getRoot())->setObj(FunctorFactory::CreateFunctor(availableFunctors[rand() % availableFunctors.size()]));
-
-	if (rand() % 100 < 10)
-		TestBinTree::getRandFunctorNode(blueTree, blueTree.getRoot())->setObj(FunctorFactory::CreateFunctor(availableFunctors[rand() % availableFunctors.size()]));
-
-	//slightly mutate 'r'
-	randRed = parentColor.randRed + ((1000 - rand() % 2000) / 200.0f);
-	randGreen = parentColor.randGreen + ((1000 - rand() % 2000) / 200.0f);
-	randBlue = parentColor.randBlue + ((1000 - rand() % 2000) / 200.0f);
+	//mutation chance for each of trees, mutate only one of them
+	switch (rand() % 3) {
+	case 0:
+		if (rand() % 100 < 5)
+			TestBinTree::getRandFunctorNode(redTree, redTree.getRoot())->setObj(FunctorFactory::CreateFunctor(availableFunctors[rand() % availableFunctors.size()]));
+		break;
+	case 1:
+		if (rand() % 100 < 5)
+			TestBinTree::getRandFunctorNode(greenTree, greenTree.getRoot())->setObj(FunctorFactory::CreateFunctor(availableFunctors[rand() % availableFunctors.size()]));
+		break;
+	case 2:
+		if (rand() % 100 < 5)
+			TestBinTree::getRandFunctorNode(blueTree, blueTree.getRoot())->setObj(FunctorFactory::CreateFunctor(availableFunctors[rand() % availableFunctors.size()]));
+		break;
+	}
 }

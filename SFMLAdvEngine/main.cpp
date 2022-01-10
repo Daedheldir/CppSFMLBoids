@@ -24,11 +24,12 @@ int main() {
 	{
 		std::cout << "Successfuly loaded input img." << std::endl;
 	}
-	constexpr int boidPopulations = 1;
-	constexpr int boidPopSize = 3000;
-	constexpr int iterationBetweenEvaluation = 200;
-	constexpr int totalIterations = iterationBetweenEvaluation * 500;
-	m_gameData->gpPopulationController = new GPPopulationController{ m_gameData->inputImage, boidPopulations, boidPopSize, iterationBetweenEvaluation, totalIterations };
+	constexpr int boidPopulations = 4;
+	constexpr int boidPopSize = 10000;
+	constexpr int iterationBetweenEvaluation = 500;
+	constexpr int iterationBetweenImageSave = 100;
+	constexpr int totalIterations = iterationBetweenEvaluation * 200;
+	m_gameData->gpPopulationController = new GPPopulationController{ m_gameData->inputImage, boidPopulations, boidPopSize, iterationBetweenEvaluation, iterationBetweenImageSave, totalIterations };
 	BoidsApp boidsApp
 	(
 		m_gameData,

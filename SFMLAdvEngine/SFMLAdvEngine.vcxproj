@@ -30,6 +30,8 @@
     <ClInclude Include="BoidFlock.h" />
     <ClInclude Include="BoidsApp.h" />
     <ClInclude Include="CohesionBehaviour.h" />
+    <ClInclude Include="CosineFunctor.h" />
+    <ClInclude Include="DebugFlags.h" />
     <ClInclude Include="Definitions.h" />
     <ClInclude Include="DivisionFunctor.h" />
     <ClInclude Include="FlockBehaviour.h" />
