@@ -4,5 +4,12 @@ class DebugFlags {
 	DebugFlags() = delete;
 
 public:
-	static const bool GP_POP_USE_SEPARATE_COLORS_DEPOSITS = false;
+
+	enum class PopulationUpdateModifiers {
+		DEFAULT,
+		SEPARATE_COLORS,
+		WARPED_PERCEPTION
+	};
+	static constexpr float BRUSH_SIZE_LERP{ 0.2f };
+	static const PopulationUpdateModifiers POPULATION_UPDATE_METHOD = PopulationUpdateModifiers::DEFAULT;
 };

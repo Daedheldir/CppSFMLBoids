@@ -6,7 +6,7 @@
 class AdditionFunctor : public FunctorBase {
 public:
 	AdditionFunctor() : FunctorBase{ nullptr } {};
-	const std::string var = "AdditionFunctor";
+	virtual std::string GetName() { return "AddF"; };
 
 	virtual float operator () (float val1, float val2) const {
 		return val1 + val2;

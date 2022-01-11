@@ -28,6 +28,10 @@ std::shared_ptr<FunctorBase> FunctorFactory::CreateFunctor(const FunctorBase::Fu
 	{
 		return std::make_shared<BitwiseORFunctor>();
 	}
+	case FunctorBase::FunctorTypes::BitwiseXOR:
+	{
+		return std::make_shared<BitwiseXORFunctor>();
+	}
 	case FunctorBase::FunctorTypes::Sine:
 	{
 		return std::make_shared<SineFunctor>();
@@ -36,9 +40,21 @@ std::shared_ptr<FunctorBase> FunctorFactory::CreateFunctor(const FunctorBase::Fu
 	{
 		return std::make_shared<CosineFunctor>();
 	}
+	case FunctorBase::FunctorTypes::Tangent:
+	{
+		return std::make_shared<TangentFunctor>();
+	}
 	case FunctorBase::FunctorTypes::LeftShift:
 	{
 		return std::make_shared<LeftShiftFunctor>();
+	}
+	case FunctorBase::FunctorTypes::RightShift:
+	{
+		return std::make_shared<RightShiftFunctor>();
+	}
+	case FunctorBase::FunctorTypes::NOT:
+	{
+		return std::make_shared<NOTFunctor>();
 	}
 	}
 }

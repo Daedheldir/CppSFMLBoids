@@ -7,7 +7,7 @@ class DivisionFunctor : public FunctorBase {
 public:
 	DivisionFunctor() :FunctorBase(nullptr) {};
 
-	const std::string var = "DivisionFunctor";
+	virtual std::string GetName() { return "DivF"; };
 
 	virtual float operator () (float val1, float val2) const {
 		if (val2 == 0)

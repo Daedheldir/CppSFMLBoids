@@ -20,14 +20,18 @@ int main() {
 	srand(0);	//seeding with 0 instead of time, so our simulation is deterministic
 
 	dh::GameDataRef m_gameData = std::make_shared<dh::GameData>();
-	if (m_gameData->inputImage.loadFromFile("../Data/input_img.bmp"))
+	if (m_gameData->inputImage.loadFromFile("../Data/input_img_old.bmp"))
 	{
 		std::cout << "Successfuly loaded input img." << std::endl;
 	}
-	constexpr int boidPopulations = 4;
-	constexpr int boidPopSize = 10000;
-	constexpr int iterationBetweenEvaluation = 500;
-	constexpr int iterationBetweenImageSave = 100;
+	else {
+		std::cout << "Couldn't load input img." << std::endl;
+		return -1;
+	}
+	constexpr int boidPopulations = 8;
+	constexpr int boidPopSize = 1500;
+	constexpr int iterationBetweenEvaluation = 200;
+	constexpr int iterationBetweenImageSave = 50;
 	constexpr int totalIterations = iterationBetweenEvaluation * 200;
 	m_gameData->gpPopulationController = new GPPopulationController{ m_gameData->inputImage, boidPopulations, boidPopSize, iterationBetweenEvaluation, iterationBetweenImageSave, totalIterations };
 	BoidsApp boidsApp

@@ -1,5 +1,6 @@
 #pragma once
 #include "BoidFlock.h"
+#include "DebugFlags.h"
 #include "GPColor.h"
 #include "FunctorBase.h"
 #include "AlignmentBehaviour.h"
@@ -58,7 +59,7 @@ public:
 		}
 
 		for (int i = 0; i < threadPool.size(); ++i) {
-			threadPool[i] = std::move(std::thread(&GPPopulationController::UpdatePopulations, this, i + 1));
+			threadPool[i] = std::move(std::thread(&GPPopulationController::UpdatePopulations<DebugFlags::POPULATION_UPDATE_METHOD>, this, i + 1));
 
 			DWORD_PTR dw = SetThreadAffinityMask(threadPool[i].native_handle(), DWORD_PTR(1) << ((2 + (i * 2)) % std::thread::hardware_concurrency()));
 			if (dw == 0)
@@ -69,7 +70,7 @@ public:
 		}
 
 		//job for this thread
-		UpdatePopulations(0);
+		UpdatePopulations<DebugFlags::POPULATION_UPDATE_METHOD>(0);
 
 		for (auto& thread : threadPool)
 		{
@@ -116,7 +117,7 @@ public:
 		}
 
 		for (int i = 0; i < populations.size(); ++i)
-			UpdatePopulations(i);
+			UpdatePopulations<DebugFlags::POPULATION_UPDATE_METHOD>(i);
 
 		if (iterationsCounter % iterationsBetweenEvaluation == 0
 			&& iterationsCounter < totalIterations)
@@ -135,9 +136,141 @@ public:
 
 	const BoidFlock& GetBestPopulation() const;
 private:
-	void UpdatePopulations(const unsigned int flockIndex);
+	template<DebugFlags::PopulationUpdateModifiers T>
+	void UpdatePopulations(const unsigned int flockIndex) {
+		int i = flockIndex;
+		populations[i].MoveBoids();
+
+		//update colors and decide whether to deposit
+		for (int j = 0; j < populations[i].boidsDataArr.size(); ++j) {
+			BoidAgentData& boid = populations[i].boidsDataArr[j];
+
+			//update boid color
+			populationColors[i][j].SetPosition(boid.position);
+			boid.color = populationColors[i][j].GetColor();
+
+			//compare colors with ref image
+			sf::Color imageColor = refImage.getPixel(static_cast<unsigned int>(std::floorl(boid.position.x)), static_cast<unsigned int>(std::floorl(boid.position.y)));
+			sf::Color currentColor = populationCanvases[i].getPixel(static_cast<unsigned int>(std::floorl(boid.position.x)), static_cast<unsigned int>(std::floorl(boid.position.y)));
+
+			int currentDiff = std::abs(imageColor.r - currentColor.r) + std::abs(imageColor.g - currentColor.g) + std::abs(imageColor.b - currentColor.b);
+			int boidDiff = std::abs(imageColor.r - boid.color.r) + std::abs(imageColor.g - boid.color.g) + std::abs(imageColor.b - boid.color.b);
+
+			sf::Vector2u pixelPos{ static_cast<unsigned int>(std::floorl(boid.position.x)), static_cast<unsigned int>(std::floorl(boid.position.y)) };
+			sf::Color newColor = populationCanvases[i].getPixel(pixelPos.x, pixelPos.y);
+
+			boid.color.a = 0;
+			if (boidDiff - currentDiff < 0) {
+				boid.color.a = 255;
+				newColor = boid.color;
+				populationBoidScores[i][j].second += boidDiff;
+			}
+
+			SetCanvasColor(pixelPos, flockIndex, newColor);
+			populations[i].boidsVerticesArr[j].color = newColor;
+		}
+
+		//save iteration image
+		if (iterationsCounter % iterationsBetweenImageSave == 0) {
+			SaveEvaluationImage(flockIndex);
+		}
+	};
+	template<>
+	void UpdatePopulations<DebugFlags::PopulationUpdateModifiers::SEPARATE_COLORS>(const unsigned int flockIndex)
+	{
+		int i = flockIndex;
+		populations[i].MoveBoids();
+
+		//update colors and decide whether to deposit
+		for (int j = 0; j < populations[i].boidsDataArr.size(); ++j) {
+			BoidAgentData& boid = populations[i].boidsDataArr[j];
+
+			//update boid color
+			populationColors[i][j].SetPosition(boid.position);
+			boid.color = populationColors[i][j].GetColor();
+
+			//compare colors with ref image
+			sf::Color imageColor = refImage.getPixel(static_cast<unsigned int>(std::floorl(boid.position.x)), static_cast<unsigned int>(std::floorl(boid.position.y)));
+			sf::Color currentColor = populationCanvases[i].getPixel(static_cast<unsigned int>(std::floorl(boid.position.x)), static_cast<unsigned int>(std::floorl(boid.position.y)));
+
+			sf::Vector3i currentSeparateDiff = { std::abs(imageColor.r - currentColor.r) , std::abs(imageColor.g - currentColor.g) , std::abs(imageColor.b - currentColor.b) };
+			sf::Vector3i boidSeparateDiff = { std::abs(imageColor.r - boid.color.r) , std::abs(imageColor.g - boid.color.g) , std::abs(imageColor.b - boid.color.b) };
+
+			sf::Vector2u pixelPos{ static_cast<unsigned int>(std::floorl(boid.position.x)), static_cast<unsigned int>(std::floorl(boid.position.y)) };
+			sf::Color newColor = populationCanvases[i].getPixel(pixelPos.x, pixelPos.y);
+
+			boid.color.a = 0;
+			if (boidSeparateDiff.x < currentSeparateDiff.x) {
+				boid.color.a = 255;
+				newColor.r = boid.color.r;
+				populationBoidScores[i][j].second += boidSeparateDiff.x;
+			}
+			if (boidSeparateDiff.y < currentSeparateDiff.y) {
+				boid.color.a = 255;
+				newColor.g = boid.color.g;
+				populationBoidScores[i][j].second += boidSeparateDiff.y;
+			}
+			if (boidSeparateDiff.z < currentSeparateDiff.z) {
+				boid.color.a = 255;
+				newColor.b = boid.color.b;
+				populationBoidScores[i][j].second += boidSeparateDiff.z;
+			}
+			SetCanvasColor(pixelPos, flockIndex, newColor);
+			populations[i].boidsVerticesArr[j].color = newColor;
+		}
+
+		//save iteration image
+		if (iterationsCounter % iterationsBetweenImageSave == 0) {
+			SaveEvaluationImage(flockIndex);
+		}
+	};
+	template<>
+	void UpdatePopulations<DebugFlags::PopulationUpdateModifiers::WARPED_PERCEPTION>(const unsigned int flockIndex) {
+		int i = flockIndex;
+		populations[i].MoveBoids();
+
+		//update colors and decide whether to deposit
+		for (int j = 0; j < populations[i].boidsDataArr.size(); ++j) {
+			BoidAgentData& boid = populations[i].boidsDataArr[j];
+
+			//update boid color
+			populationColors[i][j].SetPosition(boid.position);
+			boid.color = populationColors[i][j].GetColor();
+
+			//compare colors with ref image
+			sf::Color imageColor = refImage.getPixel(static_cast<unsigned int>(std::floorl(boid.position.x)), static_cast<unsigned int>(std::floorl(boid.position.y)));
+			sf::Color currentColor = populationCanvases[i].getPixel(static_cast<unsigned int>(std::floorl(boid.position.x)), static_cast<unsigned int>(std::floorl(boid.position.y)));
+
+			long currentPerceptionDiff = (*populationPerceptionFunctors[i])(std::abs(imageColor.r - currentColor.r), std::abs(imageColor.g - currentColor.g));
+			currentPerceptionDiff = (*populationPerceptionFunctors[i])(currentPerceptionDiff, std::abs(imageColor.b - currentColor.b));
+			long boidPerceptionDiff = (*populationPerceptionFunctors[i])(std::abs(imageColor.r - boid.color.r), std::abs(imageColor.g - boid.color.g));
+			boidPerceptionDiff = (*populationPerceptionFunctors[i])(boidPerceptionDiff, std::abs(imageColor.b - boid.color.b));
+
+			sf::Vector2u pixelPos{ static_cast<unsigned int>(std::floorl(boid.position.x)), static_cast<unsigned int>(std::floorl(boid.position.y)) };
+			sf::Color newColor = populationCanvases[i].getPixel(pixelPos.x, pixelPos.y);
+
+			boid.color.a = 0;
+			if (boidPerceptionDiff - currentPerceptionDiff < 2) {
+				boid.color.a = 255;
+				newColor = boid.color;
+				populationBoidScores[i][j].second += boidPerceptionDiff;
+			}
+
+			SetCanvasColor(pixelPos, flockIndex, newColor);
+			populations[i].boidsVerticesArr[j].color = newColor;
+		}
+
+		//save iteration image
+		if (iterationsCounter % iterationsBetweenImageSave == 0) {
+			SaveEvaluationImage(flockIndex);
+		}
+	};
+
 	void EvaluatePopulations(const unsigned int flockIndex);
 	void SaveEvaluationImage(const unsigned int flockIndex, std::string additionalFileText = "") const;
+
+private:
+	void SetCanvasColor(const sf::Vector2u& pixelPos, const unsigned int flockIndex, const sf::Color& newColor);
 public:
 	bool simRunning = true;
 	static constexpr Threading threading = Threading::Enabled;
@@ -156,12 +289,13 @@ private:
 	std::vector<std::vector<GPColor>> populationColors;
 	std::vector<std::vector <FunctorBase::FunctorTypes>> populationAvailableFunctors;
 
-	const float boidDiscardPercentage = 0.8f; //discarding worst boids
+	const float boidDiscardPercentage = 0.95f; //discarding worst boids
 	std::vector<std::vector<std::pair<unsigned int, unsigned long int>>> populationBoidScores;	//flocks -> boids -> pair of boid index in vector and boid score
 	//population related vecs
 	std::vector<int> populationScores;
 	std::vector<sf::Image> populationCanvases;
 	std::vector<BoidFlock> populations;
+	std::vector<std::shared_ptr<FunctorBase>> populationPerceptionFunctors;
 
 	std::vector<std::thread> threadPool;
 };

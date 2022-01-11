@@ -5,7 +5,7 @@
 class GPColor {
 public:
 	GPColor();
-	void Initialize(const std::vector<FunctorBase::FunctorTypes>& availableFunctors);
+	void Initialize(const std::shared_ptr<FunctorBase> redFunctor, const std::shared_ptr<FunctorBase> greenFunctor, const std::shared_ptr<FunctorBase> blueFunctor);
 	void SetPosition(sf::Vector2f position);
 	sf::Color GetColor() const;
 	void Evolve(const GPColor& parentColor, const std::vector<FunctorBase::FunctorTypes>& availableFunctors);
