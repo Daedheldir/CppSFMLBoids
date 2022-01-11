@@ -2,8 +2,6 @@
 #include "BinTree.h"
 #include "FunctorBase.h"
 
-using namespace std;
-
 //template <typename T>
 class TestBinTree {
 private:

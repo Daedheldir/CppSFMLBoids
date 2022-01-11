@@ -153,6 +153,24 @@
     <ClInclude Include="FunctorFactory.h">
       <Filter>Header Files\Utilities</Filter>
     </ClInclude>
+    <ClInclude Include="CosineFunctor.h">
+      <Filter>Header Files\Functors</Filter>
+    </ClInclude>
+    <ClInclude Include="DebugFlags.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BitwiseXORFunctor.h">
+      <Filter>Header Files\Functors</Filter>
+    </ClInclude>
+    <ClInclude Include="NOTFunctor.h">
+      <Filter>Header Files\Functors</Filter>
+    </ClInclude>
+    <ClInclude Include="RightShiftFunctor.h">
+      <Filter>Header Files\Functors</Filter>
+    </ClInclude>
+    <ClInclude Include="TangentFunctor.h">
+      <Filter>Header Files\Functors</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LogicEngine.cpp">

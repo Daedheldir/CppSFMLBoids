@@ -6,10 +6,10 @@
 class SineFunctor : public FunctorBase {
 public:
 	SineFunctor() : FunctorBase{ nullptr } {};
-	const std::string var = "SineFunctor";
+	virtual std::string GetName() { return "SinF"; };
 
 	virtual float operator () (float val1, float val2) const {
-		return std::sinf(val1) * val2;
+		float output = std::sinf((1 + val1) / (1 + val2)) * 255;
+		return output;
 	}
 };
-#pragma once
