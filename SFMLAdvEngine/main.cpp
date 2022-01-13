@@ -20,7 +20,7 @@ int main() {
 	srand(0);	//seeding with 0 instead of time, so our simulation is deterministic
 
 	dh::GameDataRef m_gameData = std::make_shared<dh::GameData>();
-	if (m_gameData->inputImage.loadFromFile("../Data/input_img_old.bmp"))
+	if (m_gameData->inputImage.loadFromFile("../Data/input_img_landscape.bmp"))
 	{
 		std::cout << "Successfuly loaded input img." << std::endl;
 	}
@@ -28,7 +28,7 @@ int main() {
 		std::cout << "Couldn't load input img." << std::endl;
 		return -1;
 	}
-	constexpr int boidPopulations = 8;
+	constexpr int boidPopulations = 1;
 	constexpr int boidPopSize = 1500;
 	constexpr int iterationBetweenEvaluation = 200;
 	constexpr int iterationBetweenImageSave = 50;

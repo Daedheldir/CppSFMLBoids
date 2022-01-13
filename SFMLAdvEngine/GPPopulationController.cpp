@@ -48,25 +48,23 @@ void GPPopulationController::CreatePopulations(const size_t populationsSize, con
 		for (int j = 0; j < FunctorBase::FunctorTypesCount; ++j) {
 			availableElements.push_back(static_cast<FunctorBase::FunctorTypes>(j));
 		}
-		std::vector<int> selectedElements;
-		for (int j = 0; j < 4; ++j) {
+		std::vector<FunctorBase::FunctorTypes> selectedElements;
+		for (int j = 0; j < 3; ++j) {
+			if (availableElements.size() <= 0) break;
+
 			int randVal = rand() % availableElements.size();
 
-			if (std::find(selectedElements.begin(), selectedElements.end(), randVal) != selectedElements.end()) {
-				//if element was found then try again
-				--j;
-				continue;
-			}
-			selectedElements.push_back(randVal);
-			continue;
+			selectedElements.push_back(availableElements[randVal]);
+			availableElements.erase(availableElements.begin() + randVal);
 		}
 		for (int j = 0; j < selectedElements.size(); ++j) {
-			populationAvailableFunctors[i].push_back(static_cast<FunctorBase::FunctorTypes>(selectedElements[j]));
+			populationAvailableFunctors[i].push_back(selectedElements[j]);
 		}
 
-		populationPerceptionFunctors.push_back(FunctorFactory::CreateFunctor(availableElements[rand() % availableElements.size()]));
+		populationPerceptionFunctors.push_back(FunctorFactory::CreateFunctor(static_cast<FunctorBase::FunctorTypes>(rand() % FunctorBase::FunctorTypesCount)));
 
 		populationColors[i].resize(flockSize);
+
 		std::shared_ptr<FunctorBase> redFunctor = FunctorFactory::CreateFunctor(populationAvailableFunctors[i][rand() % populationAvailableFunctors[i].size()]);
 		std::shared_ptr<FunctorBase> greenFunctor = FunctorFactory::CreateFunctor(populationAvailableFunctors[i][rand() % populationAvailableFunctors[i].size()]);
 		std::shared_ptr<FunctorBase> blueFunctor = FunctorFactory::CreateFunctor(populationAvailableFunctors[i][rand() % populationAvailableFunctors[i].size()]);
@@ -159,7 +157,7 @@ void GPPopulationController::SaveEvaluationImage(const unsigned int flockIndex, 
 	const sf::Image& currentImg = populationCanvases[flockIndex];
 
 	//if image height is bigger then width then position images horizontally
-	if (currentImg.getSize().x < currentImg.getSize().y) {
+	if (currentImg.getSize().x <= currentImg.getSize().y) {
 		outImg.create(currentImg.getSize().x + refImage.getSize().x, currentImg.getSize().y > refImage.getSize().y ? currentImg.getSize().y : refImage.getSize().y);
 		outImg.copy(refImage, 0, 0);
 		outImg.copy(currentImg, refImage.getSize().x, 0);
