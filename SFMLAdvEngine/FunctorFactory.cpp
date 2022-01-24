@@ -56,5 +56,9 @@ std::shared_ptr<FunctorBase> FunctorFactory::CreateFunctor(const FunctorBase::Fu
 	{
 		return std::make_shared<NOTFunctor>();
 	}
+	case FunctorBase::FunctorTypes::PerlinNoise:
+	{
+		return std::make_shared<PerlinNoiseFunctor>();
+	}
 	}
 }

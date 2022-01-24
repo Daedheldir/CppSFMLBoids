@@ -32,7 +32,7 @@
     <ClInclude Include="BoidsApp.h" />
     <ClInclude Include="CohesionBehaviour.h" />
     <ClInclude Include="CosineFunctor.h" />
-    <ClInclude Include="DebugFlags.h" />
+    <ClInclude Include="GPParameters.h" />
     <ClInclude Include="Definitions.h" />
     <ClInclude Include="DivisionFunctor.h" />
     <ClInclude Include="FlockBehaviour.h" />
@@ -45,6 +45,8 @@
     <ClInclude Include="LeftShiftFunctor.h" />
     <ClInclude Include="NodeB.h" />
     <ClInclude Include="NOTFunctor.h" />
+    <ClInclude Include="PerlinNoise.hpp" />
+    <ClInclude Include="PerlinNoiseFunctor.h" />
     <ClInclude Include="RightShiftFunctor.h" />
     <ClInclude Include="SineFunctor.h" />
     <ClInclude Include="SubtractionFunctor.h" />
@@ -163,12 +165,12 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\VS\SFML_x64\include;D:\Programming\libraries\SFML_x64\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)\lib\SFML_x64\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
-      <AdditionalLibraryDirectories>C:\VS\SFML_x64\lib;D:\Programming\libraries\SFML_x64\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)\lib\SFML_x64\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -198,12 +200,14 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)\lib\SFML_x64\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
+      <AdditionalLibraryDirectories>$(SolutionDir)\lib\SFML_x64\lib</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

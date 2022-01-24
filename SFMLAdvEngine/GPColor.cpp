@@ -2,6 +2,7 @@
 #include "TestBinTree.h"
 
 #include "FunctorFactory.h"
+#include "GPParameters.h"
 
 GPColor::GPColor() :
 	randRed{ 0 },
@@ -12,12 +13,12 @@ GPColor::GPColor() :
 	blueTree{ std::make_shared<SubtractionFunctor>(), BinTree<std::shared_ptr<FunctorBase>>(), BinTree<std::shared_ptr<FunctorBase>>() }
 {}
 
-void GPColor::Initialize(const std::shared_ptr<FunctorBase> redFunctor, const std::shared_ptr<FunctorBase> greenFunctor, const std::shared_ptr<FunctorBase> blueFunctor)
+void GPColor::Initialize(const std::shared_ptr<FunctorBase> redFunctor[], const std::shared_ptr<FunctorBase> greenFunctor[], const std::shared_ptr<FunctorBase> blueFunctor[])
 {
 	//(x / y) / r
-	redTree.getRoot().getNodePtr()->setObj(redFunctor);
-	redTree.insert(redFunctor);
-	redTree.insert(redFunctor);
+	redTree.getRoot().getNodePtr()->setObj(redFunctor[0]);
+	redTree.insert(redFunctor[1]);
+	redTree.insert(redFunctor[2]);
 
 	redTree.insert(std::make_shared<FunctorBase>(&posX));
 	redTree.insert(std::make_shared<FunctorBase>(&randRed));
@@ -25,9 +26,9 @@ void GPColor::Initialize(const std::shared_ptr<FunctorBase> redFunctor, const st
 	redTree.insert(std::make_shared<FunctorBase>(&posY));
 
 	//(x / y) * r
-	greenTree.getRoot().getNodePtr()->setObj(greenFunctor);
-	greenTree.insert(greenFunctor);
-	greenTree.insert(greenFunctor);
+	greenTree.getRoot().getNodePtr()->setObj(greenFunctor[0]);
+	greenTree.insert(greenFunctor[1]);
+	greenTree.insert(greenFunctor[2]);
 
 	greenTree.insert(std::make_shared<FunctorBase>(&posX));
 	greenTree.insert(std::make_shared<FunctorBase>(&randGreen));
@@ -35,9 +36,9 @@ void GPColor::Initialize(const std::shared_ptr<FunctorBase> redFunctor, const st
 	greenTree.insert(std::make_shared<FunctorBase>(&posY));
 
 	//(x * y) / r
-	blueTree.getRoot().getNodePtr()->setObj(blueFunctor);
-	blueTree.insert(blueFunctor);
-	blueTree.insert(blueFunctor);
+	blueTree.getRoot().getNodePtr()->setObj(blueFunctor[0]);
+	blueTree.insert(blueFunctor[1]);
+	blueTree.insert(blueFunctor[2]);
 
 	blueTree.insert(std::make_shared<FunctorBase>(&posX));
 	blueTree.insert(std::make_shared<FunctorBase>(&randBlue));
@@ -65,31 +66,56 @@ sf::Color GPColor::GetColor() const
 void GPColor::Evolve(const GPColor& parentColor, const std::vector<FunctorBase::FunctorTypes>& availableFunctors)
 {
 	//slightly mutate one of 'r's
-	switch (rand() % 3) {
-	case 0:
-		randRed = parentColor.randRed + ((100 - (rand() % 201)) / 10.0f);
-		break;
-	case 1:
-		randGreen = parentColor.randGreen + ((100 - (rand() % 201)) / 10.0f);
-		break;
-	case 3:
-		randBlue = parentColor.randBlue + ((100 - (rand() % 201)) / 10.0f);
-		break;
+	auto GetRandNumberInRange = [](const float& min, const float& max, const unsigned int& precision)->float {
+		float diff = max - min;
+		unsigned int precisionMultiplier = std::powl(10, precision);
+		if (precision > 0)
+			return min + (rand() % static_cast<unsigned int>(max * precisionMultiplier)) / static_cast<float>(precisionMultiplier);
+		else
+			return min + (rand() % static_cast<unsigned int>(max));
+	};
+
+	if (rand() % 100 < GPParameters::MUTATION_RATE_RAND * 100) {
+		switch (rand() % 3) {
+		case 0:
+			randRed = parentColor.randRed + GetRandNumberInRange(GPParameters::MUTATION_RANGE_MIN, GPParameters::MUTATION_RANGE_MAX, 2);
+			break;
+		case 1:
+			randGreen = parentColor.randGreen + GetRandNumberInRange(GPParameters::MUTATION_RANGE_MIN, GPParameters::MUTATION_RANGE_MAX, 2);
+			break;
+		case 3:
+			randBlue = parentColor.randBlue + GetRandNumberInRange(GPParameters::MUTATION_RANGE_MIN, GPParameters::MUTATION_RANGE_MAX, 2);
+			break;
+		}
 	}
 
+	redTree.getRoot().getNodePtr()->setObj(std::shared_ptr<FunctorBase>{ parentColor.redTree.getRootObj() });
+	redTree.getLeftPointer()->setObj(std::shared_ptr<FunctorBase>{ parentColor.redTree.getLeftObj() });
+	redTree.getRightPointer()->setObj(std::shared_ptr<FunctorBase>{ parentColor.redTree.getRightObj() });
+
+	greenTree.getRoot().getNodePtr()->setObj(std::shared_ptr<FunctorBase>{ parentColor.greenTree.getRootObj() });
+	greenTree.getLeftPointer()->setObj(std::shared_ptr<FunctorBase>{ parentColor.greenTree.getLeftObj() });
+	greenTree.getRightPointer()->setObj(std::shared_ptr<FunctorBase>{ parentColor.greenTree.getRightObj() });
+
+	blueTree.getRoot().getNodePtr()->setObj(std::shared_ptr<FunctorBase>{ parentColor.blueTree.getRootObj() });
+	blueTree.getLeftPointer()->setObj(std::shared_ptr<FunctorBase>{ parentColor.blueTree.getLeftObj() });
+	blueTree.getRightPointer()->setObj(std::shared_ptr<FunctorBase>{ parentColor.blueTree.getRightObj() });
+
 	//mutation chance for each of trees, mutate only one of them
-	switch (rand() % 3) {
-	case 0:
-		if (rand() % 100 < 10)
-			TestBinTree::getRandFunctorNode(redTree, redTree.getRoot())->setObj(FunctorFactory::CreateFunctor(availableFunctors[rand() % availableFunctors.size()]));
-		break;
-	case 1:
-		if (rand() % 100 < 10)
-			TestBinTree::getRandFunctorNode(greenTree, greenTree.getRoot())->setObj(FunctorFactory::CreateFunctor(availableFunctors[rand() % availableFunctors.size()]));
-		break;
-	case 2:
-		if (rand() % 100 < 10)
-			TestBinTree::getRandFunctorNode(blueTree, blueTree.getRoot())->setObj(FunctorFactory::CreateFunctor(availableFunctors[rand() % availableFunctors.size()]));
-		break;
+	if (rand() % 100 < GPParameters::MUTATION_RATE_TREE * 100) {
+		switch (std::rand() % 3) {
+		case 0:
+			for (int k = 0; k < GPParameters::MUTATION_NODES_COUNT; ++k)
+				TestBinTree::getRandFunctorNode(redTree, redTree.getRoot())->setObj(FunctorFactory::CreateFunctor(availableFunctors[rand() % availableFunctors.size()]));
+			break;
+		case 1:
+			for (int k = 0; k < GPParameters::MUTATION_NODES_COUNT; ++k)
+				TestBinTree::getRandFunctorNode(greenTree, greenTree.getRoot())->setObj(FunctorFactory::CreateFunctor(availableFunctors[rand() % availableFunctors.size()]));
+			break;
+		case 2:
+			for (int k = 0; k < GPParameters::MUTATION_NODES_COUNT; ++k)
+				TestBinTree::getRandFunctorNode(blueTree, blueTree.getRoot())->setObj(FunctorFactory::CreateFunctor(availableFunctors[rand() % availableFunctors.size()]));
+			break;
+		}
 	}
 }

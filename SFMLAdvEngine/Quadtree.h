@@ -117,7 +117,7 @@ public:
 		this->vertex.setPrimitiveType(sf::PrimitiveType::LineStrip);
 
 		uDepth = depth;
-		bucketSize = static_cast<size_t>(pow(QT_BASE_BUCKET_SIZE, uDepth / QT_BASE_DIVIDER));
+		bucketSize = static_cast<size_t>(pow(QT_BASE_BUCKET_SIZE, std::ceil(uDepth / QT_BASE_DIVIDER)));
 		dataContainer.reserve(bucketSize);
 	};
 	Quadtree(Quadtree* parentNode, const sf::Vector2f& center, const sf::Vector2f& halfDimension, unsigned int depth, sf::Color color = sf::Color::Red)

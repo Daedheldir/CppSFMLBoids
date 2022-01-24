@@ -50,7 +50,7 @@ public:
 
 	BinTree& operator= (const BinTree& bintree) {
 		PointerNodeB nodepointer = clone(bintree.getRootPointer());
-		BinTree bt(bintree.getRootPointer());
+		BinTree bt(nodepointer);
 		return bt;
 	};
 

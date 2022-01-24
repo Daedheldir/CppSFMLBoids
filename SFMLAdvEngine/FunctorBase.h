@@ -17,12 +17,14 @@ public:
 		Tangent,
 		LeftShift,
 		RightShift,
-		NOT
+		NOT,
+		PerlinNoise
 	};
-	static constexpr int FunctorTypesCount = 13;
+	static constexpr int FunctorTypesCount = 14;
 protected:
 	float* val;
 public:
+	FunctorBase(const FunctorBase& other) = default;
 	FunctorBase(float* val2) :val{ val2 } {};
 	virtual ~FunctorBase() {};
 	virtual std::string GetName() { return "FB"; };

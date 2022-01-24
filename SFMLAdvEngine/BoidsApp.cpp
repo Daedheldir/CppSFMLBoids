@@ -16,12 +16,11 @@ BoidsApp::BoidsApp(dh::GameDataRef m_gameData, sf::Vector2u uWindowSize, std::st
 	m_gameData->FPSCounter.setPosition({ 0,0 });
 
 	m_gameData->renderTexture.create(m_gameData->inputImage.getSize().x, m_gameData->inputImage.getSize().y);
+	m_gameData->renderTexture.clear(sf::Color::White);
 	m_gameData->renderTextureRectShape.setSize({ static_cast<float>(m_gameData->inputImage.getSize().x), static_cast<float>(m_gameData->inputImage.getSize().y) });
 	m_gameData->renderTextureRectShape.setPosition(0, 0);
 
 	m_gameData->renderTextureRectShape.setTexture(&m_gameData->renderTexture.getTexture());
-
-
 }
 void BoidsApp::LoadResources()
 {
@@ -53,7 +52,6 @@ void BoidsApp::handleLogic()
 	//update flock
 	TextUpdate();
 	m_gameData->gpPopulationController->UpdateGP< GPPopulationController::threading>();
-
 }
 
 void BoidsApp::handleDrawing()
@@ -95,4 +93,3 @@ void BoidsApp::TextUpdate()
 	this->m_gameData->FPSCounter.setString(str);
 	fpsLock.unlock();
 }
-

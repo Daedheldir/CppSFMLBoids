@@ -42,7 +42,7 @@ BoidFlock::BoidFlock(size_t flockSize, std::map<FlockBehaviourTypes, std::shared
 {
 	//initialize positions and vertex array
 	boidsDataArr.resize(flockSize);
-	int flockGroups = 100;
+	int flockGroups = 20;
 	int groupRadius = 20;
 
 	int boidIndex = 0;

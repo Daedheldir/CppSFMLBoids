@@ -3,7 +3,7 @@
 #include <filesystem>
 #include <algorithm>
 
-#include "DebugFlags.h"
+#include "GPParameters.h"
 #include "FunctorFactory.h"
 
 GPPopulationController::GPPopulationController(sf::Image& refImage, const size_t populationsSize, const size_t flockSize, const unsigned int iterationsBetweenEvaluation, const unsigned int iterationsBetweenImageSave, const unsigned int totalIterations) :
@@ -49,7 +49,7 @@ void GPPopulationController::CreatePopulations(const size_t populationsSize, con
 			availableElements.push_back(static_cast<FunctorBase::FunctorTypes>(j));
 		}
 		std::vector<FunctorBase::FunctorTypes> selectedElements;
-		for (int j = 0; j < 3; ++j) {
+		for (int j = 0; j < 5; ++j) {
 			if (availableElements.size() <= 0) break;
 
 			int randVal = rand() % availableElements.size();
@@ -60,14 +60,37 @@ void GPPopulationController::CreatePopulations(const size_t populationsSize, con
 		for (int j = 0; j < selectedElements.size(); ++j) {
 			populationAvailableFunctors[i].push_back(selectedElements[j]);
 		}
-
+		populationAvailableFunctors[i] = {
+			{
+				FunctorBase::FunctorTypes::Addition,
+				FunctorBase::FunctorTypes::Subtraction,
+				FunctorBase::FunctorTypes::Division,
+				FunctorBase::FunctorTypes::Multiplication,
+				FunctorBase::FunctorTypes::BitwiseOR,
+				FunctorBase::FunctorTypes::BitwiseAND,
+				FunctorBase::FunctorTypes::BitwiseXOR,
+				FunctorBase::FunctorTypes::Sine,
+				FunctorBase::FunctorTypes::Cosine,
+				FunctorBase::FunctorTypes::Tangent,
+				FunctorBase::FunctorTypes::LeftShift,
+				FunctorBase::FunctorTypes::RightShift,
+				FunctorBase::FunctorTypes::NOT,
+				FunctorBase::FunctorTypes::PerlinNoise
+			}
+		};
 		populationPerceptionFunctors.push_back(FunctorFactory::CreateFunctor(static_cast<FunctorBase::FunctorTypes>(rand() % FunctorBase::FunctorTypesCount)));
 
 		populationColors[i].resize(flockSize);
 
-		std::shared_ptr<FunctorBase> redFunctor = FunctorFactory::CreateFunctor(populationAvailableFunctors[i][rand() % populationAvailableFunctors[i].size()]);
-		std::shared_ptr<FunctorBase> greenFunctor = FunctorFactory::CreateFunctor(populationAvailableFunctors[i][rand() % populationAvailableFunctors[i].size()]);
-		std::shared_ptr<FunctorBase> blueFunctor = FunctorFactory::CreateFunctor(populationAvailableFunctors[i][rand() % populationAvailableFunctors[i].size()]);
+		std::shared_ptr<FunctorBase> redFunctor[3];
+		std::shared_ptr<FunctorBase> greenFunctor[3];
+		std::shared_ptr<FunctorBase> blueFunctor[3];
+
+		for (int k = 0; k < 3; ++k) {
+			redFunctor[k] = FunctorFactory::CreateFunctor(populationAvailableFunctors[i][rand() % populationAvailableFunctors[i].size()]);
+			greenFunctor[k] = FunctorFactory::CreateFunctor(populationAvailableFunctors[i][rand() % populationAvailableFunctors[i].size()]);
+			blueFunctor[k] = FunctorFactory::CreateFunctor(populationAvailableFunctors[i][rand() % populationAvailableFunctors[i].size()]);
+		}
 
 		for (int j = 0; j < flockSize; ++j) {
 			populationColors[i][j].Initialize(redFunctor, greenFunctor, blueFunctor);
@@ -85,7 +108,7 @@ void GPPopulationController::CreatePopulations(const size_t populationsSize, con
 			refImage.getSize() - sf::Vector2u{ 1, 1 }
 		);
 
-		populationCanvases[i].create(refImage.getSize().x, refImage.getSize().y);
+		populationCanvases[i].create(refImage.getSize().x, refImage.getSize().y, sf::Color::White);
 
 		//initialize scores and assign boid colors
 		populationBoidScores[i].reserve(flockSize);
@@ -121,7 +144,7 @@ void GPPopulationController::EvaluatePopulations(const unsigned int flockIndex)
 	//evolve spawn new boids in place of discarded ones
 
 	auto& boidsDataArr = populations[i].boidsDataArr;
-	const unsigned int discardedBoidsPivot = static_cast<unsigned int>(std::round(boidDiscardPercentage * (populations[i].boidsDataArr.size() - 1)));
+	const unsigned int discardedBoidsPivot = static_cast<unsigned int>(std::round(GPParameters::BOID_DISCARD_PERCENTAGE * (populations[i].boidsDataArr.size() - 1)));
 
 	std::vector<unsigned int> availableParentsIndices(boidsDataArr.size() - discardedBoidsPivot);
 
@@ -130,13 +153,15 @@ void GPPopulationController::EvaluatePopulations(const unsigned int flockIndex)
 	}
 
 	//for each discarded boid select a random parent from rest of population
-	for (int j = discardedBoidsPivot; j < populationBoidScores[i].size(); ++j) {
+	for (int j = populationBoidScores[i].size() - discardedBoidsPivot; j < populationBoidScores[i].size(); ++j) {
 		//using populationBoidsScores to select boids
 		unsigned int discardedBoidIndex = populationBoidScores[i][j].first;
 		unsigned int vectorRowToDeleteIndex = static_cast<unsigned int>(rand() % availableParentsIndices.size());
 		unsigned int randParentIndex = availableParentsIndices[vectorRowToDeleteIndex];
 
-		availableParentsIndices.erase(availableParentsIndices.begin() + vectorRowToDeleteIndex);
+		//if there are more parents left than boids then delete used parent
+		if (availableParentsIndices.size() >= populationBoidScores[i].size() - j)
+			availableParentsIndices.erase(availableParentsIndices.begin() + vectorRowToDeleteIndex);
 
 		//evolve discarded boid color
 		populationColors[i][discardedBoidIndex].Evolve(populationColors[i][randParentIndex], populationAvailableFunctors[i]);
@@ -168,7 +193,7 @@ void GPPopulationController::SaveEvaluationImage(const unsigned int flockIndex, 
 		outImg.copy(currentImg, 0, refImage.getSize().y);
 	}
 	std::string functorsStr = "";
-	if (DebugFlags::POPULATION_UPDATE_METHOD == DebugFlags::PopulationUpdateModifiers::WARPED_PERCEPTION) {
+	if (GPParameters::POPULATION_UPDATE_METHOD == GPParameters::PopulationUpdateModifiers::WARPED_PERCEPTION) {
 		functorsStr += "_WP_" + (*populationPerceptionFunctors[flockIndex]).GetName();
 	}
 	for (const auto& func : populationAvailableFunctors[flockIndex])
@@ -176,6 +201,44 @@ void GPPopulationController::SaveEvaluationImage(const unsigned int flockIndex, 
 		functorsStr += "_" + (*FunctorFactory::CreateFunctor(func)).GetName();
 	}
 
+	if (GPParameters::ENABLE_IMAGE_FADING) {
+		sf::Image fadedImage = currentImg;
+		sf::Vector2f imageCenter = { fadedImage.getSize().x / 2.0f, fadedImage.getSize().y / 2.0f };
+
+		const float maxDist = std::min(fadedImage.getSize().x / 2, fadedImage.getSize().y / 2);
+		const float maxDistSqr = pow(maxDist, 2);
+		const float fadeDiameter = pow(maxDist - GPParameters::IMAGE_FADE_DISTANCE, 2);
+
+		for (int y = 0; y < fadedImage.getSize().y; ++y) {
+			for (int x = 0; x < fadedImage.getSize().x; ++x) {
+				const float dist = mathAdditions::VectorSqrMagnitude(sf::Vector2f{ imageCenter.x - x, imageCenter.y - y });
+				if (dist < fadeDiameter) {
+					continue;
+				}
+
+				sf::Color currentColor = fadedImage.getPixel(x, y);
+
+				const float lerpParam = std::powf(fadeDiameter / dist, 10);
+
+				sf::Color newColor = {
+					static_cast<uint8_t>(std::lerp(255, currentColor.r, lerpParam)),
+					static_cast<uint8_t>(std::lerp(255, currentColor.g, lerpParam)),
+					static_cast<uint8_t>(std::lerp(255, currentColor.b, lerpParam))
+				};
+
+				fadedImage.setPixel(x, y, newColor);
+			}
+		}
+
+		fadedImage.saveToFile(
+			"../Data/Evaluations/FImg_Canvas_"
+			+ std::to_string(flockIndex)
+			+ "_eval" + std::to_string(evaluationsCounter)
+			+ "_iter" + std::to_string(iterationsCounter)
+			+ functorsStr
+			+ additionalFileText
+			+ ".png");
+	}
 	outImg.saveToFile(
 		"../Data/Evaluations/Canvas_"
 		+ std::to_string(flockIndex)
@@ -183,7 +246,16 @@ void GPPopulationController::SaveEvaluationImage(const unsigned int flockIndex, 
 		+ "_iter" + std::to_string(iterationsCounter)
 		+ functorsStr
 		+ additionalFileText
-		+ ".jpg");
+		+ ".png");
+
+	currentImg.saveToFile(
+		"../Data/Evaluations/Img_Canvas_"
+		+ std::to_string(flockIndex)
+		+ "_eval" + std::to_string(evaluationsCounter)
+		+ "_iter" + std::to_string(iterationsCounter)
+		+ functorsStr
+		+ additionalFileText
+		+ ".png");
 }
 
 void GPPopulationController::SetCanvasColor(const sf::Vector2u& pixelPos, const unsigned int flockIndex, const sf::Color& newColor)
@@ -196,36 +268,36 @@ void GPPopulationController::SetCanvasColor(const sf::Vector2u& pixelPos, const 
 		sf::Color currentColor = populationCanvases[i].getPixel(pixelPos.x - 1, pixelPos.y);
 		populationCanvases[i].setPixel(pixelPos.x - 1, pixelPos.y,
 			{
-				static_cast<uint8_t>(std::lerp(currentColor.r, newColor.r, DebugFlags::BRUSH_SIZE_LERP)),
-				static_cast<uint8_t>(std::lerp(currentColor.g, newColor.g, DebugFlags::BRUSH_SIZE_LERP)),
-				static_cast<uint8_t>(std::lerp(currentColor.b, newColor.b, DebugFlags::BRUSH_SIZE_LERP)),
+				static_cast<uint8_t>(std::lerp(currentColor.r, newColor.r, GPParameters::BRUSH_SIZE_LERP)),
+				static_cast<uint8_t>(std::lerp(currentColor.g, newColor.g, GPParameters::BRUSH_SIZE_LERP)),
+				static_cast<uint8_t>(std::lerp(currentColor.b, newColor.b, GPParameters::BRUSH_SIZE_LERP)),
 			});
 	}
 	if (pixelPos.x < refImage.getSize().x - 1) {
 		sf::Color currentColor = populationCanvases[i].getPixel(pixelPos.x + 1, pixelPos.y);
 		populationCanvases[i].setPixel(pixelPos.x + 1, pixelPos.y,
 			{
-				static_cast<uint8_t>(std::lerp(currentColor.r, newColor.r, DebugFlags::BRUSH_SIZE_LERP)),
-				static_cast<uint8_t>(std::lerp(currentColor.g, newColor.g, DebugFlags::BRUSH_SIZE_LERP)),
-				static_cast<uint8_t>(std::lerp(currentColor.b, newColor.b, DebugFlags::BRUSH_SIZE_LERP)),
+				static_cast<uint8_t>(std::lerp(currentColor.r, newColor.r, GPParameters::BRUSH_SIZE_LERP)),
+				static_cast<uint8_t>(std::lerp(currentColor.g, newColor.g, GPParameters::BRUSH_SIZE_LERP)),
+				static_cast<uint8_t>(std::lerp(currentColor.b, newColor.b, GPParameters::BRUSH_SIZE_LERP)),
 			});
 	}
 	if (pixelPos.y > 0) {
 		sf::Color currentColor = populationCanvases[i].getPixel(pixelPos.x, pixelPos.y - 1);
 		populationCanvases[i].setPixel(pixelPos.x, pixelPos.y - 1,
 			{
-				static_cast<uint8_t>(std::lerp(currentColor.r, newColor.r, DebugFlags::BRUSH_SIZE_LERP)),
-				static_cast<uint8_t>(std::lerp(currentColor.g, newColor.g, DebugFlags::BRUSH_SIZE_LERP)),
-				static_cast<uint8_t>(std::lerp(currentColor.b, newColor.b, DebugFlags::BRUSH_SIZE_LERP)),
+				static_cast<uint8_t>(std::lerp(currentColor.r, newColor.r, GPParameters::BRUSH_SIZE_LERP)),
+				static_cast<uint8_t>(std::lerp(currentColor.g, newColor.g, GPParameters::BRUSH_SIZE_LERP)),
+				static_cast<uint8_t>(std::lerp(currentColor.b, newColor.b, GPParameters::BRUSH_SIZE_LERP)),
 			});
 	}
 	if (pixelPos.y < refImage.getSize().y - 1) {
 		sf::Color currentColor = populationCanvases[i].getPixel(pixelPos.x, pixelPos.y + 1);
 		populationCanvases[i].setPixel(pixelPos.x, pixelPos.y + 1,
 			{
-				static_cast<uint8_t>(std::lerp(currentColor.r, newColor.r, DebugFlags::BRUSH_SIZE_LERP)),
-				static_cast<uint8_t>(std::lerp(currentColor.g, newColor.g, DebugFlags::BRUSH_SIZE_LERP)),
-				static_cast<uint8_t>(std::lerp(currentColor.b, newColor.b, DebugFlags::BRUSH_SIZE_LERP)),
+				static_cast<uint8_t>(std::lerp(currentColor.r, newColor.r, GPParameters::BRUSH_SIZE_LERP)),
+				static_cast<uint8_t>(std::lerp(currentColor.g, newColor.g, GPParameters::BRUSH_SIZE_LERP)),
+				static_cast<uint8_t>(std::lerp(currentColor.b, newColor.b, GPParameters::BRUSH_SIZE_LERP)),
 			});
 	}
 }

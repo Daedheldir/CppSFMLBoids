@@ -14,6 +14,7 @@
 #include "LeftShiftFunctor.h"
 #include "RightShiftFunctor.h"
 #include "NOTFunctor.h"
+#include "PerlinNoiseFunctor.h"
 
 class FunctorFactory
 {
