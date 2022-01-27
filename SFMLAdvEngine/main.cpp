@@ -24,7 +24,7 @@ int main() {
 	srand(3);	//seeding with constant instead of time, so our simulation is deterministic
 
 	dh::GameDataRef m_gameData = std::make_shared<dh::GameData>();
-	if (m_gameData->inputImage.loadFromFile("../Data/miniUs.png"))
+	if (m_gameData->inputImage.loadFromFile("../Data/input_img_landscape.bmp"))
 	{
 		std::cout << "Successfuly loaded input img." << std::endl;
 	}
@@ -32,14 +32,14 @@ int main() {
 		std::cout << "Couldn't load input img." << std::endl;
 		return -1;
 	}
-	constexpr int boidPopulations = 1;
-	constexpr int boidPopSize = 2000;
-	constexpr int iterationBetweenEvaluation = 500;
-	constexpr int evaluationsCount = 250;
-	constexpr int totalIterations = iterationBetweenEvaluation * evaluationsCount;
-	const unsigned int iterationBetweenImageSave = static_cast<unsigned int>(std::ceil(totalIterations / 998.0f));
+	constexpr int BOID_POPULATIONS = 1;
+	constexpr int BOID_POP_SIZE = 2000;
+	constexpr int ITER_BETWEEN_EVALUATIONS = 500;
+	constexpr int EVALUATIONS_COUNT = 250;
+	constexpr int MAX_ITERATIONS = ITER_BETWEEN_EVALUATIONS * EVALUATIONS_COUNT;
+	const unsigned int ITERATIONS_BETWEEN_IMAGE_SAVE = static_cast<unsigned int>(std::ceil(MAX_ITERATIONS / 998.0f));
 
-	m_gameData->gpPopulationController = new GPPopulationController{ m_gameData->inputImage, boidPopulations, boidPopSize, iterationBetweenEvaluation, iterationBetweenImageSave, totalIterations };
+	m_gameData->gpPopulationController = new GPPopulationController{ m_gameData->inputImage, BOID_POPULATIONS, BOID_POP_SIZE, ITER_BETWEEN_EVALUATIONS, ITERATIONS_BETWEEN_IMAGE_SAVE, MAX_ITERATIONS };
 	BoidsApp boidsApp
 	(
 		m_gameData,
