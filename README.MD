@@ -1,13 +1,39 @@
-- SFML Graphics Library is required for running this project!
+
+SFML Graphics Library is required for running this project!
 
 Combination of genetic programming and boids flock simulation to recreate input images with a artistic twist by limiting genes (mathematical operations) available to agents.
 
-Example results:
-![](https://github.com/Daedheldir/CppSFMLBoids/tree/main/Examples/example_img_1.gif)
-![](https://github.com/Daedheldir/CppSFMLBoids/tree/main/Examples/example_img_2.gif)
-![](https://github.com/Daedheldir/CppSFMLBoids/tree/main/Examples/example_img_3.gif)
-![](https://github.com/Daedheldir/CppSFMLBoids/tree/main/Examples/example_img_4.gif)
-![](https://github.com/Daedheldir/CppSFMLBoids/tree/main/Examples/example_img_5.gif)
+# Example results (Large GIFs:
+
+<details>
+<summary>Example GIF - all functors</summary>
+
+
+![Example Image 1](https://github.com/Daedheldir/CppSFMLBoids/blob/main/example_img_1.gif)
+</details>
+<details>
+<summary>Example GIF - limited functors 1</summary>
+
+![Example Image 2](https://github.com/Daedheldir/CppSFMLBoids/blob/main/example_img_2.gif)
+</details>
+<details>
+<summary>Example GIF - limited functors 2</summary>
+
+![Example Image 3](https://github.com/Daedheldir/CppSFMLBoids/blob/main/example_img_3.gif)
+</details>
+<details>
+<summary>Example GIF - limited functors 3</summary>
+
+![Example Image 4](https://github.com/Daedheldir/CppSFMLBoids/blob/main/example_img_4.gif)
+</details>
+<details>
+<summary>Example GIF - limited functors 4</summary>
+
+![Example Image 5](https://github.com/Daedheldir/CppSFMLBoids/blob/main/example_img_5.gif)
+
+</details>
+
+# Credits
 
 - Perlin noise implementation by Ryo Suzuki
 
