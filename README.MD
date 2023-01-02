@@ -3,11 +3,11 @@
 Combination of genetic programming and boids flock simulation to recreate input images with a artistic twist by limiting genes (mathematical operations) available to agents.
 
 Example results:
-![](https://github.com/CppSFMLBoids/Examples/example_img_1.gif)
-![](https://github.com/CppSFMLBoids/Examples/example_img_2.gif)
-![](https://github.com/CppSFMLBoids/Examples/example_img_3.gif)
-![](https://github.com/CppSFMLBoids/Examples/example_img_4.gif)
-![](https://github.com/CppSFMLBoids/Examples/example_img_5.gif)
+![](https://github.com/Daedheldir/CppSFMLBoids/tree/main/Examples/example_img_1.gif)
+![](https://github.com/Daedheldir/CppSFMLBoids/tree/main/Examples/example_img_2.gif)
+![](https://github.com/Daedheldir/CppSFMLBoids/tree/main/Examples/example_img_3.gif)
+![](https://github.com/Daedheldir/CppSFMLBoids/tree/main/Examples/example_img_4.gif)
+![](https://github.com/Daedheldir/CppSFMLBoids/tree/main/Examples/example_img_5.gif)
 
 - Perlin noise implementation by Ryo Suzuki
 
