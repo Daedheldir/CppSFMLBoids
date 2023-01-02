@@ -1,9 +1,10 @@
 
-SFML Graphics Library is required for running this project!
+**SFML Graphics Library is required for running this project!**
 
+## Description
 Combination of genetic programming and boids flock simulation to recreate input images with a artistic twist by limiting genes (mathematical operations) available to agents.
 
-# Example results (Large GIFs:
+## Example results (Large GIFs):
 
 <details>
 <summary>Example GIF - all functors</summary>
@@ -33,7 +34,7 @@ Combination of genetic programming and boids flock simulation to recreate input 
 
 </details>
 
-# Credits
+## Credits
 
 - Perlin noise implementation by Ryo Suzuki
 
